@@ -4,14 +4,14 @@
  */
 :root {
   /* Night ground: deep navy, never pure black */
-  --bc-bg-0: #0b1124; /* deepest: page edges, map void */
-  --bc-bg-1: #10182f; /* base */
-  --bc-bg-2: #172242; /* raised panel */
-  --bc-bg-3: #203057; /* hover / active row */
-  --bc-editor: #121a33; /* calm, solid code surface */
-  --bc-editor-gutter: #0f162c;
+  --bc-bg-0: #0e1630; /* deepest: page edges, map void */
+  --bc-bg-1: #131d3a; /* base */
+  --bc-bg-2: #1a274b; /* raised panel */
+  --bc-bg-3: #243562; /* hover / active row */
+  --bc-editor: #141e3c; /* calm, solid code surface */
+  --bc-editor-gutter: #111a34;
 
-  --bc-line: #2c3b69; /* hairlines, cables at rest */
+  --bc-line: #30416f; /* hairlines, cables at rest */
   --bc-line-strong: #445890;
 
   --bc-text-1: #f2f5fd; /* primary */
@@ -24,6 +24,14 @@
   --bc-amber: #ffb547; /* warning, 4xx */
   --bc-red: #ff4d6d; /* error, 5xx, Glitch */
   --bc-purple: #b27cff; /* AI, magic, Byte's voice */
+
+  /* Mission brief: the brightest night surface, lit from the top edge */
+  --bc-brief: linear-gradient(180deg, #273b70 0%, #1f305d 55%, #1c2b55 100%);
+  --bc-brief-strip: rgb(10 18 40 / 0.35);
+  --bc-brief-line: rgb(150 180 245 / 0.22);
+  --bc-brief-shadow:
+    inset 0 1px 0 rgb(170 200 255 / 0.22), 0 0 0 1px rgb(62 230 255 / 0.22),
+    0 24px 48px -24px rgb(0 0 0 / 0.7), 0 0 60px -30px rgb(62 230 255 / 0.5);
 
   /* Ink on neon fills (buttons, chips) */
   --bc-on-neon: #051018;

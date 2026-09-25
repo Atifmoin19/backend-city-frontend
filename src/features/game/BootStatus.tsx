@@ -10,7 +10,13 @@ const STAGES = [
 const ORDER = ["starting", "runtime", "packages", "harness", "ready"];
 
 /** Pyodide boot progress, framed as the server cold-starting (ideology 9.6). */
-export function BootStatus({ status }: { status: HarnessStatus }) {
+export function BootStatus({
+  status,
+  compact = false,
+}: {
+  status: HarnessStatus;
+  compact?: boolean;
+}) {
   if (status.state === "ready") return null;
   if (status.state === "error") {
     return (
@@ -20,6 +26,24 @@ export function BootStatus({ status }: { status: HarnessStatus }) {
     );
   }
   const reached = status.state === "loading" ? ORDER.indexOf(status.stage) : -1;
+  if (compact) {
+    // One fixed-height line so nothing around it moves while the server boots
+    const step = STAGES.find((s) => ORDER.indexOf(s.key) === reached + 1) ?? STAGES[0];
+    return (
+      <p role="status" className="flex h-5 min-w-0 items-center gap-2 text-xs text-text-2">
+        <StatusLight status="busy" iconOnly>
+          Starting
+        </StatusLight>
+        <span className="truncate">
+          Starting your server: {step.label}
+          <span className="text-text-3">
+            {" "}
+            ({reached + 2}/{STAGES.length + 1})
+          </span>
+        </span>
+      </p>
+    );
+  }
   return (
     <div className="flex flex-col gap-2 text-sm" role="status">
       <p className="text-text-1">Booting your server… this is literally what a cold start is.</p>

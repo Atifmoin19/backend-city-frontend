@@ -1,8 +1,11 @@
-import { BookOpen, Crosshair, Pencil, Play, ShieldAlert, Target } from "lucide-react";
+"use client";
+
+import { ArrowUpRight, BookOpen, Check } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
 import type { GameVariant } from "@/lib/api/types";
+import { cn } from "@/lib/cn";
 
 import { InlineCode } from "./InlineCode";
 import type { GameMode } from "./useGamePlay";
@@ -10,106 +13,118 @@ import type { GameMode } from "./useGamePlay";
 interface MissionBriefProps {
   game: GameVariant;
   mode: GameMode;
-  /** Link to the topic briefing; shown loud when the learner skipped it. */
+  /** Every public request landed where it should. */
+  cleared: boolean;
   lessonHref?: string;
   lessonDone: boolean;
 }
 
-/** What to do, stated as a mission: the win condition, the exact rules, and the three moves. */
-export function MissionBrief({ game, mode, lessonHref, lessonDone }: MissionBriefProps) {
+/**
+ * The mission brief: the brightest surface on the screen, lit from its top edge, so the task
+ * reads first. Win condition, then the exact rules, then the one move to make.
+ */
+export function MissionBrief({ game, mode, cleared, lessonHref, lessonDone }: MissionBriefProps) {
   const rules = game.rules.length ? game.rules : [game.scenario.goal];
   const objective = game.objective || game.scenario.intro;
-  const requests = game.public_tests.length;
   return (
     <section
       aria-labelledby="mission-title"
-      className="relative overflow-hidden rounded-lg border border-cyan/30 bg-bg-2 shadow-panel"
+      className="relative overflow-hidden rounded-lg shadow-brief [background:var(--bc-brief)]"
     >
-      <span aria-hidden className="absolute inset-y-0 left-0 w-1 bg-cyan shadow-glow-cyan" />
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-5 py-2.5">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.14em] text-cyan uppercase">
-          <Target aria-hidden className="size-3.5" />
-          Your mission · {mode === "checkpoint" ? "Checkpoint" : "Practice"}
-        </p>
-        {lessonHref ? (
-          <Link
-            href={lessonHref}
-            className={
-              lessonDone
-                ? "ml-auto inline-flex items-center gap-1.5 text-xs text-text-3 hover:text-text-1"
-                : "ml-auto inline-flex items-center gap-1.5 text-xs font-medium text-amber underline"
-            }
-          >
-            <BookOpen aria-hidden className="size-3.5" />
-            {lessonDone ? "Review the briefing" : "Read the briefing first"}
-          </Link>
-        ) : null}
+      {/* Top strip: which variant, the story, and the mode stamp */}
+      <div className="relative flex items-center gap-3 border-b border-brief-line py-2.5 pr-36 pl-5 text-xs text-text-2 [background:var(--bc-brief-strip)]">
+        <span className="shrink-0 font-mono tracking-wide whitespace-nowrap text-text-3">
+          Variant {String(game.seed % 10000).padStart(4, "0")}
+        </span>
+        <span aria-hidden className="h-3 w-px shrink-0 bg-brief-line" />
+        <span className="truncate">{game.scenario.intro}</span>
+        <Stamp mode={mode} cleared={cleared} />
       </div>
 
       <div className="px-5 pt-4 pb-4">
         <h2
           id="mission-title"
-          className="font-display text-[1.05rem] leading-snug font-semibold tracking-tight text-text-1 sm:text-lg"
+          className="font-display text-[1.15rem] leading-[1.22] font-bold tracking-[-0.015em] text-text-1 sm:text-[1.3rem]"
         >
           {objective}
         </h2>
-        <p className="mt-1 text-sm text-text-3">{game.scenario.intro}</p>
 
         {mode === "checkpoint" ? (
-          <p className="mt-3 flex items-start gap-2 rounded-md border border-amber/40 bg-amber/[0.07] px-3 py-2 text-sm text-amber">
-            <ShieldAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
+          <p className="mt-2 text-sm text-amber">
             New variant: names and limits differ from practice. Hidden requests test every boundary.
           </p>
         ) : null}
 
-        <p className="mt-4 text-[0.7rem] font-semibold tracking-[0.14em] text-text-3 uppercase">
-          Rules your server must enforce
-        </p>
-        <ol className="mt-2 flex flex-col gap-1.5">
+        <ol className="mt-4 flex flex-col divide-y divide-brief-line border-y border-brief-line">
           {rules.map((rule, i) => (
-            <li key={rule} className="flex items-start gap-3 text-sm leading-relaxed text-text-1">
+            <li
+              key={rule}
+              className="flex items-baseline gap-3 py-2 text-[0.94rem] leading-relaxed text-text-1"
+            >
               <span
                 aria-hidden
-                className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-sm border border-cyan/40 bg-cyan/10 font-mono text-[0.7rem] font-semibold text-cyan"
+                className={cn(
+                  "grid size-5 shrink-0 translate-y-0.5 place-items-center rounded-full border font-mono text-[0.68rem] font-semibold transition-colors duration-(--bc-dur-3)",
+                  cleared
+                    ? "border-green bg-green text-on-neon shadow-glow-green"
+                    : "border-cyan/50 bg-cyan/10 text-cyan",
+                )}
               >
-                {i + 1}
+                {cleared ? <Check className="size-3" strokeWidth={3} /> : i + 1}
               </span>
               <span>
-                <InlineCode text={rule} />
+                <InlineCode text={rule} tone="chip" />
               </span>
             </li>
           ))}
         </ol>
-      </div>
 
-      <ol
-        aria-label="How to win"
-        className="grid grid-cols-1 border-t border-line bg-bg-1/60 text-xs text-text-2 sm:grid-cols-3"
-      >
-        <Move n={1} icon={<Pencil />}>
-          Edit the <span className="text-cyan">highlighted lines</span>
-        </Move>
-        <Move n={2} icon={<Play />}>
-          Press <span className="font-semibold text-text-1">Run requests</span>
-        </Move>
-        <Move n={3} icon={<Crosshair />}>
-          All {requests} requests hit their <span className="text-green">expected</span> status
-        </Move>
-      </ol>
+        <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-text-2">
+          <span>
+            Edit the <span className="rounded-sm bg-cyan/15 px-1 text-cyan">highlighted lines</span>
+            , then <strong className="font-semibold text-text-1">Run requests</strong>.
+          </span>
+          {lessonHref ? (
+            <Link
+              href={lessonHref}
+              className={cn(
+                "ml-auto inline-flex shrink-0 items-center gap-1 font-medium underline-offset-2 hover:underline",
+                lessonDone ? "text-text-3 hover:text-text-1" : "text-amber underline",
+              )}
+            >
+              <BookOpen aria-hidden className="size-3.5" />
+              {lessonDone ? "Review the briefing" : "Read the briefing first"}
+              <ArrowUpRight aria-hidden className="size-3" />
+            </Link>
+          ) : null}
+        </p>
+      </div>
     </section>
   );
 }
 
-function Move({ n, icon, children }: { n: number; icon: ReactNode; children: ReactNode }) {
+/** Neon stamp naming the mode. Lands once with a thud; turns green when practice clears. */
+function Stamp({ mode, cleared }: { mode: GameMode; cleared: boolean }) {
+  const reduce = useReducedMotion();
+  const label = cleared ? "Cleared" : mode === "checkpoint" ? "Checkpoint" : "Practice";
   return (
-    <li className="flex items-center gap-2.5 px-5 py-2.5 sm:border-l sm:border-line sm:first:border-l-0">
-      <span aria-hidden className="text-text-3 [&_svg]:size-3.5">
-        {icon}
-      </span>
-      <span>
-        <span className="sr-only">Step {n}: </span>
-        {children}
-      </span>
-    </li>
+    <motion.span
+      key={label}
+      aria-label={`Mode: ${label}`}
+      role="img"
+      initial={reduce ? false : { opacity: 0, scale: 1.6, rotate: 0 }}
+      animate={{ opacity: 1, scale: 1, rotate: -4 }}
+      transition={{ type: "spring", stiffness: 520, damping: 22, mass: 0.7 }}
+      className={cn(
+        "absolute top-1/2 right-4 -translate-y-1/2 rounded-[4px] border-2 px-2 py-px font-display text-[0.66rem] font-bold tracking-[0.14em] uppercase",
+        cleared
+          ? "border-green bg-green/10 text-green shadow-glow-green"
+          : mode === "checkpoint"
+            ? "border-amber bg-amber/10 text-amber shadow-glow-amber"
+            : "border-cyan bg-cyan/10 text-cyan shadow-glow-cyan",
+      )}
+    >
+      {label}
+    </motion.span>
   );
 }

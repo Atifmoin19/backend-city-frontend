@@ -120,3 +120,9 @@ and read-only (`lockedRegion`). Ctrl+Enter and Cmd+Enter run.
 Lives as a comment at the top of `src/app/layout.tsx` (JSX comments don't reach built HTML, so
 this file is the auditable copy): THESIS status board; OWN-WORLD above; FIRST VIEWPORT full-bleed
 skyline, headline bottom-left, primary CTA "Start your first shift", live light legend.
+
+## Game screen
+
+- Mission brief is the brightest surface (`--bc-brief`, `shadow-brief`); never a light/paper card.
+- The traffic simulation lives in `TrafficModal` and opens on Run; the editor is the largest region.
+- Status lines that appear while loading must have fixed height (no layout shift).

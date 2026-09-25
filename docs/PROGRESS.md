@@ -2,6 +2,17 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 6: game screen revamp
+
+### Done
+
+- Layout: left = mission brief + gate card + compact request table; right = tall editor with its own action bar (Run, Submit, Hint, Reset, boot status). Mobile order: brief → editor → gate → log (`display: contents` wrapper + grid areas).
+- Mission brief on the brightest night surface (`--bc-brief*` tokens): objective heading, numbered rules that turn green on clear, neon mode stamp (Practice / Checkpoint / Cleared). A light paper version was tried and rejected by the owner.
+- Traffic simulation moved into `TrafficModal`: opens on Run (button or Ctrl+Enter), full-size Pixi stage + request table, Esc / "Back to code", "Take the checkpoint" once practice clears. Always mounted (`inert` when closed) so the Pixi scene never restarts; page behind is `inert` while open.
+- Header: one flat 56px row (back, title, text step trail, progress, account). Avatar no longer a gradient.
+- Boot status is one fixed-height line in the editor action bar, so nothing shifts while Pyodide starts.
+- Navy lifted one step (bg-0..3, line, editor).
+
 ## 2026-09-25 — Round 5 (owner feedback: buttons, mission clarity, headers)
 
 ### Done

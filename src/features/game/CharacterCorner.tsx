@@ -15,14 +15,24 @@ export function CharacterCorner({
   character,
   mood,
   speech,
+  size = 76,
+  reverse = false,
 }: {
   character: string;
   mood: CharacterState;
   speech: Speech | null;
+  size?: number;
+  /** Character first, bubble after (inline use). */
+  reverse?: boolean;
 }) {
   const isByte = speech?.who === "byte";
   return (
-    <div className="pointer-events-none flex items-start gap-2">
+    <div
+      className={cn(
+        "pointer-events-none flex items-start gap-2",
+        reverse && "flex-row-reverse justify-end",
+      )}
+    >
       <AnimatePresence mode="wait">
         {speech ? (
           <motion.p
@@ -46,7 +56,11 @@ export function CharacterCorner({
           </motion.p>
         ) : null}
       </AnimatePresence>
-      <Character name={isByte ? "byte" : character} state={isByte ? "thinking" : mood} size={76} />
+      <Character
+        name={isByte ? "byte" : character}
+        state={isByte ? "thinking" : mood}
+        size={size}
+      />
     </div>
   );
 }

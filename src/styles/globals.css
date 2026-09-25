@@ -19,6 +19,7 @@
   --color-red: var(--bc-red);
   --color-purple: var(--bc-purple);
   --color-on-neon: var(--bc-on-neon);
+  --color-brief-line: var(--bc-brief-line);
 
   --font-display: var(--font-unbounded), "Arial Black", sans-serif;
   --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
@@ -30,6 +31,7 @@
   --shadow-glow-red: var(--bc-glow-red);
   --shadow-glow-purple: var(--bc-glow-purple);
   --shadow-panel: var(--bc-shadow-panel);
+  --shadow-brief: var(--bc-brief-shadow);
 
   --radius-sm: var(--bc-radius-sm);
   --radius-md: var(--bc-radius-md);

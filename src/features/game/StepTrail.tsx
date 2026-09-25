@@ -11,43 +11,46 @@ interface Step {
   state: StepState;
 }
 
-/** Briefing → Practice → Checkpoint, so the learner always knows where they stand. */
+const SR: Record<StepState, string> = {
+  done: " (done)",
+  current: " (you are here)",
+  locked: " (locked)",
+  open: "",
+};
+
+/** Briefing → Practice → Checkpoint as quiet text, so the learner knows where they stand. */
 export function StepTrail({ steps }: { steps: Step[] }) {
   return (
-    <ol aria-label="Topic steps" className="flex items-center gap-1.5 text-xs">
+    <ol aria-label="Topic steps" className="flex items-center gap-2 text-xs">
       {steps.map((s, i) => {
         const body = (
           <span
             className={cn(
-              "inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 font-medium",
-              s.state === "current" && "border-cyan/60 bg-cyan/10 text-cyan",
-              s.state === "done" && "border-green/40 text-green",
-              s.state === "open" && "border-line-strong text-text-2",
-              s.state === "locked" && "border-line text-text-3",
+              "inline-flex items-center gap-1.5 py-1",
+              s.state === "current" && "font-semibold text-text-1",
+              s.state === "done" && "text-green",
+              s.state === "open" && "text-text-2",
+              s.state === "locked" && "text-text-3",
             )}
           >
             {s.state === "done" ? <Check aria-hidden className="size-3.5" /> : null}
             {s.state === "locked" ? <Lock aria-hidden className="size-3" /> : null}
             {s.state === "current" ? (
-              <span aria-hidden className="size-1.5 rounded-full bg-cyan shadow-glow-cyan" />
+              <span aria-hidden className="size-1.5 rounded-full bg-cyan" />
             ) : null}
             {s.label}
-            <span className="sr-only">
-              {s.state === "done"
-                ? " (done)"
-                : s.state === "current"
-                  ? " (you are here)"
-                  : s.state === "locked"
-                    ? " (locked)"
-                    : ""}
-            </span>
+            <span className="sr-only">{SR[s.state]}</span>
           </span>
         );
         return (
-          <li key={s.label} className="flex items-center gap-1.5">
-            {i > 0 ? <span aria-hidden className="h-px w-3 bg-line-strong" /> : null}
+          <li key={s.label} className="flex items-center gap-2">
+            {i > 0 ? (
+              <span aria-hidden className="text-text-3">
+                /
+              </span>
+            ) : null}
             {s.href && s.state !== "current" && s.state !== "locked" ? (
-              <Link href={s.href} className="hover:brightness-125">
+              <Link href={s.href} className="hover:text-text-1 hover:underline">
                 {body}
               </Link>
             ) : (

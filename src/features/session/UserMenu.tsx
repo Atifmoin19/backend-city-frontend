@@ -30,7 +30,7 @@ export function UserMenu() {
         >
           <span
             aria-hidden
-            className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-cyan to-purple font-display text-[0.65rem] font-bold text-on-neon"
+            className="grid size-7 place-items-center rounded-full bg-cyan/15 font-mono text-[0.68rem] font-semibold text-cyan ring-1 ring-cyan/40"
           >
             {initials(user.display_name)}
           </span>
@@ -47,7 +47,7 @@ export function UserMenu() {
           <div className="flex items-center gap-3 px-2.5 pt-2 pb-3">
             <span
               aria-hidden
-              className="grid size-10 place-items-center rounded-full bg-gradient-to-br from-cyan to-purple font-display text-xs font-bold text-on-neon"
+              className="grid size-10 place-items-center rounded-full bg-cyan/15 font-mono text-sm font-semibold text-cyan ring-1 ring-cyan/40"
             >
               {initials(user.display_name)}
             </span>

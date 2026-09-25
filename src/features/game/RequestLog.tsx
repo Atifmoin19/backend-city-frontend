@@ -8,7 +8,7 @@ function statusOf(r: TestResult): Status {
   return outcomeOf(r.status) === "bounced" ? "bounce" : "pass";
 }
 
-/** Every public request, what it expects, and what your server did. */
+/** One line per public request: what it sends, what it should get, what your server did. */
 export function RequestLog({
   tests,
   results,
@@ -18,44 +18,52 @@ export function RequestLog({
 }) {
   return (
     <div className="rounded-lg border border-line bg-bg-2">
-      <div className="flex items-center justify-between border-b border-line px-4 py-2.5 text-xs text-text-3">
-        <span>Requests the city sends to your server</span>
-        <span>
-          {results
-            ? `${results.filter((r) => r.passed).length}/${results.length} as expected`
-            : "Press Run requests to send them"}
-        </span>
-      </div>
-      <ul className="divide-y divide-line">
-        {tests.map((t, i) => {
-          const r = results?.[i];
-          return (
-            <li
-              key={t.name}
-              className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-0.5 px-4 py-2.5 text-sm"
-            >
-              <span className="truncate text-text-1">{t.name}</span>
-              <span className="text-right text-xs text-text-3">
-                should get <span className="tabular font-mono text-text-2">{t.expect_status}</span>
-              </span>
-              <span className="truncate font-mono text-xs text-text-3">
-                <span className="text-cyan">{t.request.method}</span> {t.request.path}{" "}
-                {JSON.stringify(t.request.json)}
-              </span>
-              <span className="justify-self-end">
-                {r ? (
-                  <StatusLight status={statusOf(r)}>
-                    <span className="tabular font-mono">{r.status}</span>
-                    <span className="sr-only">{r.passed ? "as expected" : "not as expected"}</span>
-                  </StatusLight>
-                ) : (
-                  <span className="text-xs text-text-3">not sent</span>
-                )}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
+      <table className="w-full table-fixed text-sm">
+        <caption className="sr-only">Requests the city sends to your server</caption>
+        <thead className="text-left text-[0.72rem] text-text-3">
+          <tr className="border-b border-line">
+            <th scope="col" className="px-3.5 py-2 font-medium">
+              Request
+            </th>
+            <th scope="col" className="w-20 py-2 text-right font-medium">
+              Should get
+            </th>
+            <th scope="col" className="w-24 py-2 pr-3.5 text-right font-medium">
+              Your server
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-line">
+          {tests.map((t, i) => {
+            const r = results?.[i];
+            const body = JSON.stringify(t.request.json);
+            return (
+              <tr key={t.name}>
+                <td
+                  className="truncate px-3.5 py-2"
+                  title={`${t.request.method} ${t.request.path} ${body}`}
+                >
+                  <span className="text-text-1">{t.name}</span>{" "}
+                  <span className="font-mono text-xs text-text-3">{body}</span>
+                </td>
+                <td className="tabular py-2 text-right font-mono text-text-2">{t.expect_status}</td>
+                <td className="py-2 pr-3.5 text-right">
+                  {r ? (
+                    <StatusLight status={statusOf(r)} className="justify-end">
+                      <span className="tabular font-mono">{r.status}</span>
+                      <span className="sr-only">
+                        {r.passed ? "as expected" : "not as expected"}
+                      </span>
+                    </StatusLight>
+                  ) : (
+                    <span className="text-xs text-text-3">not sent</span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -2,11 +2,13 @@
 
 import {
   ArrowLeft,
+  ArrowRight,
   FileCode2,
   Lightbulb,
   Monitor,
   Pencil,
   Play,
+  Radar,
   RotateCcw,
   ShieldCheck,
 } from "lucide-react";
@@ -22,6 +24,7 @@ import { CodeEditor } from "@/engine/editor/CodeEditor";
 import { RequestFlowVisualizer } from "@/engine/visualizer/RequestFlowVisualizer";
 import { useSession } from "@/features/auth/useSession";
 import { SessionMenu } from "@/features/session/SessionMenu";
+import { cn } from "@/lib/cn";
 import { useLearning } from "@/stores/learning";
 
 import { BootStatus } from "./BootStatus";
@@ -32,12 +35,14 @@ import { RequestsMeter } from "./RequestsMeter";
 import { ResultOverlay } from "./ResultOverlay";
 import { ScoreMeter } from "./ScoreMeter";
 import { StepTrail } from "./StepTrail";
+import { TrafficModal } from "./TrafficModal";
 import { useGamePlay, type GameMode } from "./useGamePlay";
 
 export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const { visualizer, ...g } = useGamePlay(slug, mode);
   const { data: user } = useSession();
   const [needLogin, setNeedLogin] = useState(false);
+  const [trafficOpen, setTrafficOpen] = useState(false);
   const topic = topicByGame(slug);
   const { record, update } = useLearning();
   const rec = topic ? record(topic.slug) : {};
@@ -91,29 +96,37 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const nextHint = game.hint_tiers.find((t) => t > g.hintsUsed);
   const editable = editableLines(game.starter_code, game.editable_region);
 
+  const runAndWatch = () => {
+    setTrafficOpen(true);
+    void g.run();
+  };
+
   const submit = () => {
     if (!user) return setNeedLogin(true);
     g.grade.mutate();
   };
 
+  const results = g.report?.ok ? g.report.results : null;
+
   return (
     <div className="flex min-h-dvh flex-col bg-bg-0 lg:h-dvh">
-      {/* Where you are / progress / help */}
-      <header className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-line bg-bg-1 px-4 py-3 sm:px-6">
+      {/* One calm row: where you are, how you're doing, your account */}
+      <header
+        inert={trafficOpen}
+        className="flex h-14 shrink-0 items-center gap-4 border-b border-line bg-bg-1 px-4 sm:px-5"
+      >
         <Link
           href={`/district/${game.district}`}
-          className={buttonClasses({ variant: "ghost", size: "sm" })}
+          className="inline-flex items-center gap-1.5 text-sm text-text-2 transition-colors hover:text-text-1"
         >
           <ArrowLeft aria-hidden className="size-4" />
-          <span className="max-w-40 truncate">{district?.name ?? "District"}</span>
+          <span className="hidden max-w-36 truncate sm:inline">{district?.name ?? "District"}</span>
+          <span className="sr-only sm:hidden">Back to the district</span>
         </Link>
-        <div className="min-w-0">
-          <h1 className="truncate font-display text-base font-semibold tracking-tight sm:text-lg">
-            {game.title}
-          </h1>
-        </div>
+        <span aria-hidden className="h-5 w-px bg-line" />
+        <h1 className="min-w-0 truncate text-[0.95rem] font-semibold text-text-1">{game.title}</h1>
         {topic ? (
-          <div className="hidden xl:block">
+          <div className="ml-2 hidden lg:block">
             <StepTrail
               steps={[
                 {
@@ -142,123 +155,119 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
             />
           </div>
         ) : null}
-        <div className="ml-auto flex flex-wrap items-center gap-3">
-          {mode === "checkpoint" ? (
-            <ScoreMeter score={g.score} threshold={game.pass_threshold} label="Public requests" />
-          ) : (
-            <RequestsMeter
-              total={game.public_tests.length}
-              results={g.report?.ok ? g.report.results : null}
-            />
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={<Lightbulb aria-hidden className="size-4 text-purple" />}
-            disabled={nextHint === undefined}
-            loading={g.hint.isPending}
-            onClick={() => nextHint && g.hint.mutate(nextHint)}
-            title="Hints lower your maximum checkpoint score"
-          >
-            {nextHint ? `Get a hint (${nextHint}/${game.hint_tiers.length})` : "No hints left"}
-          </Button>
+        <div className="ml-auto flex items-center gap-4">
+          <div className="hidden sm:block">
+            {mode === "checkpoint" ? (
+              <ScoreMeter score={g.score} threshold={game.pass_threshold} label="Public requests" />
+            ) : (
+              <RequestsMeter total={game.public_tests.length} results={results} />
+            )}
+          </div>
           <SessionMenu />
         </div>
       </header>
 
-      <main className="grid min-h-0 flex-1 grid-cols-1 gap-4 p-4 sm:p-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        {/* Left: mission + calm editor */}
-        <section className="flex min-h-0 min-w-0 flex-col gap-3" aria-label="Your code">
-          <MissionBrief
-            game={game}
-            mode={mode}
-            lessonHref={topic ? `/learn/${topic.lesson}` : undefined}
-            lessonDone={!!rec.lessonDone}
-          />
-          <Panel
-            surface="editor"
-            className="flex min-h-[18rem] flex-1 flex-col overflow-hidden lg:min-h-0"
+      <main
+        inert={trafficOpen}
+        className="grid flex-1 gap-4 p-4 [grid-template-areas:'brief'_'editor'_'sim'_'log'] sm:p-5 lg:min-h-0 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:[grid-template-areas:'left_editor']"
+      >
+        {/* Left: brief, traffic, log. Its own scroll on desktop; dissolves into the grid on mobile */}
+        <div className="contents lg:flex lg:min-h-0 lg:flex-col lg:gap-4 lg:overflow-y-auto lg:[grid-area:left]">
+          <div className="min-w-0 [grid-area:brief]">
+            <MissionBrief
+              game={game}
+              mode={mode}
+              cleared={mode === "practice" && allPublicPass}
+              lessonHref={topic ? `/learn/${topic.lesson}` : undefined}
+              lessonDone={!!rec.lessonDone}
+            />
+          </div>
+
+          {/* The gate keeper + the way into the full traffic view */}
+          <section
+            aria-label="Traffic"
+            className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-3 rounded-lg border border-line bg-bg-2 px-4 py-3 [grid-area:sim]"
           >
-            <div className="flex items-center gap-3 border-b border-line bg-bg-1/70 px-3 py-1.5 text-xs">
-              <span className="inline-flex items-center gap-1.5 rounded-t-sm border-b-2 border-cyan px-1.5 py-1 font-mono text-text-1">
-                <FileCode2 aria-hidden className="size-3.5 text-cyan" /> main.py
-              </span>
-              {editable ? (
-                <span className="ml-auto inline-flex items-center gap-1.5 text-text-2">
-                  <Pencil aria-hidden className="size-3.5 text-cyan" />
-                  You can edit lines {editable.from}–{editable.to} (highlighted). The rest is
-                  locked.
-                </span>
-              ) : null}
-            </div>
-            <div className="min-h-0 flex-1">
-              <CodeEditor
-                key={`${game.seed}-${g.editorKey}`}
-                initialDoc={game.starter_code}
-                region={game.editable_region}
-                onChange={g.setDoc}
-                onRun={g.run}
-                label="Game code. Only the highlighted lines between the edit markers can be changed."
+            <div className="min-w-0 flex-1 max-sm:basis-full">
+              <CharacterCorner
+                character={game.character}
+                mood={g.mood}
+                speech={g.speech ?? { who: "character", text: game.dialogue.start }}
+                size={56}
+                reverse
               />
             </div>
-          </Panel>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="max-sm:w-full"
+              icon={<Radar aria-hidden className="size-4 text-cyan" />}
+              onClick={() => setTrafficOpen(true)}
+            >
+              {results ? "Replay traffic" : "Open traffic view"}
+            </Button>
+          </section>
+
+          <div className="min-w-0 [grid-area:log]">
+            <RequestLog tests={game.public_tests} results={results} />
+          </div>
+        </div>
+
+        {/* Your code: the biggest thing on screen, with its own controls */}
+        <Panel
+          surface="editor"
+          aria-label="Your code"
+          className="flex min-h-[26rem] min-w-0 flex-col overflow-hidden [grid-area:editor] lg:min-h-0"
+        >
+          <div className="flex items-center gap-3 border-b border-line bg-bg-1/70 px-3 text-xs">
+            <span className="inline-flex items-center gap-1.5 border-b-2 border-cyan px-1.5 py-2 font-mono text-text-1">
+              <FileCode2 aria-hidden className="size-3.5 text-cyan" /> main.py
+            </span>
+            {editable ? (
+              <span className="ml-auto inline-flex items-center gap-1.5 text-text-2">
+                <Pencil aria-hidden className="size-3.5 text-cyan" />
+                Edit lines {editable.from}–{editable.to}
+                <span className="hidden text-text-3 xl:inline">· the rest is locked</span>
+              </span>
+            ) : null}
+          </div>
+          <div className="min-h-0 flex-1">
+            <CodeEditor
+              key={`${game.seed}-${g.editorKey}`}
+              initialDoc={game.starter_code}
+              region={game.editable_region}
+              onChange={g.setDoc}
+              onRun={runAndWatch}
+              label="Game code. Only the highlighted lines between the edit markers can be changed."
+            />
+          </div>
+
           {g.report && !g.report.ok ? (
             <pre
               role="alert"
-              className="max-h-36 overflow-auto rounded-md border border-red/40 bg-red/[0.06] p-3 font-mono text-xs text-red"
+              className="max-h-32 overflow-auto border-t border-red/40 bg-red/[0.07] px-4 py-3 font-mono text-xs text-red"
             >
               {g.report.error}
             </pre>
           ) : null}
-          <div className="flex flex-wrap items-center gap-3">
-            <Button
-              onClick={g.run}
-              loading={g.running}
-              disabled={!ready}
-              icon={<Play aria-hidden className="size-4" />}
-            >
-              Run requests
-            </Button>
-            {mode === "checkpoint" ? (
-              <Button
-                variant="ghost"
-                onClick={submit}
-                loading={g.grade.isPending}
-                icon={<ShieldCheck aria-hidden className="size-4" />}
-              >
-                Submit checkpoint
-              </Button>
-            ) : null}
-            <Button
-              variant="quiet"
-              size="sm"
-              onClick={g.reset}
-              icon={<RotateCcw aria-hidden className="size-4" />}
-            >
-              Reset
-            </Button>
-            <span className="ml-auto hidden text-xs text-text-3 md:inline">
-              <Kbd>⌘/Ctrl</Kbd> + <Kbd>Enter</Kbd> runs
-            </span>
-          </div>
           {mode === "practice" && allPublicPass ? (
             <div
               role="status"
-              className="flex flex-wrap items-center gap-3 rounded-md border border-green/50 bg-green/[0.07] px-4 py-3"
+              className="flex flex-wrap items-center gap-3 border-t border-green/40 bg-green/[0.08] px-4 py-2.5"
             >
               <span className="text-sm text-text-1">
-                Practice cleared: every public request landed where it should.
+                Practice cleared. Every request landed where it should.
               </span>
               <Link
                 href={`/play/${slug}?mode=checkpoint`}
-                className="ml-auto text-sm font-semibold text-green underline"
+                className={buttonClasses({ variant: "success", size: "sm", className: "ml-auto" })}
               >
-                Take the checkpoint
+                Take the checkpoint <ArrowRight aria-hidden className="size-4" />
               </Link>
             </div>
           ) : null}
           {needLogin && !user ? (
-            <p className="text-sm text-amber">
+            <p className="border-t border-amber/40 bg-amber/[0.07] px-4 py-2.5 text-sm text-amber">
               Checkpoints are graded on the server and saved to your record.{" "}
               <Link href={`/login?next=/play/${slug}?mode=checkpoint`} className="underline">
                 Log in
@@ -270,32 +279,102 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
               to submit.
             </p>
           ) : null}
-          <p className="flex items-center gap-1.5 text-xs text-text-3 md:hidden">
-            <Monitor aria-hidden className="size-3.5" /> Best on desktop
-          </p>
-        </section>
 
-        {/* Right: visualizer + log */}
-        <section className="flex min-h-0 min-w-0 flex-col gap-3" aria-label="Traffic">
-          <div className="relative min-h-[17rem] flex-1 overflow-hidden rounded-lg border border-line bg-bg-1 lg:min-h-0">
+          <div className="flex flex-wrap items-center gap-2.5 border-t border-line bg-bg-1/70 px-3 py-3">
+            <Button
+              onClick={runAndWatch}
+              loading={g.running}
+              disabled={!ready}
+              icon={<Play aria-hidden className="size-4" />}
+            >
+              Run requests
+            </Button>
+            {mode === "checkpoint" ? (
+              <Button
+                variant="success"
+                onClick={submit}
+                loading={g.grade.isPending}
+                icon={<ShieldCheck aria-hidden className="size-4" />}
+              >
+                Submit checkpoint
+              </Button>
+            ) : null}
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<Lightbulb aria-hidden className="size-4 text-purple" />}
+              disabled={nextHint === undefined}
+              loading={g.hint.isPending}
+              onClick={() => nextHint && g.hint.mutate(nextHint)}
+              title="Hints lower your maximum checkpoint score"
+            >
+              {nextHint ? `Hint ${nextHint}/${game.hint_tiers.length}` : "No hints left"}
+            </Button>
+            <Button
+              variant="quiet"
+              size="sm"
+              onClick={g.reset}
+              icon={<RotateCcw aria-hidden className="size-4" />}
+            >
+              Reset
+            </Button>
+            <span
+              className={cn(
+                "ml-auto min-w-0 text-xs text-text-3",
+                ready ? "hidden md:inline" : "basis-full md:basis-auto",
+              )}
+            >
+              {ready ? (
+                <>
+                  <Kbd>⌘/Ctrl</Kbd> + <Kbd>Enter</Kbd> runs
+                </>
+              ) : (
+                <BootStatus status={g.harness} compact />
+              )}
+            </span>
+            <span className="ml-auto flex items-center gap-1.5 text-xs text-text-3 md:hidden">
+              <Monitor aria-hidden className="size-3.5" /> Best on desktop
+            </span>
+          </div>
+        </Panel>
+      </main>
+
+      <TrafficModal
+        open={trafficOpen}
+        onClose={() => setTrafficOpen(false)}
+        title="Live traffic at the gate"
+        summary={
+          mode === "checkpoint" ? (
+            <ScoreMeter score={g.score} threshold={game.pass_threshold} label="Public requests" />
+          ) : (
+            <RequestsMeter total={game.public_tests.length} results={results} />
+          )
+        }
+        stage={
+          <>
             <div aria-hidden data-ambient className="city-grid absolute inset-0 opacity-60" />
             <RequestFlowVisualizer ref={visualizer} className="absolute inset-0" />
-            {!ready ? (
-              <div className="glass absolute right-3 bottom-10 left-3 rounded-md px-3.5 py-2.5">
-                <BootStatus status={g.harness} />
-              </div>
-            ) : null}
-            <div className="absolute top-3 right-3">
+            <div className="absolute top-4 right-4">
               <CharacterCorner
                 character={game.character}
                 mood={g.mood}
                 speech={g.speech ?? { who: "character", text: game.dialogue.start }}
               />
             </div>
-          </div>
-          <RequestLog tests={game.public_tests} results={g.report?.ok ? g.report.results : null} />
-        </section>
-      </main>
+          </>
+        }
+        log={<RequestLog tests={game.public_tests} results={results} />}
+        action={
+          mode === "practice" && allPublicPass ? (
+            <Link
+              href={`/play/${slug}?mode=checkpoint`}
+              className={buttonClasses({ variant: "success", size: "sm" })}
+            >
+              Take the checkpoint <ArrowRight aria-hidden className="size-4" />
+            </Link>
+          ) : null
+        }
+      />
 
       {g.result ? (
         <ResultOverlay

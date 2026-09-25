@@ -1,5 +1,5 @@
 /** Renders content strings: `backticks` become inline code, **double stars** become key terms. */
-export function InlineCode({ text }: { text: string }) {
+export function InlineCode({ text, tone = "night" }: { text: string; tone?: "night" | "chip" }) {
   return (
     <>
       {text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, i) => {
@@ -7,7 +7,11 @@ export function InlineCode({ text }: { text: string }) {
           return (
             <code
               key={i}
-              className="rounded-sm bg-bg-1 px-1 py-0.5 font-mono text-[0.9em] text-cyan"
+              className={
+                tone === "chip"
+                  ? "rounded-sm bg-bg-0/55 px-1.5 py-0.5 font-mono text-[0.88em] font-medium text-cyan ring-1 ring-cyan/30"
+                  : "rounded-sm bg-bg-1 px-1 py-0.5 font-mono text-[0.9em] text-cyan"
+              }
             >
               {part.slice(1, -1)}
             </code>
