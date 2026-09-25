@@ -1,0 +1,5 @@
+.next
+node_modules
+public/harness
+package-lock.json
+docs/PROJECT_IDEOLOGY.md
