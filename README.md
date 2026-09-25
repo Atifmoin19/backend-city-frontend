@@ -64,8 +64,8 @@ npm run dev            # http://localhost:3000  (runs sync-harness first)
 
 ## Deployment (later, at a milestone)
 
-**Vercel** (Hobby, non-commercial). Set `BACKEND_URL` to the Render URL. Before the first Vercel
-build, push the backend and bump `harness.lock` to a pushed commit. Not deployed yet.
+**Vercel** (Hobby, non-commercial). Full step-by-step for Neon + Render + Vercel:
+[docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Docs
 
