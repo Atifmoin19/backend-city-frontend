@@ -2,6 +2,25 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 2 (owner feedback)
+
+### Done
+
+- **Bug fix:** landing page and public header are session-aware ("Continue your shift", "Open city
+  map"); signed-in visitors to /login or /signup are redirected (only if already signed in when
+  the page opened, so form redirects don't race).
+- **Onboarding** `/welcome` after first sign-in: story, how districts work, what the lights mean,
+  controls. Stored per user (`onboarded`).
+- **Content:** Academy ("Python for JavaScript developers") and Signal Tower ("How a request
+  travels") briefings; lesson-only topics complete on the briefing. New learners start at the Academy.
+- **Map:** full-screen world, illustrated district plates, lit roads with traffic, scaffolding + crane
+  for unbuilt districts ("under construction"), side HUD with current mission, district drawer and
+  guide.
+- **App shell** for signed-in screens with real stats (districts cleared, stars).
+- District and lesson pages: wide layouts with banners and side rails (step outline, what's next).
+- 23 unit tests; full new-user E2E (signup → orientation → map → briefing → practice → checkpoint →
+  cleared) passes.
+
 ## 2026-09-25 — Session 1: foundation, Phase 0 spike 2, learning flow
 
 ### Done

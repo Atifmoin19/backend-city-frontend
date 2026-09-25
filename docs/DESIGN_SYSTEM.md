@@ -84,6 +84,15 @@ in performance mode.
 | `ui/Kbd`, `ui/PreferenceToggles`              | shortcuts; always-visible mute + performance mode                              |
 | `layout/SiteHeader`, `Wordmark`, `SiteFooter` | chrome                                                                         |
 
+## Layout
+
+- Signed-in screens: `AppShell` (sticky 64px top bar, nav, stat chips, account menu).
+- Wide screens: max-w-7xl content with a main column + 19–22rem side rail. No lone narrow column.
+- Map: full-bleed world + 25rem side HUD (mission, district drawer, guide); world scrolls
+  horizontally below 60rem.
+- District states on the map: open (cyan windows, beacon, glow), cleared (green windows),
+  under construction (dashed towers, scaffolding, crane, neutral text; never amber).
+
 ## Characters
 
 Contract: `CharacterProps { state: idle|happy|sad|thinking|worried|celebrating; size; label }`

@@ -15,7 +15,7 @@ after adding routes. Never `git push` unless the owner asks. Conventional commit
 ## Layout
 
 - `src/app/` routes only (thin): `(marketing)`, `(auth)`, `(game)` groups
-- `src/features/<feature>/` screens + feature logic: landing, auth, world-map, district, lesson, game, session
+- `src/features/<feature>/` screens + feature logic: landing, auth, onboarding, world-map, district, lesson, game, session, progress
 - `src/components/ui` design-system primitives · `components/characters` (CharacterProps contract, Rive-ready) · `components/layout`
 - `src/engine/` game engine: `harness/` (worker client + protocol), `editor/` (CodeMirror, locked region), `visualizer/` (Pixi scene)
 - `public/workers/pyodide.worker.mjs` static module worker (NOT bundled: Pyodide rejects Turbopack's classic workers). Keep in sync with `src/engine/harness/protocol.ts`
@@ -28,6 +28,8 @@ after adding routes. Never `git push` unless the owner asks. Conventional commit
 ## Rules
 
 - Learners always get briefing → practice → checkpoint. Never route a new user straight to a test.
+- Session-aware navigation: a signed-in user must never be sent to /signup. Signed-in screens use `AppShell`.
+- Use the full width on wide screens (main column + side rail), not a narrow centered column.
 - Colors have fixed meaning: cyan flow, green 2xx, amber 4xx, red 5xx, purple AI. Never color alone: use `StatusLight` (icon + text).
 - No raw hex in components; add a token. Keep the theme readable (text-2/text-3 on bg-1 ≥ 4.5:1).
 - Editor area stays calm: solid surface, nothing animating behind code.
