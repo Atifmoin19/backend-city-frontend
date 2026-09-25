@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { buttonClasses } from "@/components/ui/Button";
 import { SessionCta } from "@/features/session/SessionCta";
 
+import { CitySoundToggle } from "../CitySoundToggle";
 import { LiveLegend, type TrafficCounts } from "../LiveLegend";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -68,6 +69,7 @@ export function HeroChapter({ counts }: { counts: TrafficCounts }) {
         <a href="#academy" className={buttonClasses({ variant: "ghost", size: "lg" })}>
           Fly through the city <ChevronDown aria-hidden className="size-4 animate-bounce" />
         </a>
+        <CitySoundToggle />
       </motion.div>
       <motion.div
         initial={{ opacity: 0 }}

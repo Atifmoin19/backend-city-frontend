@@ -286,6 +286,7 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
               loading={g.running}
               disabled={!ready}
               icon={<Play aria-hidden className="size-4" />}
+              data-sound="run"
             >
               Run requests
             </Button>
@@ -295,6 +296,7 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
                 onClick={submit}
                 loading={g.grade.isPending}
                 icon={<ShieldCheck aria-hidden className="size-4" />}
+                data-sound="submit"
               >
                 Submit checkpoint
               </Button>
@@ -307,6 +309,7 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
               loading={g.hint.isPending}
               onClick={() => nextHint && g.hint.mutate(nextHint)}
               title="Hints lower your maximum checkpoint score"
+              data-sound="hint"
             >
               {nextHint ? `Hint ${nextHint}/${game.hint_tiers.length}` : "No hints left"}
             </Button>

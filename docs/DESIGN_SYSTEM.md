@@ -132,3 +132,9 @@ skyline, headline bottom-left, primary CTA "Start your first shift", live light 
 - Night (default) and Daybreak (light). Every color must come from `tokens.css` so both work; alpha washes use `rgb(var(--bc-<neon>-rgb) / a)`.
 - Canvas / WebGL code reads tokens at build time (`cssVar`, `cssHex` in `lib/theme.ts`) and rebuilds when `useResolvedTheme()` changes. The 3D city keeps its own `LOOKS` table.
 - Never use additive blending or strong bloom in Daybreak; it vanishes on bright ground.
+
+## Sound
+
+- All cues live in `lib/sound/engine.ts` (synthesized, short, soft; master gain 0.32 + compressor). Never add audio files for UI cues.
+- Default click comes from `SoundDelegate`; use `data-sound` for a specific cue or `"none"` when the handler plays a result-dependent cue.
+- Audio needs a user gesture: scroll alone never starts sound. Respect `soundMuted`.

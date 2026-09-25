@@ -87,6 +87,7 @@ export function DistrictPanel({ district, state, records }: DistrictPanelProps) 
         {topics.length > 0 ? (
           <Link
             href={`/district/${district.key}`}
+            data-sound="open"
             className={buttonClasses({ className: "w-full" })}
           >
             {state === "done" ? "Revisit the district" : "Enter the district"}

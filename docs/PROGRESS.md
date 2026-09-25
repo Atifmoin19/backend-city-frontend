@@ -2,6 +2,14 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 9: sound + stronger night palette
+
+### Done
+
+- **Sound** (`lib/sound/engine.ts`): Web Audio synth cues, no audio files. `SoundDelegate` unlocks audio on the first gesture and gives every button/link a soft click; `data-sound="<cue>"` picks a cue, `data-sound="none"` opts out. Cues: map select/step/open, answer correct/wrong, run whoosh, per-request pass/bounce/crash, hint sparkle, submit, win/lose, lesson complete, homepage chapter chords, relay packet. Sound is on by default (persist v1 migration flips the old muted default); hero has a "City sound" toggle.
+- Night 3D city: synthwave sky gradient (indigo to magenta horizon) with violet fog, per-face shading, brighter rims, neon street uplight, more lit windows with warm apartment lights, district color glow.
+- Night map: cobalt / teal / violet-clay diorama tokens, magenta + amber horizon glow; traffic stage gets a night sky gradient.
+
 ## 2026-09-25 — Round 8: golden-hour Daybreak scenes
 
 ### Done

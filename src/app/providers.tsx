@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MotionConfig } from "motion/react";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { SoundDelegate } from "@/lib/sound/SoundDelegate";
 import { resolveTheme } from "@/lib/theme";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { usePreferences } from "@/stores/preferences";
@@ -38,6 +39,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={client}>
       <MotionConfig reducedMotion={reduced ? "always" : "never"}>
         <PreferenceAttributes />
+        <SoundDelegate />
         {children}
       </MotionConfig>
     </QueryClientProvider>

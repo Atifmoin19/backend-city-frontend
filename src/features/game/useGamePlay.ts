@@ -12,6 +12,7 @@ import { gamesApi } from "@/lib/api/games";
 import type { GameVariant, GradeResponse } from "@/lib/api/types";
 
 import type { Speech } from "./CharacterCorner";
+import { playSound } from "@/lib/sound/engine";
 
 export function practiceScore(report: RunReport | null): number | null {
   if (!report?.ok || report.results.length === 0) return null;
@@ -77,6 +78,16 @@ export function useGamePlay(slug: string, mode: GameMode) {
         );
         return;
       }
+      // each request lands with its own sound, in the order the visualizer plays them
+      r.results.forEach((res, i) =>
+        setTimeout(
+          () => {
+            const o = !res.passed ? "crash" : res.status >= 400 ? "bounce" : "pass";
+            playSound(o, i);
+          },
+          380 + i * 260,
+        ),
+      );
       await visualizer.current?.play(r.results);
       const allOk = r.results.every((x) => x.passed);
       say(

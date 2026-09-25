@@ -50,6 +50,7 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
+      data-sound="select"
       aria-label={`${district.name}, level ${district.level}, ${STATE_LABEL[state]}`}
       className="group absolute w-28 -translate-x-1/2 -translate-y-[72%] rounded-lg outline-offset-4 sm:w-32"
       style={{ left: `${district.map.x}%`, top: `${district.map.y}%` }}

@@ -30,24 +30,33 @@ export interface CityOptions {
 /** Night city vs Daybreak city. Colors are linear RGB for the shader / three.js. */
 const LOOKS = {
   dark: {
-    sky: null as [string, number][] | null,
+    // Synthwave night: indigo zenith, magenta horizon, violet fog so far towers read as layers
+    sky: [
+      ["#03061a", 0],
+      ["#0b1240", 0.1],
+      ["#2a1560", 0.18],
+      ["#5a1d6e", 0.235],
+      ["#1a1440", 0.3],
+      ["#1a1440", 1],
+    ] as [string, number][] | null,
     background: 0x070b18,
-    fog: 0x0a1022,
-    fogDensity: 0.0082,
-    horizon: ["rgba(62,230,255,0.35)", "rgba(178,124,255,0.12)", "rgba(0,0,0,0)"],
+    fog: 0x191338,
+    fogDensity: 0.0068,
+    horizon: ["rgba(255,70,190,0.42)", "rgba(62,230,255,0.2)", "rgba(0,0,0,0)"],
     additive: true,
     stars: true,
     base: [0.006, 0.01, 0.026],
     glass: [0.55, 0.65, 1.0],
-    rim: [0.16, 0.22, 0.42],
+    rim: [0.24, 0.36, 0.78],
     day: 0,
-    sun: [0, 0, 0],
-    front: [0, 0, 0],
-    shade: [0, 0, 0],
-    roof: [0, 0, 0],
+    // moonlit/neon-lit faces: the side toward downtown catches the glow
+    sun: [0.07, 0.085, 0.21],
+    front: [0.04, 0.05, 0.13],
+    shade: [0.015, 0.02, 0.06],
+    roof: [0.08, 0.1, 0.22],
     tints: null as number[][] | null,
     neutral: false,
-    street: { block: "#070b16", road: "#0d1428", lane: "rgba(62,230,255,0.55)" },
+    street: { block: "#0b1026", road: "#171f44", lane: "rgba(62,230,255,0.75)" },
     reflect: 0x8899bb,
     asphaltOpacity: 0.8,
     bloom: [0.7, 0.32, 0.45],
@@ -223,8 +232,9 @@ void main() {
 
   // Face color: night = one dark base; day = directional sun, with the district's color washed in
   vec3 face = vNormalW.x > 0.5 ? uSun : (vNormalW.z > 0.5 ? uFront : uShade);
-  face = mix(face, face * tint * 1.35, clamp(lit - 0.12, 0.0, 1.0) * 0.55);
-  vec3 base = mix(uBase, face, uDay);
+  float wash = clamp(lit - 0.12, 0.0, 1.0);
+  face = mix(face, face * tint * 1.35, wash * 0.55) + tint * wash * 0.07 * (1.0 - uDay);
+  vec3 base = face;
   vec3 col = base;
 
   if (abs(vNormalW.y) < 0.5) {
@@ -236,8 +246,10 @@ void main() {
     float flick = 0.88 + 0.12 * sin(uTime * (0.4 + r * 1.6) + r * 40.0);
 
     // Night: sparse lit windows that multiply as the district comes online
-    float onN = step(r, mix(0.03, 0.5, lit));
+    float onN = step(r, mix(0.14, 0.62, lit));
     vec3 wcN = mix(uGlass, tint, 0.4 + 0.6 * lit) * (0.4 + 0.75 * lit * r + 0.2 * lit) * flick;
+    // a share of warm apartment lights for color contrast against the cool neon
+    wcN = mix(wcN, vec3(1.0, 0.66, 0.34) * (0.55 + 0.4 * r) * flick, step(0.8, fract(r * 7.0)) * (1.0 - lit * 0.6));
 
     // Day: every pane is glass reflecting the sky; lit districts glow through as neon signage
     vec3 sky = mix(uGlass, vec3(0.32, 0.52, 1.0), f.y * 0.8);
@@ -249,7 +261,8 @@ void main() {
     float on = mix(onN, onD, uDay);
     float slab = 1.0 - step(0.08, fract(vWorld.y / 4.2));
     col = mix(base, wc, win * on) * (1.0 - mix(0.5, 0.22, uDay) * slab);
-    col += vec3(0.004, 0.014, 0.026) * (1.0 - smoothstep(0.0, 8.0, vWorld.y)) * (1.0 - uDay);
+    // Night: neon uplight from the streets, tinted by the district once it is online
+    col += mix(vec3(0.03, 0.08, 0.16), tint * 0.2, lit) * (1.0 - smoothstep(0.0, 10.0, vWorld.y)) * (1.0 - uDay);
     // Day: soft ambient occlusion where towers meet the street
     col *= mix(1.0, mix(0.62, 1.0, smoothstep(0.0, 9.0, vWorld.y)), uDay);
   } else {

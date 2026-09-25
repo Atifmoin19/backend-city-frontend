@@ -82,6 +82,7 @@ function SwitchRow({
     <button
       type="button"
       role="switch"
+      data-sound="toggle"
       aria-checked={on}
       onClick={onToggle}
       className="flex items-center gap-3 rounded-md px-2.5 py-2.5 text-left transition-colors hover:bg-bg-3/70"

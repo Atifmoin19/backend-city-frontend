@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { CheckQuestion as Question } from "@/content/lessons/types";
 import { InlineCode } from "@/features/game/InlineCode";
 import { cn } from "@/lib/cn";
+import { playSound } from "@/lib/sound/engine";
 
 /** Low-stakes understanding check. Unlimited tries; the explanation shows once answered right. */
 export function CheckQuestion({
@@ -33,8 +34,10 @@ export function CheckQuestion({
               key={o.text}
               type="button"
               disabled={solved}
+              data-sound="none"
               onClick={() => {
                 setPicked(i);
+                playSound(i === question.correct ? "correct" : "wrong");
                 if (i === question.correct) onSolved();
               }}
               aria-pressed={isPicked}

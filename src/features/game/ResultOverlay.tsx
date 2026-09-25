@@ -11,6 +11,7 @@ import { StatusLight } from "@/components/ui/StatusLight";
 import type { GradeResponse } from "@/lib/api/types";
 
 import { ScoreMeter } from "./ScoreMeter";
+import { playSound } from "@/lib/sound/engine";
 
 const VERDICT_TEXT: Record<Exclude<GradeResponse["verdict"], "graded">, string> = {
   rejected: "The gate refused to run this code.",
@@ -36,6 +37,9 @@ export function ResultOverlay({
   onClose,
 }: ResultOverlayProps) {
   const dialog = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    playSound(result.passed ? "win" : "lose");
+  }, [result.passed]);
   useEffect(() => {
     dialog.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();

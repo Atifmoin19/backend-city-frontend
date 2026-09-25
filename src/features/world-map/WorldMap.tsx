@@ -14,6 +14,7 @@ import { MapRoads } from "./MapRoads";
 import { MapGuide } from "./MapGuide";
 import { MissionCard } from "./MissionCard";
 import { activeDistrict, neighbor, progressFrom } from "./progress";
+import { playSound } from "@/lib/sound/engine";
 
 const KEY_DIR: Record<string, "up" | "down" | "left" | "right"> = {
   ArrowUp: "up",
@@ -49,7 +50,9 @@ export function WorldMap() {
       const target = e.target as HTMLElement | null;
       if (!dir || target?.closest("input, textarea, [contenteditable]")) return;
       e.preventDefault();
-      select(neighbor(selected, dir));
+      const to = neighbor(selected, dir);
+      if (to !== selected) playSound("step");
+      select(to);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

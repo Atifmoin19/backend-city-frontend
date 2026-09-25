@@ -3,11 +3,13 @@
 import { Check, Map, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import { Byte } from "@/components/characters/Byte";
 import { Button, buttonClasses } from "@/components/ui/Button";
 import { SignHeading } from "@/components/ui/SignHeading";
 import { districtByKey } from "@/content/districts";
+import { playSound } from "@/lib/sound/engine";
 import type { Lesson } from "@/content/lessons";
 import type { Topic } from "@/content/topics";
 import { NextStepCard } from "@/features/progress/NextStepCard";
@@ -24,6 +26,7 @@ export function LessonComplete({
   topic: Topic;
   onReview: () => void;
 }) {
+  useEffect(() => playSound("win"), []);
   const district = districtByKey(topic.district);
   return (
     <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[minmax(0,1fr)_24rem] lg:py-16">

@@ -10,6 +10,7 @@ import type { TrafficCounts } from "../LiveLegend";
 import { ChapterPanel } from "./ChapterPanel";
 import { CHAPTERS } from "./chapters";
 import { HeroChapter } from "./HeroChapter";
+import { playSound } from "@/lib/sound/engine";
 
 /**
  * Pinned 3D city with chapters scrolling over it. Scroll position drives the camera flight
@@ -18,6 +19,7 @@ import { HeroChapter } from "./HeroChapter";
 export function CityStory() {
   const wrap = useRef<HTMLElement>(null);
   const city = useRef<City3DHandle>(null);
+  const lastChapter = useRef(-1);
   const [counts, setCounts] = useState<TrafficCounts>({ pass: 0, bounce: 0, crash: 0 });
   const onResolve = useCallback((o: Outcome) => setCounts((c) => ({ ...c, [o]: c[o] + 1 })), []);
   const [stages, setStages] = useState<ReadonlySet<LoadStage>>(() => new Set());
@@ -36,6 +38,12 @@ export function CityStory() {
       const span = rect.height - innerHeight;
       const p = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
       city.current?.setProgress(p * (CHAPTERS.length - 1));
+      // a soft chord as each district comes into view (only once the visitor enabled audio)
+      const chapter = Math.round(p * (CHAPTERS.length - 1));
+      if (chapter !== lastChapter.current) {
+        if (lastChapter.current !== -1) playSound("chapter", chapter);
+        lastChapter.current = chapter;
+      }
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);

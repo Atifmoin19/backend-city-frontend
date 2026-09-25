@@ -39,28 +39,28 @@
   --bc-window: rgb(170 190 255 / 0.13);
   --bc-byte-bubble: #261d4a; /* Byte (AI) speech surface */
   /* Map diorama + traffic stage: the 3D-ish objects (plates, towers, server) */
-  --bc-plate-top: #1a274b;
-  --bc-plate-side: #131d3a;
-  --bc-road: #243562;
-  --bc-skyline: #141e3e;
-  --bc-tower-active: #213060;
-  --bc-tower-active-side: #172246;
-  --bc-tower-active-window: var(--bc-cyan);
-  --bc-tower-done: #213060;
-  --bc-tower-done-side: #172246;
-  --bc-tower-done-window: var(--bc-green);
-  --bc-tower-locked: #1a2750;
-  --bc-tower-locked-side: #141e3c;
-  --bc-viz-server: #1a2750;
-  --bc-viz-server-edge: #445890;
-  --bc-viz-window: #30416f;
-  --bc-viz-gate: #445890;
-  --bc-viz-stage: var(--bc-bg-1);
+  --bc-plate-top: #25336e;
+  --bc-plate-side: #4a2667; /* violet clay: warms the night */
+  --bc-road: #2c3a74;
+  --bc-skyline: #231a4d;
+  --bc-tower-active: #2f4fb8;
+  --bc-tower-active-side: #1f337f;
+  --bc-tower-active-window: #7ff0ff;
+  --bc-tower-done: #178a6a;
+  --bc-tower-done-side: #0f5d49;
+  --bc-tower-done-window: #b6ffd8;
+  --bc-tower-locked: #2a3366;
+  --bc-tower-locked-side: #1d244c;
+  --bc-viz-server: #2f4fb8;
+  --bc-viz-server-edge: #6f8cff;
+  --bc-viz-window: #4462c9;
+  --bc-viz-gate: #6f8cff;
+  --bc-viz-stage: linear-gradient(180deg, #0c1238 0%, #1a1650 55%, #2a1650 100%);
   --bc-map-sky:
-    radial-gradient(ellipse 80% 55% at 50% 0%, #22306a 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 15% 90%, rgb(77 255 154 / 0.07), transparent 70%),
-    radial-gradient(ellipse 55% 45% at 85% 95%, rgb(178 124 255 / 0.1), transparent 70%),
-    linear-gradient(180deg, #0a1230, #0b1124 60%, #0d1632);
+    radial-gradient(ellipse 45% 35% at 80% 100%, rgb(255 90 190 / 0.28), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 18% 100%, rgb(255 170 80 / 0.16), transparent 70%),
+    radial-gradient(ellipse 80% 55% at 50% 0%, #25347a 0%, transparent 70%),
+    linear-gradient(180deg, #0a1236 0%, #141a4a 55%, #2a1650 100%);
 
   /* Code editor syntax (calm, desaturated) */
   --bc-code-fg: #dfe6f7;

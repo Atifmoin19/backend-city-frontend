@@ -9,6 +9,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 
 import { CodeLine } from "./CodeLine";
 import { SAMPLES, SERVER_LINES, clientLines, type RelaySample } from "./samples";
+import { playSound } from "@/lib/sound/engine";
 
 type Beat = "idle" | "out" | "gate" | "server" | "back" | "landed";
 const ease = [0.65, 0, 0.35, 1] as const;
@@ -48,7 +49,13 @@ export function RequestRelay() {
   // Play the beats for the current run
   useEffect(() => {
     if (reduced) return;
-    const timers = PLAN[sample.status].map(([b, at]) => setTimeout(() => setBeat(b), at));
+    const timers = PLAN[sample.status].map(([b, at]) =>
+      setTimeout(() => {
+        setBeat(b);
+        if (b === "out") playSound("step");
+        if (b === "gate") playSound(sample.status === 422 ? "bounce" : "pass");
+      }, at),
+    );
     return () => timers.forEach(clearTimeout);
   }, [sample, run, reduced]);
 
