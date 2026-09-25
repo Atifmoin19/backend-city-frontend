@@ -90,7 +90,8 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
       </div>
 
       <div className="grid gap-10 py-8 lg:grid-cols-[minmax(0,1fr)_19rem] xl:gap-14">
-        <main>
+        {/* min-w-0: long code lines scroll inside their block instead of widening the page */}
+        <main className="min-w-0">
           <AnimatePresence mode="wait">
             <motion.article
               key={index}

@@ -32,6 +32,24 @@ export function ContentScreen() {
           Couldn&apos;t load content: {content.error.message}
         </p>
       ) : null}
+      {content.data?.tracks.length ? (
+        <Panel className="mt-8 p-5">
+          <h2 className="text-sm font-semibold text-text-1">Sides of the city</h2>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+            {content.data.tracks.map((t) => (
+              <li key={t.slug} className="rounded-md border border-line bg-bg-1 px-4 py-3">
+                <p className="text-sm text-text-1">
+                  {t.title} <span className="font-mono text-xs text-text-3">{t.slug}</span>
+                </p>
+                <p className="mt-1 text-xs text-text-2">
+                  {t.status === "published" ? "Open" : "Coming soon"} ·{" "}
+                  <span className="tabular font-semibold text-text-1">{t.interested}</span> want it
+                </p>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      ) : null}
       <div className="mt-8 flex flex-col gap-10">
         {content.data?.levels.map((level) => (
           <section key={level.slug} aria-labelledby={`level-${level.slug}`}>

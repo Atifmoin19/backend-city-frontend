@@ -90,7 +90,7 @@ export const SLIDES: Slide[] = [
     body: (
       <>
         <p>
-          Backend City runs on servers, and most of them are dark. A villain called{" "}
+          Full Stack City runs on servers, and most of them are dark. A villain called{" "}
           <span className="font-semibold text-red">Glitch</span> keeps flooding the streets with bad
           requests.
         </p>

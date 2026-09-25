@@ -9,7 +9,7 @@ import { StatusLight } from "@/components/ui/StatusLight";
 import { cn } from "@/lib/cn";
 
 const FAQ = [
-  { path: "is-it-free", q: "Is it free?", a: "Yes, while Backend City is in early access." },
+  { path: "is-it-free", q: "Is it free?", a: "Yes, while Full Stack City is in early access." },
   {
     path: "need-python",
     q: "Do I need to know Python?",
@@ -51,7 +51,7 @@ export function Faq() {
   return (
     <section
       id="faq"
-      className="relative scroll-mt-16 overflow-hidden border-t border-line bg-bg-1 px-5 py-24 sm:px-10 lg:px-16 lg:py-32"
+      className="relative scroll-mt-16 overflow-hidden border-t border-line bg-bg-1 px-3 py-14 sm:px-10 sm:py-24 lg:px-16 lg:py-32"
     >
       <div
         aria-hidden
@@ -119,7 +119,7 @@ export function Faq() {
                     onClick={() => toggle(i)}
                     aria-expanded={isOpen}
                     aria-controls={`faq-${f.path}`}
-                    className="flex w-full items-center gap-4 px-5 py-4 text-left"
+                    className="flex w-full items-center gap-3 px-3.5 py-3.5 text-left sm:gap-4 sm:px-5 sm:py-4"
                   >
                     <span className="rounded-sm border border-cyan/40 bg-cyan/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-cyan">
                       GET
@@ -151,7 +151,7 @@ export function Faq() {
                         className="overflow-hidden"
                       >
                         {/* Padding, not margin: a collapsing margin escapes the measured height */}
-                        <div className="px-5 pb-5">
+                        <div className="px-3.5 pb-4 sm:px-5 sm:pb-5">
                           <div className="rounded-lg border border-line bg-editor">
                             <div className="flex items-center justify-between border-b border-line px-4 py-2 text-xs">
                               <StatusLight status="pass" className="text-xs">

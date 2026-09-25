@@ -1,11 +1,13 @@
 /**
- * Backend City in 3D (three.js). Imperative scene with a tiny API so React only mounts it.
+ * Full Stack City in 3D (three.js). Imperative scene with a tiny API so React only mounts it.
  *
  * - Instanced towers with a procedural window shader; each district has a "lights on" level
  *   that the scroll story raises (the city comes back online).
  * - Wet street: planar reflection under a translucent asphalt layer (skipped in low-fx mode).
  * - Packets with light trails travel the streets: served (climb a tower), bounced (amber, at
  *   the Gatehouse), crashed (red sparks). Bloom makes the neon glow.
+ * - The Backend Tower: its glass facade is cut away top to bottom as the story dives in,
+ *   revealing the structure inside (interior.ts): the backend under the frontend.
  */
 import * as THREE from "three";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
@@ -13,6 +15,16 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+import {
+  createInterior,
+  GROUP_COUNT,
+  INTERIOR_LOOKS,
+  LANE_X,
+  STAIRWELL,
+  TOWER,
+  TOWER_H,
+} from "./interior";
 
 export type Outcome = "pass" | "bounce" | "crash";
 
@@ -126,13 +138,35 @@ const DISTRICTS = [
   { key: "construction", center: new THREE.Vector2(34, -62), radius: 26, tint: [0.45, 0.5, 0.7] },
 ] as const;
 
-/** Camera stops for the scroll story: overview, Academy, Signal Tower, Gatehouse, pull-back. */
+const TX = TOWER.x;
+const TZ = TOWER.z;
+const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
+
+/**
+ * Camera stops for the scroll story, one per chapter (story/chapters.ts). `arc` lifts the
+ * camera over rooftops between outdoor stops; inside the tower the moves stay level.
+ */
+const SW = { x: TX + STAIRWELL.x, z: TZ + STAIRWELL.z }; // the camera's way up, inside
+
 const STOPS = [
-  { pos: new THREE.Vector3(0, 34, 62), look: new THREE.Vector3(0, 4, -22) },
-  { pos: new THREE.Vector3(-72, 24, 28), look: new THREE.Vector3(-36, 6, -8) },
-  { pos: new THREE.Vector3(-44, 30, 0), look: new THREE.Vector3(-10, 8, -36) },
-  { pos: new THREE.Vector3(56, 22, 20), look: new THREE.Vector3(18, 10, -12) },
-  { pos: new THREE.Vector3(6, 62, 58), look: new THREE.Vector3(14, 0, -40) },
+  { pos: v3(0, 34, 62), look: v3(0, 4, -22), arc: 0 }, // hero: the whole city
+  // ---- the surface: Frontend District ----
+  { pos: v3(14, 11, 44), look: v3(-2, 17, -8), arc: 22 }, // among the glass
+  { pos: v3(-64, 20, 24), look: v3(-30, 8, -18), arc: 18 }, // HTML: rows of blocks
+  { pos: v3(-34, 11, -2), look: v3(-12, 16, -38), arc: 10 }, // CSS: windows light up
+  { pos: v3(6, 6.5, 26), look: v3(6, 1.5, -50), arc: 12 }, // JavaScript: street traffic
+  { pos: v3(18, 48, 34), look: v3(6, 0, -42), arc: 14 }, // components + state: from above
+  // ---- the dive: Backend Tower ----
+  { pos: v3(TX + 24, 34, TZ + 34), look: v3(TX, 22, TZ), arc: 16 }, // facade peels away
+  { pos: v3(TX - 13, 9, TZ + 15), look: v3(TX - 4, 11, TZ + 3), arc: 0 }, // steel frame
+  { pos: v3(TX + 0.3, 3.2, TZ + 3.4), look: v3(TX + 1.4, 3.8, TZ - 1), arc: 0 }, // brick core
+  // ---- inside, floor by floor, rising through the stairwell ----
+  // lobby: back from the gate; the rise to floor 1 still passes through the stairwell
+  { pos: v3(SW.x, 2.8, TZ - 1.2), look: v3(TX + LANE_X, 2.4, TZ + 6.2), arc: 0 }, // lobby: gate
+  { pos: v3(SW.x, 10.6, SW.z - 0.4), look: v3(TX + 6, 9.6, TZ - 1), arc: 0 }, // F1: junction
+  { pos: v3(SW.x, 18.6, SW.z - 0.4), look: v3(TX - 2, 19.8, TZ - 7.6), arc: 0 }, // F2: racks
+  { pos: v3(SW.x, 26.6, SW.z - 0.4), look: v3(TX - 2.6, 26.6, TZ - 8.3), arc: 0 }, // F3: vault
+  { pos: v3(SW.x, 45, SW.z), look: v3(TX + 6, 52, TZ - 6), arc: 0 }, // roof: scaffolding
 ];
 export const STAGE_COUNT = STOPS.length;
 
@@ -175,6 +209,8 @@ interface Packet {
   history: THREE.Vector3[];
   alive: boolean;
   fade: number;
+  /** Travels inside the Backend Tower (its own spawn budget). */
+  inside: boolean;
 }
 
 const TOWER_VERT = /* glsl */ `
@@ -210,6 +246,9 @@ uniform vec3 uBase;
 uniform vec3 uGlass;
 uniform vec3 uRim;
 uniform float uDay;
+#ifdef CUTAWAY
+uniform float uCut; // the Backend Tower's facade exists only below this height
+#endif
 // Daybreak only: sun-lit, front, shade and roof face colors
 uniform vec3 uSun;
 uniform vec3 uFront;
@@ -222,6 +261,9 @@ varying float vSeed;
 varying vec2 vUv;
 float hash(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
 void main() {
+  #ifdef CUTAWAY
+  if (vWorld.y > uCut) discard;
+  #endif
   int d = int(vDistrict + 0.5);
   float lit = uLit[0];
   vec3 tint = uTint[0];
@@ -275,6 +317,11 @@ void main() {
   float rim = 1.0 - smoothstep(0.6, 1.6, min(edge.x, edge.y));
   vec3 rimColor = mix(mix(uRim, tint * 0.55, lit), uRim, uDay);
   col = mix(col, rimColor, rim * mix(0.85, 0.7, uDay));
+  #ifdef CUTAWAY
+  // a hot cutting line where the glass is being peeled away
+  float band = 1.0 - smoothstep(0.0, 0.7, uCut - vWorld.y);
+  col = mix(col, vec3(0.45, 0.95, 1.0) * mix(2.4, 1.0, uDay), band * step(0.0, uCut));
+  #endif
   gl_FragColor = vec4(col, 1.0);
   #include <fog_fragment>
 }
@@ -358,6 +405,13 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     return 0;
   };
   const halfBlock = (BLOCK - STREET) / 2;
+  // the Backend Tower's footprint, plus the street its traffic arrives on
+  const inTowerSpace = (x: number, z: number, w: number, d: number) => {
+    const nearX = Math.abs(x - TX) < TOWER.w / 2 + w / 2 + 2.5;
+    const onLot = nearX && Math.abs(z - TZ) < TOWER.d / 2 + d / 2 + 2.5;
+    const onStreet = Math.abs(x - (TX + LANE_X)) < 4 + w / 2 && z > TZ && z < TZ + TOWER.d / 2 + 44;
+    return onLot || onStreet;
+  };
   for (let bx = -84; bx <= 84; bx += BLOCK) {
     for (let bz = -120; bz <= 24; bz += BLOCK) {
       const count = 1 + Math.floor(rand() * 3);
@@ -366,6 +420,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
         const dpt = 1.8 + rand() * 3.2;
         const x = bx + (rand() * 2 - 1) * (halfBlock - w / 2);
         const z = bz + (rand() * 2 - 1) * (halfBlock - dpt / 2);
+        if (inTowerSpace(x, z, w, dpt)) continue;
         const district = districtOf(x, z);
         const centerBoost = Math.max(0, 1 - Math.hypot(x, z + 30) / 90);
         const h = 3 + rand() * rand() * 30 * (0.5 + centerBoost) + (district ? 4 : 0);
@@ -424,6 +479,35 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   box.setAttribute("aDistrict", new THREE.InstancedBufferAttribute(aDistrict, 1));
   box.setAttribute("aSeed", new THREE.InstancedBufferAttribute(aSeed, 1));
   scene.add(mesh);
+
+  // ---- the Backend Tower: glass facade (cut away by the story) + the structure inside ----
+  const facadeGeo = track(new THREE.BoxGeometry(1, 1, 1));
+  facadeGeo.setAttribute("aDistrict", new THREE.InstancedBufferAttribute(new Float32Array([0]), 1));
+  facadeGeo.setAttribute("aSeed", new THREE.InstancedBufferAttribute(new Float32Array([42]), 1));
+  const facadeMat = track(
+    new THREE.ShaderMaterial({
+      vertexShader: TOWER_VERT,
+      fragmentShader: TOWER_FRAG,
+      fog: true,
+      defines: { CUTAWAY: "" },
+      // shares the city's uniform objects (time, lights, theme); only the cut is its own
+      uniforms: { ...towerMat.uniforms, uCut: { value: TOWER_H + 1 } },
+    }),
+  );
+  const facade = new THREE.InstancedMesh(facadeGeo, facadeMat, 1);
+  facade.setMatrixAt(
+    0,
+    m4.compose(
+      new THREE.Vector3(TX, TOWER_H / 2, TZ),
+      new THREE.Quaternion(),
+      new THREE.Vector3(TOWER.w, TOWER_H, TOWER.d),
+    ),
+  );
+  scene.add(facade);
+  const interior = createInterior(INTERIOR_LOOKS[opts.theme], opts.lowFx);
+  disposables.push(interior);
+  scene.add(interior.group);
+  const inside: number[] = Array.from({ length: GROUP_COUNT }, () => 0);
 
   // Gatehouse crown (amber = the gate that bounces bad requests)
   const crown = new THREE.Mesh(
@@ -510,34 +594,20 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   const blend = look.additive ? THREE.AdditiveBlending : THREE.NormalBlending;
   const sparks: { p: THREE.Points; v: Float32Array; life: number }[] = [];
 
-  function spawnPacket() {
-    const t = openTowers[Math.floor(rand() * openTowers.length)]!;
-    const zs = streetZ(t.z);
-    const xs = streetX(t.x);
-    const y = 0.35;
-    const path = [
-      new THREE.Vector3(-110, y, zs),
-      new THREE.Vector3(xs, y, zs),
-      new THREE.Vector3(xs, y, t.z),
-      new THREE.Vector3(t.x, y, t.z),
-      new THREE.Vector3(t.x, t.h + 0.6, t.z),
-    ];
+  function launch(
+    path: THREE.Vector3[],
+    outcome: Outcome,
+    bounceAt: number,
+    speed: number,
+    scale = 1,
+    inside = false,
+  ): Packet {
     const lengths = [0];
     for (let i = 1; i < path.length; i++)
       lengths.push(lengths[i - 1]! + path[i]!.distanceTo(path[i - 1]!));
-    const r = rand();
-    const outcome: Outcome =
-      t.district === 3
-        ? r < 0.3
-          ? "bounce"
-          : r < 0.4
-            ? "crash"
-            : "pass"
-        : r < 0.06
-          ? "crash"
-          : "pass";
     const color = COLORS.flow.clone();
     const head = new THREE.Mesh(headGeo, new THREE.MeshBasicMaterial({ color }));
+    head.scale.setScalar(scale);
     const trailGeo = new THREE.BufferGeometry();
     trailGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(TRAIL * 3), 3));
     trailGeo.setAttribute("color", new THREE.BufferAttribute(new Float32Array(TRAIL * 3), 3));
@@ -553,22 +623,68 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     const start = path[0]!.clone();
     head.position.copy(start);
     scene.add(head, trail);
-    packets.push({
+    const packet: Packet = {
       path,
       lengths,
       total: lengths.at(-1)!,
       dist: 0,
       dir: 1,
-      speed: 16 + rand() * 10,
+      speed,
       outcome,
-      bounceAt: lengths[1]! - 6,
+      bounceAt,
       color,
       head,
       trail,
       history: Array.from({ length: TRAIL }, () => start.clone()),
       alive: true,
       fade: 1,
-    });
+      inside,
+    };
+    packets.push(packet);
+    return packet;
+  }
+
+  /** Inside the tower: door → checkpoint → riser → junction → a handler (or the antenna). */
+  function spawnInteriorPacket() {
+    const r = interior.routes;
+    const r1 = rand();
+    if (r1 < 0.2) {
+      launch(r.riser, "pass", Infinity, 9 + rand() * 4, 0.5, true);
+      return;
+    }
+    const handler = r.handlers[Math.floor(rand() * r.handlers.length)]!;
+    const path = [...r.toGate, ...r.toJunction.slice(1), ...handler.slice(1)];
+    const toGate = r.toGate.reduce((n, p, i) => (i ? n + p.distanceTo(r.toGate[i - 1]!) : 0), 0);
+    const r2 = rand();
+    const outcome: Outcome = r2 < 0.28 ? "bounce" : r2 < 0.36 ? "crash" : "pass";
+    launch(path, outcome, toGate - 0.8, 8 + rand() * 3, 0.55, true);
+  }
+
+  function spawnPacket() {
+    const t = openTowers[Math.floor(rand() * openTowers.length)]!;
+    const zs = streetZ(t.z);
+    const xs = streetX(t.x);
+    const y = 0.35;
+    const path = [
+      new THREE.Vector3(-110, y, zs),
+      new THREE.Vector3(xs, y, zs),
+      new THREE.Vector3(xs, y, t.z),
+      new THREE.Vector3(t.x, y, t.z),
+      new THREE.Vector3(t.x, t.h + 0.6, t.z),
+    ];
+    const r = rand();
+    const outcome: Outcome =
+      t.district === 3
+        ? r < 0.3
+          ? "bounce"
+          : r < 0.4
+            ? "crash"
+            : "pass"
+        : r < 0.06
+          ? "crash"
+          : "pass";
+    const street = path[1]!.distanceTo(path[0]!);
+    launch(path, outcome, street - 6, 16 + rand() * 10);
   }
 
   function pointAt(p: Packet, d: number, out: THREE.Vector3) {
@@ -685,12 +801,8 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   const [bStrength, bRadius, bThreshold] = look.bloom as [number, number, number];
-  const bloom = new UnrealBloomPass(
-    new THREE.Vector2(1, 1),
-    opts.lowFx ? bStrength * 0.65 : bStrength,
-    bRadius,
-    bThreshold,
-  );
+  const bloomBase = opts.lowFx ? bStrength * 0.65 : bStrength;
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), bloomBase, bRadius, bThreshold);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
@@ -706,18 +818,37 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     const i = Math.min(STOPS.length - 2, Math.floor(p));
     const k = smooth(p - i);
     targetPos.copy(STOPS[i]!.pos).lerp(STOPS[i + 1]!.pos, k);
-    targetPos.y += Math.sin(Math.PI * k) * 22;
+    targetPos.y += Math.sin(Math.PI * k) * STOPS[i + 1]!.arc;
     targetLook.copy(STOPS[i]!.look).lerp(STOPS[i + 1]!.look, k);
     targetPos.x += pointer.x * 3;
     targetPos.y += pointer.y * 1.6;
     // District lights: dark city, each open district switches on as the story reaches it
+    const on = (from: number) => Math.min(1, Math.max(0, (p - from) / 0.8));
+    // The surface: CSS lights the windows, then each district glows as the tour passes it
     const want = [
-      0.16 + 0.12 * Math.min(1, p / 4),
-      Math.min(1, Math.max(0.12, p - 0.35)),
-      Math.min(1, Math.max(0.12, p - 1.35)),
-      Math.min(1, Math.max(0.12, p - 2.35)),
+      0.16 + 0.3 * on(2.5),
+      Math.max(0.12, on(2.4)),
+      Math.max(0.12, on(3.4)),
+      Math.max(0.12, on(4.4)),
       0.08,
     ];
+    // Backend Tower: the facade is cut from the roof down during the dive (stop 6)...
+    const cutT = smooth(Math.min(1, Math.max(0, (p - 5.55) / 0.95)));
+    facadeMat.uniforms.uCut!.value = TOWER_H + 1 - cutT * (TOWER_H + 2);
+    // ...then each part of the structure powers up as the camera reaches it
+    inside[0] = on(5.6); // steel frame
+    inside[1] = on(7.4); // brick core: Academy
+    inside[4] = on(8.4); // lobby checkpoint: Gatehouse
+    inside[3] = on(9.4); // junction room: Router Station
+    inside[2] = on(10.4); // racks, riser, trays: Signal Tower
+    inside[5] = on(11.4); // vault, Citadel, scaffolding: still being built
+    // Inside the tower everything is close: calm the bloom (and Daybreak's exposure) so
+    // lit parts glow instead of flooding the frame
+    const inTower =
+      smooth(Math.min(1, Math.max(0, p - 6.2))) *
+      (1 - smooth(Math.min(1, Math.max(0, (p - 12.4) / 0.6))));
+    bloom.strength = bloomBase * (1 - (look.day ? 0.75 : 0.35) * inTower);
+    renderer.toneMappingExposure = look.exposure * (1 - (look.day ? 0.1 : 0) * inTower);
     return want;
   }
 
@@ -725,6 +856,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   let raf = 0;
   let running = false;
   let spawnClock = 0;
+  let interiorClock = 0;
   let firstFrame = true;
   const markFrame = () => {
     if (!firstFrame) return;
@@ -750,6 +882,14 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       b.rotation.x = Math.PI + Math.cos(elapsed * 0.2 + i) * 0.25;
     });
     crown.rotation.z += dt * 0.4;
+    interior.update(elapsed, inside);
+    interiorClock += dt;
+    const insideEvery = opts.lowFx ? 0.9 : 0.42;
+    while (interiorClock > insideEvery) {
+      interiorClock -= insideEvery;
+      const busy = packets.reduce((n, pk) => n + (pk.inside ? 1 : 0), 0);
+      if (progress > 5.7 && busy < (opts.lowFx ? 8 : 16)) spawnInteriorPacket();
+    }
     spawnClock += dt;
     const every = opts.lowFx ? 0.35 : 0.16;
     while (spawnClock > every) {
@@ -785,6 +925,14 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       const p = packets.at(-1)!;
       p.dist = p.total * (0.2 + rand() * 0.6);
     }
+    if (progress > 5.7) {
+      for (let i = 0; i < 10; i++) {
+        spawnInteriorPacket();
+        const p = packets.at(-1)!;
+        p.dist = Math.min(p.bounceAt - 1, p.total) * (0.2 + rand() * 0.7);
+      }
+    }
+    interior.update(0, inside);
     updatePackets(0.016);
     composer.render();
     markFrame();

@@ -11,7 +11,7 @@ export const gatehouseValidation: Lesson = {
       body: [
         "On the frontend you validate forms with `required`, `minLength` or a Zod schema. That protects honest users from typos. It does not protect your server.",
         "Anyone can skip your form and send a request with `curl`, Postman or DevTools. The server only ever sees the raw request, so the server must check every field again, every time.",
-        "In Backend City that checkpoint is the Gatehouse. Good requests get in (2xx), bad ones bounce (4xx) before they touch your code.",
+        "In the Backend District that checkpoint is the Gatehouse. Good requests get in (2xx), bad ones bounce (4xx) before they touch your code.",
       ],
       check: {
         prompt:

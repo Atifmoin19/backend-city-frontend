@@ -23,14 +23,16 @@ learner passes checkpoints on the first or second variant and comes back the nex
 
 ## Positioning
 
-Backend concepts are invisible; Backend City makes them visible. The learner edits a small
+Backend concepts are invisible; Full Stack City makes them visible. The learner edits a small
 snippet inside a pre-written FastAPI backend and **watches a traffic simulation** hit it:
 requests pass (2xx), bounce (4xx) or crash the server (5xx). No other backend course shows the
 learner's own code handling live requests.
 
 ## Operating Context
 
-- World: Backend City, a broken neon city the learner brings back online as a new engineer.
+- World: Full Stack City. The surface is the Frontend District (coming soon); inside its buildings
+  is the Backend District (open), a broken neon city the learner brings back online. See
+  docs/FULL_STACK_CITY.md.
   Each level is a district (Signal Tower, Router Station, Gatehouse, Data Vaults, Citadel,
   Speedway, Factory, Control Room, Skyline). Completed topics light up the district.
 - Practice code runs in the browser (Pyodide); checkpoints are re-graded on the server with
@@ -42,7 +44,8 @@ learner's own code handling live requests.
 - Next.js 16 frontend, FastAPI backend, 100% free-tier hosting; backend may cold-start.
 - Coding is desktop-first; mobile favors pick-the-line / drag games with a "Best on desktop" tag.
 - Must run on low-end devices: performance mode, pause heavy animation while typing.
-- Working title **Backend City**; mascot placeholder name **Byte** (both undecided, configurable).
+- Brand **Full Stack City** (renamed from Backend City, 2026-09-26); mascot placeholder name
+  **Byte** (configurable).
 - Built so far: auth, Bouncer game (signup-gate). Lessons, XP, AI, admin UI are later phases.
 
 ## Brand Commitments

@@ -1,5 +1,5 @@
 /*
- * Backend City design tokens. Raw values live ONLY here; everything else uses the
+ * Full Stack City design tokens. Raw values live ONLY here; everything else uses the
  * Tailwind theme (globals.css @theme) or these variables. See docs/DESIGN_SYSTEM.md.
  */
 :root {

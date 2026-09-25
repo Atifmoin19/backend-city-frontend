@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { SignupForm } from "@/features/auth/SignupForm";
 import { RedirectIfSignedIn } from "@/features/session/RedirectIfSignedIn";
@@ -9,7 +10,9 @@ export default function SignupPage() {
   return (
     <>
       <RedirectIfSignedIn />
-      <SignupForm />
+      <Suspense>
+        <SignupForm />
+      </Suspense>
     </>
   );
 }

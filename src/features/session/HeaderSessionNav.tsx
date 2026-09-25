@@ -1,5 +1,6 @@
 "use client";
 
+import { Map } from "lucide-react";
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui/Button";
@@ -16,7 +17,9 @@ export function HeaderSessionNav() {
     return (
       <>
         <Link href="/map" className={buttonClasses({ variant: "ghost", size: "sm" })}>
-          Open city map
+          <Map aria-hidden className="size-4" />
+          {/* phones: icon only, so the wordmark keeps its single line */}
+          <span className="sr-only sm:not-sr-only">Open city map</span>
         </Link>
         <UserMenu />
       </>

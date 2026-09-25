@@ -241,13 +241,14 @@ function StepRow(props: {
   return (
     <li
       className={cn(
-        "flex flex-col gap-4 rounded-lg border p-4 sm:flex-row sm:items-center sm:p-5",
+        // phones: icon beside the text, button full width underneath
+        "grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 rounded-lg border p-3.5 sm:flex sm:items-center sm:gap-4 sm:p-5",
         state === "ready" ? "border-cyan/50 bg-bg-2 shadow-glow-cyan" : "border-line bg-bg-1",
       )}
     >
       <div
         className={cn(
-          "grid size-11 shrink-0 place-items-center rounded-md border",
+          "grid size-9 shrink-0 place-items-center rounded-md border sm:size-11",
           state === "done"
             ? "border-green/50 text-green"
             : state === "ready"
@@ -282,7 +283,7 @@ function StepRow(props: {
           href={href}
           className={buttonClasses({
             variant: state === "ready" ? "primary" : "ghost",
-            className: "shrink-0",
+            className: "col-span-2 shrink-0 sm:col-span-1",
           })}
         >
           {cta}

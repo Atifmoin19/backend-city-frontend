@@ -7,7 +7,7 @@ export function Wordmark({ className }: { className?: string }) {
     <Link
       href="/"
       className={cn(
-        "group inline-flex items-center gap-2.5 font-display text-[0.95rem] font-bold tracking-tight",
+        "group inline-flex shrink-0 items-center gap-2 font-display text-[0.88rem] font-bold tracking-tight whitespace-nowrap sm:gap-2.5 sm:text-[0.95rem]",
         className,
       )}
     >
@@ -18,7 +18,7 @@ export function Wordmark({ className }: { className?: string }) {
         <span className="size-2 rounded-full bg-cyan" />
       </span>
       <span>
-        BACKEND <span className="text-cyan">CITY</span>
+        FULL STACK <span className="text-cyan">CITY</span>
       </span>
     </Link>
   );

@@ -115,7 +115,7 @@ export function RequestRelay() {
         })}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_13rem_minmax(0,1fr)] lg:items-stretch">
+      <div className="grid gap-3 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_13rem_minmax(0,1fr)] lg:items-stretch">
         {/* Your frontend */}
         <Card title="Your frontend" file="signup.ts" lit={landed} tone={tone}>
           {clientLines(sample, statusText).map((l, i) => (
@@ -261,7 +261,7 @@ function Card({
         <span className="text-text-2">{title}</span>
         <span className="font-mono text-text-3">{file}</span>
       </figcaption>
-      <pre className="overflow-x-auto py-3 font-mono text-[0.8rem] leading-6 text-(--bc-code-fg)">
+      <pre className="overflow-x-auto py-2.5 font-mono text-[0.7rem] leading-5 text-(--bc-code-fg) sm:py-3 sm:text-[0.8rem] sm:leading-6">
         {children}
       </pre>
     </figure>

@@ -63,7 +63,7 @@ export function WorldMap() {
       <MapBackdrop />
       {/* World layer (horizontal scroll on small screens) */}
       <section
-        aria-label="Backend City map"
+        aria-label="Backend District map"
         className="relative min-h-[34rem] overflow-x-auto overflow-y-hidden"
       >
         <div className="relative h-full min-w-[60rem]">

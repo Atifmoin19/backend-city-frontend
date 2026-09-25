@@ -10,6 +10,15 @@ export interface UserPublic {
   is_verified: boolean;
   /** Finished the first-run orientation (/welcome). */
   onboarded: boolean;
+  /** Track slug chosen at signup ("Which side of the city?"). */
+  learning_goal: string | null;
+}
+
+export interface TrackPublic {
+  slug: string;
+  title: string;
+  description: string;
+  status: "open" | "coming_soon";
 }
 
 export interface AuthResponse {

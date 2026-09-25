@@ -64,7 +64,7 @@ export function CityStory() {
       <section
         ref={wrap}
         id="city"
-        aria-label="Tour of Backend City"
+        aria-label="Tour of Full Stack City"
         className="relative"
         style={{ height: `${CHAPTERS.length * 100}dvh` }}
       >
@@ -82,7 +82,7 @@ export function CityStory() {
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-bg-0/70"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-bg-0/45"
           />
         </div>
         <div className="absolute inset-0">

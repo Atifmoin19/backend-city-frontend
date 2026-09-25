@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
@@ -11,6 +11,8 @@ import { ArrowRight, Mail, ShieldCheck, User } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
+import { sideByTrack } from "@/content/sides";
+import { tracksApi } from "@/lib/api/tracks";
 import { useSlowPending } from "@/lib/useSlowPending";
 
 import { AuthShell } from "./AuthShell";
@@ -36,10 +38,13 @@ export function SignupForm() {
   const values = useWatch({ control: form.control });
   const { errors, touchedFields } = form.formState;
 
+  const goal = sideByTrack(useSearchParams().get("goal"))?.track;
   const onSubmit = form.handleSubmit(async (data) => {
     setFormError(null);
     try {
       await register.mutateAsync(data);
+      // Picked a side on the homepage ("Notify me" / "Start"): save it before orientation
+      if (goal) await tracksApi.chooseGoal(goal).catch(() => undefined);
       router.push("/welcome");
     } catch (err) {
       for (const e of mapAuthError(err)) {

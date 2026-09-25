@@ -7,7 +7,7 @@ import { HeaderSessionNav } from "@/features/session/HeaderSessionNav";
 import { cn } from "@/lib/cn";
 
 const LINKS = [
-  { href: "#academy", label: "The city" },
+  { href: "#frontend", label: "The city" },
   { href: "#how", label: "How it works" },
   { href: "#faq", label: "FAQ" },
 ];
@@ -28,7 +28,7 @@ export function LandingHeader() {
         solid ? "border-b border-line bg-bg-0/80 backdrop-blur-md" : "border-b border-transparent",
       )}
     >
-      <div className="flex h-16 items-center gap-8 px-5 sm:px-10 lg:px-16">
+      <div className="flex h-16 items-center gap-4 px-3 sm:gap-8 sm:px-10 lg:px-16">
         <Wordmark />
         <nav aria-label="Sections" className="hidden items-center gap-6 md:flex">
           {LINKS.map((l) => (
@@ -41,7 +41,7 @@ export function LandingHeader() {
             </a>
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <HeaderSessionNav />
         </div>
       </div>

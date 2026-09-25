@@ -29,7 +29,7 @@ export function FinalCall() {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_40%,rgb(var(--bc-cyan-rgb)/0.14),transparent_70%),linear-gradient(180deg,var(--bc-bg-0)_10%,transparent_55%,var(--bc-bg-0))]"
       />
 
-      <div className="mx-auto flex max-w-5xl flex-col items-center px-5 py-28 text-center sm:px-8 lg:py-36">
+      <div className="mx-auto flex max-w-5xl flex-col items-center px-3 py-14 text-center sm:px-8 sm:py-28 lg:py-36">
         <div className="relative grid size-48 place-items-center">
           <div aria-hidden data-ambient className="reactor-ring absolute inset-0 rounded-full" />
           <div
@@ -45,7 +45,7 @@ export function FinalCall() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.8, ease }}
-          className="mt-10"
+          className="mt-6 sm:mt-10"
         >
           <SignHeading lit className="mx-auto text-[clamp(2.4rem,6vw,4.75rem)]">
             The city is dark.
@@ -57,7 +57,7 @@ export function FinalCall() {
             Free while in early access. Everything runs in your browser, so the first briefing loads
             before your coffee does.
           </p>
-          <div className="mt-10 flex justify-center">
+          <div className="mt-6 flex justify-center sm:mt-10">
             <SessionCta className="px-9 shadow-[0_0_0_1px_rgb(var(--bc-cyan-rgb)/0.5),0_18px_60px_-10px_rgb(var(--bc-cyan-rgb)/0.8)]" />
           </div>
         </motion.div>

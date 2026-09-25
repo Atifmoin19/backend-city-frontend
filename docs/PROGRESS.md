@@ -53,6 +53,21 @@ card, daily challenge.
 - Topic → game list is static in `src/content/topics.ts` (must match backend seed slugs).
 - Open decisions (§22): final name, AI provider, monetization, i18n, OAuth, leaderboard privacy.
 
+## 2026-09-26 — Session 3: Full Stack City homepage
+
+### Done
+
+- Rebrand to **Full Stack City**; the in-app map is the Backend District. Plan and status:
+  docs/FULL_STACK_CITY.md.
+- Homepage is a 14-chapter 3D tour: 5 Frontend District chapters across the city (coming soon),
+  then the dive into the Backend Tower (facade cut away), steel frame and brick close-ups, and
+  a floor-by-floor ride up a stairwell (lobby checkpoint, junction room, network room, vault,
+  roof). Interior packets flow door → gate → riser → junction → handler.
+- Choose your side section (Frontend / Backend / Full stack) with Notify me; signup keeps the
+  chosen goal (`/signup?goal=`). Admin shows interest per track.
+- Phone pass: chapter cards at the bottom, compact sections, briefing width bug fixed, header
+  on one line. Daybreak interior glare fixed.
+
 ## 2026-09-26 — Session 2: server progress, new districts, admin
 
 ### Done

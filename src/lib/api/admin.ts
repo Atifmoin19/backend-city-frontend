@@ -5,6 +5,14 @@ import type { Progress, Role } from "./types";
 
 export type ContentStatus = "draft" | "published";
 
+export interface AdminTrack {
+  slug: string;
+  title: string;
+  status: ContentStatus;
+  /** Learners who asked to be notified when it opens. */
+  interested: number;
+}
+
 export interface AdminGameSummary {
   slug: string;
   title: string;
@@ -126,13 +134,18 @@ export interface AdminUserDetail {
   }[];
 }
 
+export interface AdminContent {
+  tracks: AdminTrack[];
+  levels: AdminLevel[];
+}
+
 const game = (slug: string) => `/admin/games/${encodeURIComponent(slug)}`;
 const user = (id: string) => `/admin/users/${encodeURIComponent(id)}`;
 
 export const adminApi = {
-  content: () => api<{ levels: AdminLevel[] }>("/admin/content"),
+  content: () => api<AdminContent>("/admin/content"),
   updateTopic: (slug: string, body: TopicSettings) =>
-    api<{ levels: AdminLevel[] }>(`/admin/topics/${encodeURIComponent(slug)}`, {
+    api<AdminContent>(`/admin/topics/${encodeURIComponent(slug)}`, {
       method: "PATCH",
       body,
     }),

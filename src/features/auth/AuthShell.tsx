@@ -23,7 +23,7 @@ export function AuthShell({ title, subtitle, children, tagline, aside, footer }:
       {/* Visual side */}
       <section
         className="relative isolate hidden overflow-hidden border-r border-line lg:flex lg:flex-col"
-        aria-label="Backend City"
+        aria-label="Full Stack City"
       >
         <SkylineCanvas className="absolute inset-0 -z-10 size-full" />
         <div

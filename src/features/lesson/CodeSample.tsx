@@ -15,7 +15,7 @@ export function CodeSample({
       <figcaption className="border-b border-line px-4 py-2 font-mono text-xs text-text-2">
         {file}
       </figcaption>
-      <pre className="overflow-x-auto py-3 font-mono text-[0.84rem] leading-7">
+      <pre className="overflow-x-auto py-3 font-mono text-[0.76rem] leading-6 sm:text-[0.84rem] sm:leading-7">
         {source.split("\n").map((line, i) => (
           <div
             key={i}

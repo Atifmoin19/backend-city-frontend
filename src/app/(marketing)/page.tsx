@@ -4,6 +4,7 @@ import { FetchBridge } from "@/features/landing/FetchBridge";
 import { FinalCall } from "@/features/landing/FinalCall";
 import { LandingHeader } from "@/features/landing/LandingHeader";
 import { CityStory } from "@/features/landing/story/CityStory";
+import { ChooseYourSide } from "@/features/landing/ChooseYourSide";
 
 export default function LandingPage() {
   return (
@@ -11,6 +12,7 @@ export default function LandingPage() {
       <LandingHeader />
       <main className="bg-bg-0">
         <CityStory />
+        <ChooseYourSide />
         <FetchBridge />
         <Faq />
         <FinalCall />

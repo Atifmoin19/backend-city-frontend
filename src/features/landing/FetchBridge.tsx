@@ -10,7 +10,7 @@ export function FetchBridge() {
   return (
     <section
       id="how"
-      className="relative scroll-mt-16 overflow-hidden bg-bg-0 px-5 py-28 sm:px-10 lg:px-16 lg:py-36"
+      className="relative scroll-mt-16 overflow-hidden bg-bg-0 px-3 py-14 sm:px-10 sm:py-28 lg:px-16 lg:py-36"
     >
       <div
         aria-hidden
@@ -29,15 +29,15 @@ export function FetchBridge() {
           You know this end. Now learn the other one.
         </SignHeading>
         <p className="mt-5 max-w-2xl text-lg text-text-2">
-          Every lesson in Backend City starts from something you already write in the browser, and
-          follows the request to the server that answers it.
+          Every lesson in the Backend District starts from something you already write in the
+          browser, and follows the request to the server that answers it.
         </p>
 
-        <div className="relative mt-14 rounded-2xl border border-line bg-bg-1/70 p-4 shadow-panel backdrop-blur-sm sm:p-6 lg:p-8">
+        <div className="relative mt-8 rounded-2xl border border-line bg-bg-1/70 p-2.5 shadow-panel backdrop-blur-sm sm:mt-14 sm:p-6 lg:p-8">
           <RequestRelay />
         </div>
 
-        <ul className="mt-16 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3">
+        <ul className="mt-8 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:mt-16 sm:grid-cols-3">
           {[
             {
               s: "flow" as const,
@@ -55,7 +55,7 @@ export function FetchBridge() {
               b: "Byte gives tiered hints. It never hands you the solution during a checkpoint.",
             },
           ].map((f) => (
-            <li key={f.t} className="bg-bg-1 px-6 py-6">
+            <li key={f.t} className="bg-bg-1 px-4 py-4 sm:px-6 sm:py-6">
               <StatusLight status={f.s}>{f.t}</StatusLight>
               <p className="mt-2 text-text-2">{f.b}</p>
             </li>

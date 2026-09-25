@@ -16,9 +16,9 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Backend City", template: "%s · Backend City" },
+  title: { default: "Full Stack City", template: "%s · Full Stack City" },
   description:
-    "Learn backend development by playing. Write small snippets inside a real FastAPI server and watch live requests pass, bounce, or crash.",
+    "Learn both sides of the web by playing. Start in the Backend District: write small snippets inside a real FastAPI server and watch live requests pass, bounce, or crash.",
 };
 
 export const viewport: Viewport = {

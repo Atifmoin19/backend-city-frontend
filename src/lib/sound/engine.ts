@@ -3,7 +3,7 @@
 import { usePreferences } from "@/stores/preferences";
 
 /**
- * Backend City's sound kit, synthesized with Web Audio: no files to download, tiny and
+ * Full Stack City's sound kit, synthesized with Web Audio: no files to download, tiny and
  * consistent. Every cue is short and soft; the city should feel alive, never noisy.
  * Browsers only allow audio after a user gesture, so the context is created/resumed on the
  * first pointer or key press (see `unlockSound`). Before that, cues are silently skipped.
