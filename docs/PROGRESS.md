@@ -2,27 +2,75 @@
 
 Newest entry on top. Update at the end of every task.
 
-## Status snapshot (2026-09-25)
+## Status snapshot (2026-09-26)
 
-**Playable today:** signup/login → orientation → map → Academy + Signal Tower briefings →
-Gatehouse briefing → practice (Pyodide) → server-graded checkpoint → district cleared.
-Night + Daybreak themes, sound, real 3D preloader, interactive homepage. All local; nothing
-pushed or deployed.
+**Live:** https://backend-city-frontend-two.vercel.app (Vercel) · API
+https://backend-city-api.onrender.com (Render free, Docker, Singapore) · Postgres 17 on Neon.
+Push to `main` auto-deploys both. Verified end to end in production with Playwright:
+signup → orientation → map → Gatehouse briefing → practice (Pyodide) → server-graded
+checkpoint (100%, 12/12 hidden, ~7 s) → district cleared → reload keeps the session.
 
-### Next up (owner decides the order)
+**Playable today:** Academy (Python for JS devs, briefing), Signal Tower (HTTP, briefing),
+Gatehouse (validation: briefing + practice + checkpoint). Night + Daybreak themes, sound,
+real 3D preloader, interactive homepage, account + settings menus.
 
-1. **Push + first deploy** (Vercel + Render + Neon): push backend first, bump `harness.lock`, set env vars.
-2. **Progress API** on the backend (`attempts`, `topic_progress`) → replace the localStorage learning store so progress follows the account; apply the hint penalty.
-3. **More content**: 2–3 practice games per topic (ideology requires it), then Level 1 Router Station.
-4. **Retention**: daily challenge + streak, shareable result card, try-before-signup practice.
-5. Password reset + email verify, placement quiz, admin content editor, Rive characters.
+### What's left (from ideology §21, in suggested order)
+
+**Finish Phase 1 (MVP)**
+
+1. **Progress API** (`attempts`, `topic_progress`, `GET/PUT /me/progress`): progress is still
+   per browser (localStorage). Also unlocks the hint penalty on the checkpoint score and a
+   retest cooldown.
+2. **Content depth**: the spec wants **2–3 practice games + a checkpoint per topic**. Today:
+   Gatehouse has 1 game; Academy and Signal Tower are briefing-only (need games, e.g.
+   Status Code Speed Round, Pick the Line). **Level 1 Router Station** (Route Dispatcher game)
+   is not built yet.
+3. **Auth emails**: verify email + forgot/reset password (EmailJS per §14.2).
+4. **Admin MVP** (§10.5): content CRUD + game builder, test-run with reference solution,
+   draft/publish, basic user list/detail. Content is static TS/JSON today.
+5. **Ops**: keep-alive ping for Render; warm sandbox (pre-imported fork server) to cut grading
+   from ~7–11 s to ~1 s; confirm rate limits key on the real client IP behind Vercel.
+6. **Mobile games** (pick-the-line / drag) with the "Best on desktop" tag (§9.5); placement
+   quiz for beginners vs frontend devs (§3).
+7. Phase 0 leftover: **PGlite vs sql.js** spike for the Data Vaults query games.
+
+**Phase 2 — Engagement & AI**
+
+- AI through Byte: tiered hints (today: static hint text), failure explainer, "Ask the
+  Robot" concept chat, with daily limits and the never-the-answer guardrail (§7).
+- XP, streaks, combos, badges (stars exist), city restoration visuals per topic.
+- Levels 3–4: Data Vaults (SQL, ORM, N+1) and Citadel (auth, permissions).
+- Admin analytics (drop-off funnel, hardest games), feedback inbox.
+- Rive characters (Byte, Bouncer, Librarian, Glitch...). Sound + performance mode: done early.
+
+**Phase 3 — Depth**: Levels 5–6 (Speedway caching, Factory queues), boss fights
+(3 AM Incident), Break It Mode, weekly leaderboard, spaced repetition / daily review,
+audit log, announcements, usage monitor.
+
+**Phase 4 — Mastery & growth**: Levels 7–8 (Control Room, Skyline) + System Builder,
+Capstone export, certificates + shareable profiles, community levels, other tracks
+(Node/Express).
+
+**Growth ideas (not in the spec)**: try-before-signup practice, shareable checkpoint result
+card, daily challenge.
 
 ### Known issues
 
 - Progress is per browser until the progress API exists.
+- Render free tier: sleeps after 15 min idle (first request 30–60 s); grading ~7–11 s on 0.1 CPU.
 - Pyodide first load is 5–7 s on a cold cache; later visits are cached.
-- `harness.lock` points at an unpushed backend commit; Vercel builds need the backend pushed.
 - Audio starts only after the first click/key press (browser rule).
+- Open decisions (§22): final name, AI provider, monetization, i18n, OAuth, leaderboard privacy.
+
+## 2026-09-26 — Deployed + hardening
+
+### Done
+
+- First production deploy (Vercel + Render + Neon), guide in `docs/DEPLOY.md`.
+- `sync-harness` ignores an empty `HARNESS_LOCAL_PATH` and falls back to the GitHub pin
+  (Vercel build failed on it).
+- Checkpoint shows a "Grading on the server…" notice while the slow free CPU grades.
+- Secret scan of both repos' full history: only placeholders; nothing real committed.
 
 ## 2026-09-25 — Round 9: sound + stronger night palette
 

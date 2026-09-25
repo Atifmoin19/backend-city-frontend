@@ -62,10 +62,11 @@ npm run dev            # http://localhost:3000  (runs sync-harness first)
 - **Performance mode** and reduced motion turn off heavy effects everywhere.
 - **Preloader** on the homepage is driven by real 3D load milestones.
 
-## Deployment (later, at a milestone)
+## Deployment
 
-**Vercel** (Hobby, non-commercial). Full step-by-step for Neon + Render + Vercel:
-[docs/DEPLOY.md](docs/DEPLOY.md).
+Live at **https://backend-city-frontend-two.vercel.app** (Vercel Hobby). `BACKEND_URL` points
+the `/api/*` rewrite at https://backend-city-api.onrender.com. Pushing `main` redeploys.
+Full step-by-step for Neon + Render + Vercel: [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Docs
 
