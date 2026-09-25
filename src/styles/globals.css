@@ -1,0 +1,160 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* Map tokens into Tailwind utilities: bg-bg-1, text-cyan, shadow-glow-cyan, font-display ... */
+@theme inline {
+  --color-bg-0: var(--bc-bg-0);
+  --color-bg-1: var(--bc-bg-1);
+  --color-bg-2: var(--bc-bg-2);
+  --color-bg-3: var(--bc-bg-3);
+  --color-editor: var(--bc-editor);
+  --color-line: var(--bc-line);
+  --color-line-strong: var(--bc-line-strong);
+  --color-text-1: var(--bc-text-1);
+  --color-text-2: var(--bc-text-2);
+  --color-text-3: var(--bc-text-3);
+  --color-cyan: var(--bc-cyan);
+  --color-green: var(--bc-green);
+  --color-amber: var(--bc-amber);
+  --color-red: var(--bc-red);
+  --color-purple: var(--bc-purple);
+  --color-on-neon: var(--bc-on-neon);
+
+  --font-display: var(--font-unbounded), "Arial Black", sans-serif;
+  --font-sans: var(--font-sora), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SFMono-Regular", monospace;
+
+  --shadow-glow-cyan: var(--bc-glow-cyan);
+  --shadow-glow-green: var(--bc-glow-green);
+  --shadow-glow-amber: var(--bc-glow-amber);
+  --shadow-glow-red: var(--bc-glow-red);
+  --shadow-glow-purple: var(--bc-glow-purple);
+  --shadow-panel: var(--bc-shadow-panel);
+
+  --radius-sm: var(--bc-radius-sm);
+  --radius-md: var(--bc-radius-md);
+  --radius-lg: var(--bc-radius-lg);
+
+  --ease-out: var(--bc-ease-out);
+  --ease-in-out: var(--bc-ease-in-out);
+
+  --animate-pulse-led: pulse-led 2.4s var(--bc-ease-in-out) infinite;
+  --animate-drift: drift 60s linear infinite;
+}
+
+@keyframes pulse-led {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 480px;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--bc-bg-0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background: var(--bc-bg-1);
+    color: var(--bc-text-1);
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+  ::selection {
+    background: rgb(62 230 255 / 0.28);
+    color: var(--bc-text-1);
+  }
+  :focus-visible {
+    outline: 2px solid var(--bc-cyan);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+  }
+  input,
+  textarea {
+    caret-color: var(--bc-cyan);
+  }
+  input::placeholder {
+    color: var(--bc-text-3);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bc-line-strong) transparent;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Gradient display heading (brief-pinned): headings only, never body copy */
+  .sign-text {
+    background: var(--bc-sign-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .glass {
+    background: var(--bc-glass-bg);
+    border: 1px solid var(--bc-glass-border);
+    backdrop-filter: blur(var(--bc-glass-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--bc-glass-blur)) saturate(1.2);
+  }
+  /* Faint street grid used by district backdrops */
+  .city-grid {
+    background-image:
+      linear-gradient(rgb(62 230 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(62 230 255 / 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}
+
+/* Performance mode: kill blur, particles, and ambient animation (set on <html>) */
+[data-perf="on"] .glass {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: var(--bc-bg-2);
+}
+[data-perf="on"] [data-ambient] {
+  animation: none !important;
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
