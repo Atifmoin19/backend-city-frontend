@@ -18,6 +18,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Button, buttonClasses } from "@/components/ui/Button";
 import { Kbd } from "@/components/ui/Kbd";
 import { Panel } from "@/components/ui/Panel";
+import { StatusLight } from "@/components/ui/StatusLight";
 import { districtByKey } from "@/content/districts";
 import { topicByGame } from "@/content/topics";
 import { CodeEditor } from "@/engine/editor/CodeEditor";
@@ -25,6 +26,7 @@ import { RequestFlowVisualizer } from "@/engine/visualizer/RequestFlowVisualizer
 import { useSession } from "@/features/auth/useSession";
 import { SessionMenu } from "@/features/session/SessionMenu";
 import { cn } from "@/lib/cn";
+import { useSlowPending } from "@/lib/useSlowPending";
 import { useLearning } from "@/stores/learning";
 
 import { BootStatus } from "./BootStatus";
@@ -43,6 +45,7 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const { data: user } = useSession();
   const [needLogin, setNeedLogin] = useState(false);
   const [trafficOpen, setTrafficOpen] = useState(false);
+  const gradingSlow = useSlowPending(g.grade.isPending, 1200);
   const topic = topicByGame(slug);
   const { record, update } = useLearning();
   const rec = topic ? record(topic.slug) : {};
@@ -265,6 +268,18 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
                 Take the checkpoint <ArrowRight aria-hidden className="size-4" />
               </Link>
             </div>
+          ) : null}
+          {gradingSlow ? (
+            <p
+              role="status"
+              className="flex items-center gap-2 border-t border-cyan/30 bg-cyan/[0.06] px-4 py-2.5 text-sm text-text-1"
+            >
+              <StatusLight status="busy" iconOnly>
+                Grading
+              </StatusLight>
+              Grading on the server: your code is facing the hidden requests. This takes about 10
+              seconds.
+            </p>
           ) : null}
           {needLogin && !user ? (
             <p className="border-t border-amber/40 bg-amber/[0.07] px-4 py-2.5 text-sm text-amber">
