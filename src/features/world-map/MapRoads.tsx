@@ -48,7 +48,9 @@ export function MapRoads({ progress }: { progress: Record<string, DistrictState>
             strokeOpacity={s.lit ? 0.85 : 0.9}
             strokeWidth={s.lit ? 2 : 1.5}
             strokeDasharray={s.lit ? undefined : "6 8"}
-            style={s.lit ? { filter: "drop-shadow(0 0 4px rgb(62 230 255 / 0.7))" } : undefined}
+            style={
+              s.lit ? { filter: "drop-shadow(0 0 4px rgb(var(--bc-cyan-rgb) / 0.7))" } : undefined
+            }
           />
           {s.lit && !reduced
             ? [0, 1].map((k) => (

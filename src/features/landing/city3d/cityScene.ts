@@ -16,11 +16,62 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 
 export type Outcome = "pass" | "bounce" | "crash";
 
+export type CityStage = "built" | "compiled" | "frame";
+
 export interface CityOptions {
   lowFx: boolean;
   still: boolean;
+  theme: "dark" | "light";
   onResolve?: (o: Outcome) => void;
+  /** Real load milestones, for the preloader: geometry built, shaders compiled, first frame. */
+  onStage?: (s: CityStage) => void;
 }
+
+/** Night city vs Daybreak city. Colors are linear RGB for the shader / three.js. */
+const LOOKS = {
+  dark: {
+    sky: null as string[] | null,
+    background: 0x070b18,
+    fog: 0x0a1022,
+    fogDensity: 0.0082,
+    horizon: ["rgba(62,230,255,0.35)", "rgba(178,124,255,0.12)", "rgba(0,0,0,0)"],
+    additive: true,
+    stars: true,
+    base: [0.006, 0.01, 0.026],
+    glass: [0.55, 0.65, 1.0],
+    rim: [0.16, 0.22, 0.42],
+    day: 0,
+    street: { block: "#070b16", road: "#0d1428", lane: "rgba(62,230,255,0.55)" },
+    reflect: 0x8899bb,
+    asphaltOpacity: 0.8,
+    bloom: [0.7, 0.32, 0.45],
+    exposure: 1.05,
+    beam: { color: 0x3ee6ff, opacity: 0.055 },
+    packet: { flow: 0x3ee6ff, pass: 0x4dff9a, bounce: 0xffb547, crash: 0xff4d6d, gain: 2.4 },
+    crown: 2.2,
+  },
+  light: {
+    sky: ["#a9c6f7", "#dfe7fb", "#f6e7ee", "#ffd2bf"],
+    background: 0xe9e6f3,
+    fog: 0xe6e3f1,
+    fogDensity: 0.0052,
+    horizon: ["rgba(255,176,140,0.7)", "rgba(255,140,170,0.22)", "rgba(255,255,255,0)"],
+    additive: false,
+    stars: false,
+    base: [0.46, 0.52, 0.68],
+    glass: [0.05, 0.15, 0.36],
+    rim: [0.05, 0.08, 0.2],
+    day: 1,
+    street: { block: "#cdd6ea", road: "#b3bfd9", lane: "rgba(10,126,164,0.75)" },
+    reflect: 0xc9d3e6,
+    asphaltOpacity: 0.9,
+    bloom: [0.22, 0.4, 0.9],
+    exposure: 1.0,
+    beam: { color: 0xffffff, opacity: 0.1 },
+    packet: { flow: 0x0a7ea4, pass: 0x0c7f47, bounce: 0xd56a00, crash: 0xcf1d45, gain: 1.15 },
+    crown: 1.3,
+  },
+};
 
 export interface CityScene {
   setProgress(p: number): void;
@@ -120,6 +171,10 @@ const TOWER_FRAG = /* glsl */ `
 uniform float uLit[5];
 uniform vec3 uTint[5];
 uniform float uTime;
+uniform vec3 uBase;
+uniform vec3 uGlass;
+uniform vec3 uRim;
+uniform float uDay;
 varying vec3 vWorld;
 varying vec3 vNormalW;
 varying float vDistrict;
@@ -134,7 +189,7 @@ void main() {
   else if (d == 2) { lit = uLit[2]; tint = uTint[2]; }
   else if (d == 3) { lit = uLit[3]; tint = uTint[3]; }
   else if (d == 4) { lit = uLit[4]; tint = uTint[4]; }
-  vec3 base = vec3(0.006, 0.01, 0.026);
+  vec3 base = uBase;
   vec3 col = base;
   if (abs(vNormalW.y) < 0.5) {
     float u = abs(vNormalW.x) > 0.5 ? vWorld.z : vWorld.x;
@@ -144,20 +199,26 @@ void main() {
     float r = hash(vec3(floor(g), vSeed));
     float on = step(r, mix(0.03, 0.5, lit));
     float flick = 0.88 + 0.12 * sin(uTime * (0.4 + r * 1.6) + r * 40.0);
-    vec3 wc = mix(vec3(0.55, 0.65, 1.0), tint, 0.4 + 0.6 * lit) * (0.4 + 0.75 * lit * r + 0.2 * lit) * flick;
+    vec3 wc = mix(uGlass, tint, 0.4 + 0.6 * lit) * (0.4 + 0.75 * lit * r + 0.2 * lit) * flick;
+    // Daybreak: windows are sky-reflecting glass, lit districts glow through as neon signage
+    vec3 dayGlass = mix(uGlass, vec3(0.35, 0.55, 0.85), 0.35 * f.y) + tint * lit * 0.55 * r;
+    wc = mix(wc, dayGlass, uDay);
+    on = mix(on, max(on, step(r, 0.62)), uDay);
     // floor slabs every 4 m give the facade structure between window rows
     float slab = 1.0 - step(0.08, fract(vWorld.y / 4.2));
     col = mix(base, wc, win * on) * (1.0 - 0.5 * slab);
     // soft vertical gradient on the facade: lighter near the street glow
     col += vec3(0.004, 0.014, 0.026) * (1.0 - smoothstep(0.0, 8.0, vWorld.y));
+    // Daybreak: sun-side faces brighter, ground contact shaded
+    col *= mix(1.0, (vNormalW.x > 0.5 ? 1.12 : vNormalW.z > 0.5 ? 0.96 : 0.84) * mix(0.72, 1.0, smoothstep(0.0, 12.0, vWorld.y)), uDay);
   } else {
-    col = base * 1.5;
+    col = base * mix(1.5, 1.14, uDay);
   }
   // Crisp building definition: thin rim on every face edge, constant pixel width
   vec2 fw = max(fwidth(vUv), vec2(1e-4));
   vec2 edge = min(vUv, 1.0 - vUv) / fw;
   float rim = 1.0 - smoothstep(0.6, 1.6, min(edge.x, edge.y));
-  vec3 rimColor = mix(vec3(0.16, 0.22, 0.42), tint * 0.55, lit);
+  vec3 rimColor = mix(uRim, tint * mix(0.55, 0.4, uDay), lit * mix(1.0, 0.6, uDay));
   col = mix(col, rimColor, rim * 0.85);
   gl_FragColor = vec4(col, 1.0);
   #include <fog_fragment>
@@ -166,6 +227,7 @@ void main() {
 
 export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): CityScene {
   const rand = rng(20260925);
+  const look = LOOKS[opts.theme];
   const renderer = new THREE.WebGLRenderer({
     canvas,
     antialias: !opts.lowFx,
@@ -173,11 +235,11 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, opts.lowFx ? 1 : 1.5));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = look.exposure;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x070b18);
-  scene.fog = new THREE.FogExp2(0x0a1022, 0.0082);
+  scene.background = look.sky ? skyTexture(look.sky) : new THREE.Color(look.background);
+  scene.fog = new THREE.FogExp2(look.fog, look.fogDensity);
 
   const camera = new THREE.PerspectiveCamera(48, 1, 0.5, 600);
   const camPos = STOPS[0]!.pos.clone();
@@ -186,11 +248,10 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
 
   const disposables: { dispose(): void }[] = [];
   const track = <T extends { dispose(): void }>(x: T) => (disposables.push(x), x);
+  if (scene.background instanceof THREE.Texture) track(scene.background);
 
   // ---- sky: horizon glow + stars ----
-  const glowTex = track(
-    radialTexture(["rgba(62,230,255,0.35)", "rgba(178,124,255,0.12)", "rgba(0,0,0,0)"]),
-  );
+  const glowTex = track(radialTexture(look.horizon));
   const horizon = new THREE.Mesh(
     track(new THREE.PlaneGeometry(520, 180)),
     track(
@@ -199,7 +260,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
         transparent: true,
         depthWrite: false,
         fog: false,
-        blending: THREE.AdditiveBlending,
+        blending: look.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
       }),
     ),
   );
@@ -214,21 +275,22 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     starPos.set([Math.cos(a) * r, 40 + rand() * 160, Math.sin(a) * r - 60], i * 3);
   }
   starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
-  scene.add(
-    new THREE.Points(
-      starGeo,
-      track(
-        new THREE.PointsMaterial({
-          color: 0xbfd0ff,
-          size: 0.9,
-          sizeAttenuation: true,
-          fog: false,
-          transparent: true,
-          opacity: 0.7,
-        }),
+  if (look.stars)
+    scene.add(
+      new THREE.Points(
+        starGeo,
+        track(
+          new THREE.PointsMaterial({
+            color: 0xbfd0ff,
+            size: 0.9,
+            sizeAttenuation: true,
+            fog: false,
+            transparent: true,
+            opacity: 0.7,
+          }),
+        ),
       ),
-    ),
-  );
+    );
 
   // ---- towers ----
   const towers: Tower[] = [];
@@ -272,6 +334,10 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
           uTime: { value: 0 },
           uLit: { value: DISTRICTS.map(() => 0.2) },
           uTint: { value: DISTRICTS.map((d) => new THREE.Vector3(...d.tint)) },
+          uBase: { value: new THREE.Vector3(...look.base) },
+          uGlass: { value: new THREE.Vector3(...look.glass) },
+          uRim: { value: new THREE.Vector3(...look.rim) },
+          uDay: { value: look.day },
         },
       ]),
     }),
@@ -297,7 +363,9 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   // Gatehouse crown (amber = the gate that bounces bad requests)
   const crown = new THREE.Mesh(
     track(new THREE.TorusGeometry(3.6, 0.12, 8, 48)),
-    track(new THREE.MeshBasicMaterial({ color: new THREE.Color(0xffb547).multiplyScalar(2.2) })),
+    track(
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(0xffb547).multiplyScalar(look.crown) }),
+    ),
   );
   crown.rotation.x = Math.PI / 2;
   crown.position.set(gate.x, gateTower.h + 0.6, gate.y);
@@ -306,10 +374,10 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   // Search beams
   const beamMat = track(
     new THREE.MeshBasicMaterial({
-      color: 0x3ee6ff,
+      color: look.beam.color,
       transparent: true,
-      opacity: opts.lowFx ? 0.03 : 0.055,
-      blending: THREE.AdditiveBlending,
+      opacity: opts.lowFx ? look.beam.opacity * 0.55 : look.beam.opacity,
+      blending: look.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
       depthWrite: false,
       side: THREE.DoubleSide,
     }),
@@ -334,13 +402,13 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     reflector = new Reflector(new THREE.PlaneGeometry(groundSize, groundSize), {
       textureWidth: 512,
       textureHeight: 512,
-      color: 0x8899bb,
+      color: look.reflect,
       clipBias: 0.003,
     });
     reflector.rotation.x = -Math.PI / 2;
     scene.add(reflector);
   }
-  const streetTex = track(streetTexture());
+  const streetTex = track(streetTexture(look.street));
   streetTex.wrapS = streetTex.wrapT = THREE.RepeatWrapping;
   streetTex.repeat.set(groundSize / BLOCK, groundSize / BLOCK);
   const asphalt = new THREE.Mesh(
@@ -349,7 +417,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       new THREE.MeshBasicMaterial({
         map: streetTex,
         transparent: true,
-        opacity: opts.lowFx ? 1 : 0.8,
+        opacity: opts.lowFx ? 1 : look.asphaltOpacity,
         color: 0xffffff,
       }),
     ),
@@ -367,12 +435,14 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   const openTowers = towers.filter((t) => t.district >= 1 && t.district <= 3);
   const streetX = (x: number) => Math.round(x / BLOCK) * BLOCK + BLOCK / 2;
   const streetZ = (z: number) => Math.round(z / BLOCK) * BLOCK + BLOCK / 2;
+  const pk = look.packet;
   const COLORS = {
-    flow: new THREE.Color(0x3ee6ff).multiplyScalar(2.4),
-    pass: new THREE.Color(0x4dff9a).multiplyScalar(2.2),
-    bounce: new THREE.Color(0xffb547).multiplyScalar(2.4),
-    crash: new THREE.Color(0xff4d6d).multiplyScalar(2.4),
+    flow: new THREE.Color(pk.flow).multiplyScalar(pk.gain),
+    pass: new THREE.Color(pk.pass).multiplyScalar(pk.gain * 0.92),
+    bounce: new THREE.Color(pk.bounce).multiplyScalar(pk.gain),
+    crash: new THREE.Color(pk.crash).multiplyScalar(pk.gain),
   };
+  const blend = look.additive ? THREE.AdditiveBlending : THREE.NormalBlending;
   const sparks: { p: THREE.Points; v: Float32Array; life: number }[] = [];
 
   function spawnPacket() {
@@ -411,7 +481,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       new THREE.LineBasicMaterial({
         vertexColors: true,
         transparent: true,
-        blending: THREE.AdditiveBlending,
+        blending: blend,
         depthWrite: false,
       }),
     );
@@ -461,7 +531,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
         color,
         size: 0.35,
         transparent: true,
-        blending: THREE.AdditiveBlending,
+        blending: blend,
         depthWrite: false,
       }),
     );
@@ -549,7 +619,13 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   // ---- post-processing ----
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), opts.lowFx ? 0.45 : 0.7, 0.32, 0.45);
+  const [bStrength, bRadius, bThreshold] = look.bloom as [number, number, number];
+  const bloom = new UnrealBloomPass(
+    new THREE.Vector2(1, 1),
+    opts.lowFx ? bStrength * 0.65 : bStrength,
+    bRadius,
+    bThreshold,
+  );
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
@@ -584,6 +660,13 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   let raf = 0;
   let running = false;
   let spawnClock = 0;
+  let firstFrame = true;
+  const markFrame = () => {
+    if (!firstFrame) return;
+    firstFrame = false;
+    // wait for the GPU to actually present the frame before calling it painted
+    requestAnimationFrame(() => opts.onStage?.("frame"));
+  };
 
   function frame(now?: number) {
     timer.update(now);
@@ -610,6 +693,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     }
     updatePackets(dt);
     composer.render();
+    markFrame();
     if (running) raf = requestAnimationFrame(frame);
   }
 
@@ -638,9 +722,13 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     }
     updatePackets(0.016);
     composer.render();
+    markFrame();
   }
 
+  opts.onStage?.("built");
   resize();
+  renderer.compile(scene, camera); // compile shaders now, not on the first visible frame
+  opts.onStage?.("compiled");
   if (opts.still) renderStill();
   else {
     // Pre-warm traffic so the live legend starts counting immediately
@@ -687,23 +775,38 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
 }
 
 /** Night asphalt: dark blocks, slightly lighter streets with faint cyan lane lines. */
-function streetTexture(): THREE.CanvasTexture {
+function streetTexture(c0: { block: string; road: string; lane: string }): THREE.CanvasTexture {
   const size = 256;
   const c = document.createElement("canvas");
   c.width = c.height = size;
   const g = c.getContext("2d")!;
-  g.fillStyle = "#070b16";
+  g.fillStyle = c0.block;
   g.fillRect(0, 0, size, size);
   const street = (STREET / BLOCK) * size;
-  g.fillStyle = "#0d1428";
+  g.fillStyle = c0.road;
   g.fillRect(0, 0, street, size);
   g.fillRect(0, 0, size, street);
-  g.fillStyle = "rgba(62,230,255,0.55)";
+  g.fillStyle = c0.lane;
   g.fillRect(street / 2 - 1, 0, 2, size);
   g.fillRect(0, street / 2 - 1, size, 2);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 4;
+  return tex;
+}
+
+/** Vertical sky gradient (top -> horizon) used as the Daybreak background. */
+function skyTexture(stops: string[]): THREE.CanvasTexture {
+  const c = document.createElement("canvas");
+  c.width = 4;
+  c.height = 256;
+  const g = c.getContext("2d")!;
+  const grad = g.createLinearGradient(0, 0, 0, 256);
+  stops.forEach((s, i) => grad.addColorStop(i / (stops.length - 1), s));
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 4, 256);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 

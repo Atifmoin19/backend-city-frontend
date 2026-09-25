@@ -4,6 +4,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 import type { TestResult } from "@/engine/harness/protocol";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { useResolvedTheme } from "@/lib/theme";
 import { usePreferences } from "@/stores/preferences";
 
 import type { RequestFlowScene } from "./requestFlowScene";
@@ -20,6 +21,7 @@ export const RequestFlowVisualizer = forwardRef<VisualizerHandle, { className?: 
     const scene = useRef<RequestFlowScene | null>(null);
     const reduced = useReducedMotion();
     const lowFx = usePreferences((s) => s.performanceMode);
+    const theme = useResolvedTheme();
     const opts = useRef({ instant: reduced, lowFx });
     useEffect(() => {
       opts.current = { instant: reduced, lowFx };
@@ -39,7 +41,7 @@ export const RequestFlowVisualizer = forwardRef<VisualizerHandle, { className?: 
         created?.destroy();
         scene.current = null;
       };
-    }, []);
+    }, [theme]); // rebuild with the new palette when the city lighting changes
 
     useImperativeHandle(ref, () => ({
       play: async (results) => {

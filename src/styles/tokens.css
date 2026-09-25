@@ -24,6 +24,39 @@
   --bc-amber: #ffb547; /* warning, 4xx */
   --bc-red: #ff4d6d; /* error, 5xx, Glitch */
   --bc-purple: #b27cff; /* AI, magic, Byte's voice */
+  /* Same neons as "r g b" channels, for rgb(var(--bc-cyan-rgb) / a) glows and washes */
+  --bc-cyan-rgb: 62 230 255;
+  --bc-green-rgb: 77 255 154;
+  --bc-amber-rgb: 255 181 71;
+  --bc-red-rgb: 255 77 109;
+  --bc-purple-rgb: 178 124 255;
+
+  /* Scene surfaces (map, skyline, visualizer, scrims) */
+  --bc-scrim-rgb: 7 11 24; /* legibility wash behind text over a scene */
+  --bc-star-rgb: 233 238 251;
+  --bc-body-a: #1a2750; /* building bodies */
+  --bc-body-b: #213060;
+  --bc-window: rgb(170 190 255 / 0.13);
+  --bc-byte-bubble: #261d4a; /* Byte (AI) speech surface */
+  --bc-map-sky:
+    radial-gradient(ellipse 80% 55% at 50% 0%, #22306a 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 15% 90%, rgb(77 255 154 / 0.07), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 85% 95%, rgb(178 124 255 / 0.1), transparent 70%),
+    linear-gradient(180deg, #0a1230, #0b1124 60%, #0d1632);
+
+  /* Code editor syntax (calm, desaturated) */
+  --bc-code-fg: #dfe6f7;
+  --bc-code-gutter-fg: #56638a;
+  --bc-code-keyword: #c7a6ff;
+  --bc-code-string: #a8e6b8;
+  --bc-code-number: #ffcf8a;
+  --bc-code-comment: #6f7ca3;
+  --bc-code-fn: #9fdcff;
+  --bc-code-class: #8fd3ff;
+  --bc-code-def: #e9eefb;
+  --bc-code-op: #aab5d3;
+  --bc-code-meta: #ffb3c1;
+  --bc-code-active: rgb(255 255 255 / 0.025);
 
   /* Mission brief: the brightest night surface, lit from the top edge */
   --bc-brief: linear-gradient(180deg, #273b70 0%, #1f305d 55%, #1c2b55 100%);
@@ -92,4 +125,93 @@
   --bc-radius-sm: 6px;
   --bc-radius-md: 10px;
   --bc-radius-lg: 16px;
+}
+
+/*
+ * DAYBREAK: the light city. Same meanings, deeper inks so every neon clears 4.5:1 on white,
+ * a pearl-and-sky ground, and coral dawn on the horizon (3D scene) for character.
+ */
+:root[data-theme="light"] {
+  --bc-bg-0: #e8eef9;
+  --bc-bg-1: #f3f6fd;
+  --bc-bg-2: #ffffff;
+  --bc-bg-3: #e6ecf8;
+  --bc-editor: #fbfcff;
+  --bc-editor-gutter: #f0f3fa;
+  --bc-line: #d3dbee;
+  --bc-line-strong: #a9b7d6;
+
+  --bc-text-1: #0b1431;
+  --bc-text-2: #33416a; /* ~9:1 on white */
+  --bc-text-3: #56648c; /* ~5.8:1 */
+
+  --bc-cyan: #0a7ea4;
+  --bc-green: #0c7f47;
+  --bc-amber: #ad5600;
+  --bc-red: #cf1d45;
+  --bc-purple: #7438ea;
+  --bc-cyan-rgb: 10 126 164;
+  --bc-green-rgb: 12 127 71;
+  --bc-amber-rgb: 173 86 0;
+  --bc-red-rgb: 207 29 69;
+  --bc-purple-rgb: 116 56 234;
+  --bc-on-neon: #ffffff;
+
+  --bc-scrim-rgb: 238 243 252;
+  --bc-star-rgb: 70 95 160;
+  --bc-body-a: #d5dff3;
+  --bc-body-b: #c6d3ee;
+  --bc-window: rgb(10 126 164 / 0.16);
+  --bc-byte-bubble: #f1eaff;
+  --bc-map-sky:
+    radial-gradient(ellipse 80% 55% at 50% 0%, #ffffff 0%, transparent 70%),
+    radial-gradient(ellipse 55% 45% at 85% 100%, rgb(255 150 120 / 0.22), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 12% 95%, rgb(116 56 234 / 0.1), transparent 70%),
+    linear-gradient(180deg, #dce7fb, #e9eefa 60%, #f6ecf0);
+
+  --bc-code-fg: #1b2544;
+  --bc-code-gutter-fg: #97a3c2;
+  --bc-code-keyword: #7438ea;
+  --bc-code-string: #1a7f4b;
+  --bc-code-number: #b35900;
+  --bc-code-comment: #7784a6;
+  --bc-code-fn: #0a6f99;
+  --bc-code-class: #1d5fc4;
+  --bc-code-def: #0b1431;
+  --bc-code-op: #55618a;
+  --bc-code-meta: #c2185b;
+  --bc-code-active: rgb(10 60 140 / 0.035);
+
+  --bc-glow-cyan: 0 0 0 1px rgb(10 126 164 / 0.28), 0 8px 24px -10px rgb(10 126 164 / 0.45);
+  --bc-glow-green: 0 0 0 1px rgb(12 127 71 / 0.28), 0 8px 24px -10px rgb(12 127 71 / 0.4);
+  --bc-glow-amber: 0 0 0 1px rgb(173 86 0 / 0.28), 0 8px 24px -10px rgb(173 86 0 / 0.4);
+  --bc-glow-red: 0 0 0 1px rgb(207 29 69 / 0.3), 0 8px 24px -10px rgb(207 29 69 / 0.4);
+  --bc-glow-purple: 0 0 0 1px rgb(116 56 234 / 0.3), 0 8px 24px -10px rgb(116 56 234 / 0.4);
+  --bc-shadow-panel: 0 18px 40px -22px rgb(22 40 90 / 0.28), 0 2px 6px -2px rgb(22 40 90 / 0.12);
+
+  --bc-glass-bg: rgb(255 255 255 / 0.78);
+  --bc-glass-border: rgb(30 50 110 / 0.13);
+  --bc-sign-gradient: linear-gradient(100deg, #0b1431 0%, #1b3f96 32%, #0a7ea4 62%, #7438ea 100%);
+
+  --bc-plate-cyan-face: linear-gradient(180deg, #33c8eb 0%, #0f9bc4 45%, #0a7ea4 100%);
+  --bc-plate-cyan-face-hover: linear-gradient(180deg, #4fd4f2 0%, #17a8d0 45%, #0b88b1 100%);
+  --bc-plate-cyan-halo: 0 0 0 1px rgb(8 100 135 / 0.55), 0 10px 22px -10px rgb(10 126 164 / 0.7);
+  --bc-plate-cyan-halo-hover:
+    0 0 0 1px rgb(8 100 135 / 0.7), 0 14px 30px -10px rgb(10 126 164 / 0.8);
+  --bc-plate-green-face: linear-gradient(180deg, #2fcf82 0%, #129b58 45%, #0c7f47 100%);
+  --bc-plate-green-halo: 0 0 0 1px rgb(8 95 52 / 0.55), 0 10px 22px -10px rgb(12 127 71 / 0.6);
+  --bc-plate-red-face: linear-gradient(180deg, #ff6384 0%, #e02b53 45%, #c21a40 100%);
+  --bc-plate-red-halo: 0 0 0 1px rgb(160 20 50 / 0.55), 0 10px 22px -10px rgb(207 29 69 / 0.6);
+  --bc-plate-bevel: inset 0 1px 0 rgb(255 255 255 / 0.45), inset 0 -2px 0 rgb(0 30 60 / 0.22);
+  --bc-plate-ghost-face: linear-gradient(180deg, #ffffff 0%, #eef2fb 100%);
+  --bc-plate-ghost-bevel:
+    inset 0 1px 0 #ffffff, 0 1px 2px rgb(20 40 90 / 0.12), 0 4px 12px -6px rgb(20 40 90 / 0.2);
+  --bc-plate-ghost-glow:
+    inset 0 1px 0 #ffffff, 0 0 0 1px rgb(10 126 164 / 0.35), 0 8px 20px -8px rgb(10 126 164 / 0.35);
+
+  --bc-brief: linear-gradient(180deg, #eef7ff 0%, #e9f0ff 100%);
+  --bc-brief-strip: rgb(10 126 164 / 0.06);
+  --bc-brief-line: rgb(30 60 130 / 0.14);
+  --bc-brief-shadow:
+    inset 0 1px 0 #ffffff, 0 0 0 1px rgb(10 126 164 / 0.3), 0 20px 40px -24px rgb(20 50 120 / 0.35);
 }

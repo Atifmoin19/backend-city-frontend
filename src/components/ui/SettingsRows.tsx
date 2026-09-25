@@ -1,16 +1,52 @@
 "use client";
 
-import { Gauge, Volume2, VolumeX } from "lucide-react";
+import { Gauge, Monitor, Moon, Sun, Volume2, VolumeX } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/cn";
-import { usePreferences } from "@/stores/preferences";
+import { usePreferences, type ThemePreference } from "@/stores/preferences";
 
-/** Sound + performance mode as labeled switches (ideology 9.2 / 9.4). */
+const THEMES: { value: ThemePreference; label: string; icon: typeof Sun }[] = [
+  { value: "dark", label: "Night", icon: Moon },
+  { value: "light", label: "Day", icon: Sun },
+  { value: "system", label: "Auto", icon: Monitor },
+];
+
+/** City lighting, sound and performance mode as labeled controls (ideology 9.2 / 9.4). */
 export function SettingsRows() {
-  const { soundMuted, toggleSound, performanceMode, setPerformanceMode } = usePreferences();
+  const { soundMuted, toggleSound, performanceMode, setPerformanceMode, theme, setTheme } =
+    usePreferences();
   return (
     <div className="flex flex-col">
+      <div className="px-2.5 pt-1.5 pb-2.5">
+        <p id="theme-label" className="mb-1.5 text-sm font-medium text-text-1">
+          City lighting
+        </p>
+        <div
+          role="radiogroup"
+          aria-labelledby="theme-label"
+          className="grid grid-cols-3 gap-1 rounded-md border border-line bg-bg-1 p-1"
+        >
+          {THEMES.map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={theme === value}
+              onClick={() => setTheme(value)}
+              className={cn(
+                "inline-flex h-8 items-center justify-center gap-1.5 rounded-sm text-xs font-medium transition-colors",
+                theme === value
+                  ? "bg-bg-2 text-text-1 shadow-glow-cyan"
+                  : "text-text-2 hover:bg-bg-3 hover:text-text-1",
+              )}
+            >
+              <Icon aria-hidden className={cn("size-3.5", theme === value && "text-cyan")} />
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
       <SwitchRow
         icon={soundMuted ? <VolumeX /> : <Volume2 />}
         label="Sound effects"

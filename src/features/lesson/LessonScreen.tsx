@@ -99,7 +99,7 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
             >
               <div className="flex items-start gap-4">
                 <Byte size={52} state={canContinue ? "happy" : "idle"} />
-                <p className="mt-1.5 rounded-md border border-purple/40 bg-[#261d4a] px-4 py-2.5 text-sm text-text-1">
+                <p className="mt-1.5 rounded-md border border-purple/40 bg-(--bc-byte-bubble) px-4 py-2.5 text-sm text-text-1">
                   {step.byte}
                 </p>
               </div>

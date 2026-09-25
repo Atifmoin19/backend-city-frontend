@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
+import { cssVar, useResolvedTheme } from "@/lib/theme";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { usePreferences } from "@/stores/preferences";
 
@@ -23,6 +24,7 @@ export function MapAtmosphere() {
   const ref = useRef<HTMLCanvasElement>(null);
   const reduced = useReducedMotion();
   const lowFx = usePreferences((s) => s.performanceMode);
+  const theme = useResolvedTheme();
 
   useEffect(() => {
     const canvas = ref.current;
@@ -77,30 +79,36 @@ export function MapAtmosphere() {
       }));
     };
 
+    const cyan = cssVar("--bc-cyan-rgb");
+    const green = cssVar("--bc-green-rgb");
+    const star = cssVar("--bc-star-rgb");
+    const body = cssVar("--bc-body-a");
     const draw = (t: number) => {
       ctx.clearRect(0, 0, w, h);
       // far skyline silhouette
-      ctx.fillStyle = "rgba(20,30,62,0.9)";
+      ctx.fillStyle = body;
+      ctx.globalAlpha = 0.9;
       for (const tw of towers) ctx.fillRect(tw.x, h - tw.h, tw.w, tw.h);
+      ctx.globalAlpha = 1;
       // twinkling windows
       for (const win of wins) {
         const k = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * win.speed + win.phase));
         ctx.fillStyle = win.hue
-          ? `rgba(77,255,154,${(0.55 * k).toFixed(3)})`
-          : `rgba(160,200,255,${(0.5 * k).toFixed(3)})`;
+          ? `rgb(${green} / ${(0.55 * k).toFixed(3)})`
+          : `rgb(${star} / ${(0.5 * k).toFixed(3)})`;
         ctx.fillRect(win.x, win.y, win.w, win.h);
       }
       // horizon glow line
       const g = ctx.createLinearGradient(0, h - 2, w, h - 2);
-      g.addColorStop(0, "rgba(62,230,255,0)");
-      g.addColorStop(0.5, "rgba(62,230,255,0.45)");
-      g.addColorStop(1, "rgba(62,230,255,0)");
+      g.addColorStop(0, `rgb(${cyan} / 0)`);
+      g.addColorStop(0.5, `rgb(${cyan} / 0.45)`);
+      g.addColorStop(1, `rgb(${cyan} / 0)`);
       ctx.fillStyle = g;
       ctx.fillRect(0, h - 1.5, w, 1.5);
       // rising data particles
       for (const p of parts) {
         ctx.beginPath();
-        ctx.fillStyle = `rgba(62,230,255,${p.a.toFixed(3)})`;
+        ctx.fillStyle = `rgb(${cyan} / ${p.a.toFixed(3)})`;
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -137,7 +145,7 @@ export function MapAtmosphere() {
       ro.disconnect();
       io.disconnect();
     };
-  }, [reduced, lowFx]);
+  }, [reduced, lowFx, theme]);
 
   return <canvas ref={ref} aria-hidden className="absolute inset-x-0 bottom-0 h-[45%] w-full" />;
 }

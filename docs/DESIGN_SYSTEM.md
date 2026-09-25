@@ -126,3 +126,9 @@ skyline, headline bottom-left, primary CTA "Start your first shift", live light 
 - Mission brief is the brightest surface (`--bc-brief`, `shadow-brief`); never a light/paper card.
 - The traffic simulation lives in `TrafficModal` and opens on Run; the editor is the largest region.
 - Status lines that appear while loading must have fixed height (no layout shift).
+
+## Themes
+
+- Night (default) and Daybreak (light). Every color must come from `tokens.css` so both work; alpha washes use `rgb(var(--bc-<neon>-rgb) / a)`.
+- Canvas / WebGL code reads tokens at build time (`cssVar`, `cssHex` in `lib/theme.ts`) and rebuilds when `useResolvedTheme()` changes. The 3D city keeps its own `LOOKS` table.
+- Never use additive blending or strong bloom in Daybreak; it vanishes on bright ground.

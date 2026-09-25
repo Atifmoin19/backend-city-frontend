@@ -79,8 +79,8 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
         className={cn(
           "w-full transition-transform duration-(--bc-dur-2) ease-out group-hover:-translate-y-1",
           selected && "-translate-y-1.5",
-          state === "active" && "drop-shadow-[0_0_18px_rgb(62_230_255/0.45)]",
-          state === "done" && "drop-shadow-[0_0_14px_rgb(77_255_154/0.3)]",
+          state === "active" && "drop-shadow-[0_0_18px_rgb(var(--bc-cyan-rgb)/0.45)]",
+          state === "done" && "drop-shadow-[0_0_14px_rgb(var(--bc-green-rgb)/0.3)]",
         )}
       >
         {/* plate */}
@@ -98,7 +98,7 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
               y={80 - t.h - 4}
               width={t.w}
               height={t.h}
-              fill={i % 2 ? "#1a2750" : "#213060"}
+              fill={i % 2 ? "var(--bc-body-a)" : "var(--bc-body-b)"}
               stroke={building ? "var(--bc-line-strong)" : "none"}
               strokeDasharray={building ? "2 2" : undefined}
             />

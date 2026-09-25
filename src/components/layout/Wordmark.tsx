@@ -13,7 +13,7 @@ export function Wordmark({ className }: { className?: string }) {
     >
       <span
         aria-hidden
-        className="grid size-7 place-items-center rounded-sm border border-cyan/50 bg-bg-2 shadow-glow-cyan transition-shadow group-hover:shadow-[0_0_0_1px_rgb(62_230_255/0.6),0_0_24px_rgb(62_230_255/0.6)]"
+        className="grid size-7 place-items-center rounded-sm border border-cyan/50 bg-bg-2 shadow-glow-cyan transition-shadow group-hover:shadow-[0_0_0_1px_rgb(var(--bc-cyan-rgb)/0.6),0_0_24px_rgb(var(--bc-cyan-rgb)/0.6)]"
       >
         <span className="size-2 rounded-full bg-cyan" />
       </span>

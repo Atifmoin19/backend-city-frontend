@@ -26,7 +26,7 @@ export function FinalCall() {
       <SkylineCanvas className="absolute inset-x-0 bottom-0 -z-10 h-[70%] w-full opacity-70" />
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_40%,rgb(62_230_255/0.14),transparent_70%),linear-gradient(180deg,var(--bc-bg-0)_10%,transparent_55%,var(--bc-bg-0))]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_55%_at_50%_40%,rgb(var(--bc-cyan-rgb)/0.14),transparent_70%),linear-gradient(180deg,var(--bc-bg-0)_10%,transparent_55%,var(--bc-bg-0))]"
       />
 
       <div className="mx-auto flex max-w-5xl flex-col items-center px-5 py-28 text-center sm:px-8 lg:py-36">
@@ -58,7 +58,7 @@ export function FinalCall() {
             before your coffee does.
           </p>
           <div className="mt-10 flex justify-center">
-            <SessionCta className="px-9 shadow-[0_0_0_1px_rgb(62_230_255/0.5),0_18px_60px_-10px_rgb(62_230_255/0.8)]" />
+            <SessionCta className="px-9 shadow-[0_0_0_1px_rgb(var(--bc-cyan-rgb)/0.5),0_18px_60px_-10px_rgb(var(--bc-cyan-rgb)/0.8)]" />
           </div>
         </motion.div>
 

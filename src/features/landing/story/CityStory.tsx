@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { City3D, type City3DHandle } from "../city3d/City3D";
+import { City3D, type City3DHandle, type LoadStage } from "../city3d/City3D";
+import { CityPreloader } from "../preloader/CityPreloader";
 import type { Outcome } from "../city3d/cityScene";
 import type { TrafficCounts } from "../LiveLegend";
 
@@ -19,6 +20,11 @@ export function CityStory() {
   const city = useRef<City3DHandle>(null);
   const [counts, setCounts] = useState<TrafficCounts>({ pass: 0, bounce: 0, crash: 0 });
   const onResolve = useCallback((o: Outcome) => setCounts((c) => ({ ...c, [o]: c[o] + 1 })), []);
+  const [stages, setStages] = useState<ReadonlySet<LoadStage>>(() => new Set());
+  const onStage = useCallback(
+    (st: LoadStage) => setStages((prev) => (prev.has(st) ? prev : new Set(prev).add(st))),
+    [],
+  );
 
   useEffect(() => {
     let raf = 0;
@@ -45,32 +51,40 @@ export function CityStory() {
   }, []);
 
   return (
-    <section
-      ref={wrap}
-      id="city"
-      aria-label="Tour of Backend City"
-      className="relative"
-      style={{ height: `${CHAPTERS.length * 100}dvh` }}
-    >
-      <div className="sticky top-0 h-dvh overflow-hidden">
-        <City3D ref={city} onResolve={onResolve} className="absolute inset-0 size-full" />
-        {/* legibility: soft vignette + bottom fade into the page */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgb(7_11_24/0.75)_100%)]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-bg-0/70"
-        />
-      </div>
-      <div className="absolute inset-0">
-        {CHAPTERS.map((c) => (
-          <div key={c.id} id={c.id} className="h-dvh">
-            {c.id === "hero" ? <HeroChapter counts={counts} /> : <ChapterPanel chapter={c} />}
-          </div>
-        ))}
-      </div>
-    </section>
+    <>
+      <CityPreloader stages={stages} />
+      <section
+        ref={wrap}
+        id="city"
+        aria-label="Tour of Backend City"
+        className="relative"
+        style={{ height: `${CHAPTERS.length * 100}dvh` }}
+      >
+        <div className="sticky top-0 h-dvh overflow-hidden">
+          <City3D
+            ref={city}
+            onResolve={onResolve}
+            onStage={onStage}
+            className="absolute inset-0 size-full"
+          />
+          {/* legibility: soft vignette + bottom fade into the page */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgb(var(--bc-scrim-rgb)/0.75)_100%)]"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-bg-0/70"
+          />
+        </div>
+        <div className="absolute inset-0">
+          {CHAPTERS.map((c) => (
+            <div key={c.id} id={c.id} className="h-dvh">
+              {c.id === "hero" ? <HeroChapter counts={counts} /> : <ChapterPanel chapter={c} />}
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
   );
 }

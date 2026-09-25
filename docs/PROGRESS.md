@@ -2,6 +2,17 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 7: Daybreak theme, real preloader, request relay
+
+### Done
+
+- **Light theme "Daybreak"**: `:root[data-theme="light"]` overrides every token (deeper inks so neons clear 4.5:1 on white, pearl/sky ground, coral dawn). Settings has a City lighting control (Night / Day / Auto). `THEME_BOOT_SCRIPT` (lib/themeBoot.ts) sets `data-theme` before first paint. Neon glows use channel vars (`rgb(var(--bc-cyan-rgb) / a)`).
+- Canvas/WebGL follow the theme: 3D city has a `LOOKS.light` (sky gradient, fog, day shader uniforms, normal blending, low bloom); Pixi visualizer, map atmosphere and skyline read tokens via `cssVar` / `cssHex` and rebuild on theme change (`useResolvedTheme`). Editor syntax colors are tokens.
+- **Preloader** (`landing/preloader/CityPreloader`): driven by real 3D milestones (chunk loaded, scene built, shaders compiled via `renderer.compile`, first frame presented). Light seam charges with progress, city gates open onto the scene. 20 s safety exit; reduced motion fades.
+- **Request relay** replaces the static code cards in "You know this end": pick a request, the packet crosses to the gate, the exact rule line lights up, the status returns into `res.status`.
+- Hero legibility: blue scrim + masked blur behind the copy, bottom wash on mobile.
+- FAQ jitter fixed: answer used a margin that collapsed outside the animated height; now padding.
+
 ## 2026-09-25 — Round 6: game screen revamp
 
 ### Done

@@ -28,7 +28,7 @@ export function AuthShell({ title, subtitle, children, tagline, aside, footer }:
         <SkylineCanvas className="absolute inset-0 -z-10 size-full" />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(11_17_36/0.92)_0%,rgb(11_17_36/0.35)_45%,rgb(11_17_36/0.85)_100%)]"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(var(--bc-scrim-rgb)/0.92)_0%,rgb(var(--bc-scrim-rgb)/0.35)_45%,rgb(var(--bc-scrim-rgb)/0.85)_100%)]"
         />
         <div
           aria-hidden

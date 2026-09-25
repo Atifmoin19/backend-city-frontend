@@ -15,11 +15,25 @@ const WORDS = ["Your", "code", "runs", "the", "city."];
 export function HeroChapter({ counts }: { counts: TrafficCounts }) {
   return (
     <div className="relative flex h-full flex-col justify-end px-5 pb-10 sm:px-10 lg:px-16 lg:pb-14">
+      {/* Legibility: a deep-blue pool + soft blur behind the copy, fading into the city */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_60%_at_18%_78%,rgb(7_11_24/0.72),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_62%_58%_at_16%_74%,rgb(var(--bc-scrim-rgb)/0.86)_0%,rgb(var(--bc-scrim-rgb)/0.55)_45%,transparent_78%)]"
       />
-      <h1 className="max-w-4xl font-display text-[clamp(2.8rem,8vw,6.25rem)] leading-[0.98] font-bold tracking-[-0.03em]">
+      {/* Narrow screens: copy spans the width, so wash the whole lower half */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[78%] bg-gradient-to-t from-[rgb(var(--bc-scrim-rgb)/0.92)] via-[rgb(var(--bc-scrim-rgb)/0.7)] to-transparent sm:hidden"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_55%_50%_at_16%_74%,black_30%,transparent_75%)] backdrop-blur-[6px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-[8%] left-[4%] h-[46%] w-[48%] rounded-full bg-cyan/10 blur-3xl"
+      />
+      <h1 className="relative max-w-4xl font-display text-[clamp(2.8rem,8vw,6.25rem)] leading-[0.98] font-bold tracking-[-0.03em] [filter:drop-shadow(0_2px_18px_rgb(var(--bc-scrim-rgb)/0.85))]">
         {WORDS.map((w, i) => (
           <span key={w} className="inline-block overflow-hidden pr-[0.22em] align-bottom">
             <motion.span
@@ -37,7 +51,7 @@ export function HeroChapter({ counts }: { counts: TrafficCounts }) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.7, ease }}
-        className="mt-6 max-w-xl text-lg leading-relaxed text-text-1/90 sm:text-xl"
+        className="relative mt-6 max-w-xl text-lg leading-relaxed text-text-1 sm:text-xl"
       >
         You know the browser end of{" "}
         <code className="font-mono text-[0.9em] text-cyan">fetch()</code>. Learn the other end by
@@ -48,7 +62,7 @@ export function HeroChapter({ counts }: { counts: TrafficCounts }) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.85, ease }}
-        className="mt-9 flex flex-wrap items-center gap-4"
+        className="relative mt-9 flex flex-wrap items-center gap-4"
       >
         <SessionCta />
         <a href="#academy" className={buttonClasses({ variant: "ghost", size: "lg" })}>
@@ -59,7 +73,7 @@ export function HeroChapter({ counts }: { counts: TrafficCounts }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.2 }}
-        className="mt-12 w-fit rounded-lg border border-line/80 bg-bg-0/55 px-4 py-3 backdrop-blur-md"
+        className="relative mt-12 w-fit rounded-lg border border-line/80 bg-bg-0/55 px-4 py-3 backdrop-blur-md"
       >
         <p className="sr-only">Live traffic in the city right now</p>
         <LiveLegend counts={counts} />

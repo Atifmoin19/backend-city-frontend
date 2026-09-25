@@ -6,20 +6,26 @@ import { Application, Container, Graphics, Text } from "pixi.js";
 
 import type { TestResult } from "@/engine/harness/protocol";
 
+import { cssHex } from "@/lib/theme";
+
 import { outcomeOf, verdictLine } from "./outcome";
 
-const C = {
-  cyan: 0x3ee6ff,
-  green: 0x4dff9a,
-  amber: 0xffb547,
-  red: 0xff4d6d,
-  line: 0x2c3b69,
-  lineStrong: 0x445890,
-  body: 0x213060,
-  bodyDark: 0x1a2750,
-  window: 0x2a3a6e,
-  text: 0xc5cee8,
-};
+/** Palette comes from the design tokens so the scene follows the night / day theme. */
+function palette() {
+  return {
+    cyan: cssHex("--bc-cyan"),
+    green: cssHex("--bc-green"),
+    amber: cssHex("--bc-amber"),
+    red: cssHex("--bc-red"),
+    line: cssHex("--bc-line"),
+    lineStrong: cssHex("--bc-line-strong"),
+    body: cssHex("--bc-body-b"),
+    bodyDark: cssHex("--bc-body-a"),
+    window: cssHex("--bc-line"),
+    text: cssHex("--bc-text-2"),
+  };
+}
+let C: ReturnType<typeof palette>;
 
 const WIN_COLS = 4;
 const WIN_ROWS = 7;
@@ -54,6 +60,7 @@ export interface RequestFlowScene {
 }
 
 export async function createRequestFlowScene(host: HTMLElement): Promise<RequestFlowScene> {
+  C = palette();
   const app = new Application();
   await app.init({
     resizeTo: host,

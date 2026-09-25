@@ -31,7 +31,7 @@ after adding routes. Never `git push` unless the owner asks. Conventional commit
 - Session-aware navigation: a signed-in user must never be sent to /signup. Signed-in screens use `AppShell`.
 - Use the full width on wide screens (main column + side rail), not a narrow centered column.
 - Colors have fixed meaning: cyan flow, green 2xx, amber 4xx, red 5xx, purple AI. Never color alone: use `StatusLight` (icon + text).
-- No raw hex in components; add a token. Keep the theme readable (text-2/text-3 on bg-1 ≥ 4.5:1).
+- No raw hex in components; add a token to BOTH theme blocks in `tokens.css` (night + Daybreak). Canvas code reads tokens via `lib/theme.ts`. Keep text-2/text-3 ≥ 4.5:1 in both themes.
 - Editor area stays calm: solid surface, nothing animating behind code.
 - Respect reduced motion (`useReducedMotion`) and performance mode (`data-ambient` elements are hidden).
 - Hidden tests / solutions never reach the browser; hint text only via the hint endpoint.

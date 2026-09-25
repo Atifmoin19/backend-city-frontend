@@ -65,6 +65,11 @@
 @layer base {
   html {
     color-scheme: dark;
+  }
+  html[data-theme="light"] {
+    color-scheme: light;
+  }
+  html {
     background: var(--bc-bg-0);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -76,7 +81,7 @@
     min-height: 100dvh;
   }
   ::selection {
-    background: rgb(62 230 255 / 0.28);
+    background: rgb(var(--bc-cyan-rgb) / 0.28);
     color: var(--bc-text-1);
   }
   :focus-visible {
@@ -129,6 +134,9 @@
     overflow: hidden;
     text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
   }
+  [data-theme="light"] .plate {
+    text-shadow: 0 1px 0 rgb(0 20 50 / 0.25);
+  }
   .plate::after {
     content: "";
     position: absolute;
@@ -178,8 +186,8 @@
   /* Street grid: ONLY on map and simulation surfaces (world map, visualizer) */
   .city-grid {
     background-image:
-      linear-gradient(rgb(62 230 255 / 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(62 230 255 / 0.05) 1px, transparent 1px);
+      linear-gradient(rgb(var(--bc-cyan-rgb) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--bc-cyan-rgb) / 0.05) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 }
@@ -189,11 +197,11 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    rgb(62 230 255 / 0.9) 60deg,
+    rgb(var(--bc-cyan-rgb) / 0.9) 60deg,
     transparent 120deg,
-    rgb(178 124 255 / 0.8) 200deg,
+    rgb(var(--bc-purple-rgb) / 0.8) 200deg,
     transparent 260deg,
-    rgb(77 255 154 / 0.7) 320deg,
+    rgb(var(--bc-green-rgb) / 0.7) 320deg,
     transparent 360deg
   );
   mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2px));
@@ -202,7 +210,7 @@
     transparent calc(100% - 3px),
     black calc(100% - 2px)
   );
-  filter: drop-shadow(0 0 10px rgb(62 230 255 / 0.6));
+  filter: drop-shadow(0 0 10px rgb(var(--bc-cyan-rgb) / 0.6));
   animation: reactor 9s linear infinite;
 }
 @keyframes reactor {
@@ -216,7 +224,7 @@
   background: conic-gradient(
     from 180deg at 50% 100%,
     transparent 170deg,
-    rgb(62 230 255 / 0.1) 180deg,
+    rgb(var(--bc-cyan-rgb) / 0.1) 180deg,
     transparent 190deg
   );
   animation: map-beam 14s var(--bc-ease-in-out) infinite alternate;
@@ -227,7 +235,7 @@
   background: conic-gradient(
     from 180deg at 50% 100%,
     transparent 172deg,
-    rgb(178 124 255 / 0.09) 180deg,
+    rgb(var(--bc-purple-rgb) / 0.09) 180deg,
     transparent 188deg
   );
 }
@@ -242,7 +250,7 @@
 .map-fog {
   background:
     radial-gradient(ellipse 30% 60% at 20% 50%, rgb(120 150 230 / 0.1), transparent 70%),
-    radial-gradient(ellipse 35% 55% at 70% 60%, rgb(62 230 255 / 0.07), transparent 70%);
+    radial-gradient(ellipse 35% 55% at 70% 60%, rgb(var(--bc-cyan-rgb) / 0.07), transparent 70%);
   filter: blur(8px);
   animation: map-fog 40s linear infinite alternate;
 }

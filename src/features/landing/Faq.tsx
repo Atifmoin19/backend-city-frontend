@@ -148,15 +148,19 @@ export function Faq() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.35, ease }}
+                        className="overflow-hidden"
                       >
-                        <div className="mx-5 mb-5 rounded-lg border border-line bg-editor">
-                          <div className="flex items-center justify-between border-b border-line px-4 py-2 text-xs">
-                            <StatusLight status="pass" className="text-xs">
-                              200 OK
-                            </StatusLight>
-                            <span className="font-mono text-text-3">application/answer</span>
+                        {/* Padding, not margin: a collapsing margin escapes the measured height */}
+                        <div className="px-5 pb-5">
+                          <div className="rounded-lg border border-line bg-editor">
+                            <div className="flex items-center justify-between border-b border-line px-4 py-2 text-xs">
+                              <StatusLight status="pass" className="text-xs">
+                                200 OK
+                              </StatusLight>
+                              <span className="font-mono text-text-3">application/answer</span>
+                            </div>
+                            <p className="px-4 py-3.5 leading-relaxed text-text-1">{f.a}</p>
                           </div>
-                          <p className="px-4 py-3.5 leading-relaxed text-text-1">{f.a}</p>
                         </div>
                       </motion.div>
                     ) : null}

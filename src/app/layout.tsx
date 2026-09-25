@@ -3,6 +3,8 @@ import { JetBrains_Mono, Sora, Unbounded } from "next/font/google";
 
 import "@/styles/globals.css";
 
+import { THEME_BOOT_SCRIPT } from "@/lib/themeBoot";
+
 import { Providers } from "./providers";
 
 const unbounded = Unbounded({ subsets: ["latin"], variable: "--font-unbounded", display: "swap" });
@@ -19,15 +21,26 @@ export const metadata: Metadata = {
     "Learn backend development by playing. Write small snippets inside a real FastAPI server and watch live requests pass, bounce, or crash.",
 };
 
-export const viewport: Viewport = { themeColor: "#0a0e1a", colorScheme: "dark" };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0e1630" },
+    { media: "(prefers-color-scheme: light)", color: "#e8eef9" },
+  ],
+  colorScheme: "dark light",
+};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${unbounded.variable} ${sora.variable} ${jetbrains.variable}`}
+      data-theme="dark"
       suppressHydrationWarning
     >
+      <head>
+        {/* Sets data-theme before first paint: no flash of the wrong theme */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body>
         {/*
           DIRECTION CONTRACT (impeccable, code-led, brief-pinned by ideology 9)

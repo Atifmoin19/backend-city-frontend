@@ -34,7 +34,7 @@ export function LessonComplete({
       >
         <div className="flex items-center gap-4">
           <Byte size={72} state="celebrating" />
-          <p className="rounded-md border border-purple/40 bg-[#261d4a] px-4 py-2.5 text-sm text-text-1">
+          <p className="rounded-md border border-purple/40 bg-(--bc-byte-bubble) px-4 py-2.5 text-sm text-text-1">
             Lights are back on in {district?.name}. Nice work.
           </p>
         </div>

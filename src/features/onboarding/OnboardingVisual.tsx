@@ -16,7 +16,7 @@ export function OnboardingVisual({ visual }: { visual: Slide["visual"] }) {
         <SkylineCanvas className="absolute inset-0 size-full" />
         <div className="absolute bottom-8 left-8 flex items-end gap-3">
           <Byte size={88} state="happy" />
-          <p className="mb-6 rounded-md border border-purple/40 bg-[#261d4a] px-4 py-2.5 text-sm text-text-1">
+          <p className="mb-6 rounded-md border border-purple/40 bg-(--bc-byte-bubble) px-4 py-2.5 text-sm text-text-1">
             I&apos;m Byte. I&apos;ll be in your corner the whole way.
           </p>
         </div>
