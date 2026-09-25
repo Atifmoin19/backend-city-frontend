@@ -108,7 +108,7 @@
 }
 
 @layer components {
-  /* Gradient display heading (brief-pinned): headings only, never body copy */
+  /* Gradient display heading: pinned by ideology 9.1. One per screen, never body copy */
   .sign-text {
     background: var(--bc-sign-gradient);
     -webkit-background-clip: text;
@@ -121,7 +121,7 @@
     backdrop-filter: blur(var(--bc-glass-blur)) saturate(1.2);
     -webkit-backdrop-filter: blur(var(--bc-glass-blur)) saturate(1.2);
   }
-  /* Faint street grid used by district backdrops */
+  /* Street grid: ONLY on map and simulation surfaces (world map, visualizer) */
   .city-grid {
     background-image:
       linear-gradient(rgb(62 230 255 / 0.05) 1px, transparent 1px),

@@ -20,7 +20,7 @@ export function AuthShell({ title, subtitle, children, aside, footer }: AuthShel
       <div
         aria-hidden
         data-ambient
-        className="city-grid absolute inset-0 [mask-image:linear-gradient(90deg,transparent,black_60%)] opacity-50"
+        className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(ellipse_at_70%_40%,rgb(62_230_255/0.07),transparent_65%)] lg:block"
       />
       <header className="relative z-10 flex h-16 items-center justify-between px-5 sm:px-8">
         <Wordmark />

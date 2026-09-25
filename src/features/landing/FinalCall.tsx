@@ -10,7 +10,7 @@ export function FinalCall() {
       <div
         aria-hidden
         data-ambient
-        className="city-grid absolute inset-0 animate-drift [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)] opacity-60"
+        className="absolute inset-x-0 bottom-0 h-px bg-[linear-gradient(90deg,transparent,rgb(62_230_255/0.5),transparent)]"
       />
       <div className="relative mx-auto flex max-w-4xl flex-col items-center text-center">
         <Byte size={88} state="happy" />
