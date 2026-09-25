@@ -84,6 +84,14 @@ in performance mode.
 | `ui/Kbd`, `ui/PreferenceToggles`              | shortcuts; always-visible mute + performance mode                              |
 | `layout/SiteHeader`, `Wordmark`, `SiteFooter` | chrome                                                                         |
 
+## Homepage 3D city
+
+Towers are near-black navy with a thin rim on every edge (definition first, glow second). Lit
+windows stay moderate: bloom threshold 0.45 so only windows, packets and the Gatehouse crown
+glow. District light colors follow meaning: Academy green, Signal Tower / Gatehouse cyan,
+construction neutral. One glass chapter panel per viewport; the camera frames the district on
+the opposite side.
+
 ## Layout
 
 - Signed-in screens: `AppShell` (sticky 64px top bar, nav, stat chips, account menu).

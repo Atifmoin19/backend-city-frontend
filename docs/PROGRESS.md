@@ -2,6 +2,23 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 3: 3D homepage
+
+### Done
+
+- Homepage rebuilt around a real 3D city (three.js r186, lazy chunk ~139 KB gz, homepage only):
+  instanced towers with a procedural window shader and crisp rim edges, wet-street reflection,
+  glowing streets, packet trails (served / bounced at the Gatehouse / crashed), search beams, bloom.
+- Scroll story: sticky 3D canvas, five chapters (hero, Academy, Signal Tower, Gatehouse, districts
+  under construction). Scroll drives the camera flight (arcs over rooftops between stops) and
+  switches each district's lights on. Mouse parallax. Live traffic legend.
+- Gatehouse chapter has a tiny playable `Field(ge=…)` demo (pure JS).
+- New sections: "You know this end" (fetch() ↔ FastAPI), FAQ, sticky transparent header with
+  section links. Old hero / shift loop / district list removed.
+- Fallbacks: reduced motion = still frame; performance mode = no reflection, lighter bloom, fewer
+  packets; no WebGL = 2D skyline. Rendering pauses offscreen and in hidden tabs.
+- Scroll snapping was tried and removed at the owner's request (normal scrolling).
+
 ## 2026-09-25 — Round 2 (owner feedback)
 
 ### Done

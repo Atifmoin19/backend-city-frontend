@@ -1,18 +1,18 @@
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { DistrictLine } from "@/features/landing/DistrictLine";
+import { Faq } from "@/features/landing/Faq";
+import { FetchBridge } from "@/features/landing/FetchBridge";
 import { FinalCall } from "@/features/landing/FinalCall";
-import { Hero } from "@/features/landing/Hero";
-import { ShiftLoop } from "@/features/landing/ShiftLoop";
+import { LandingHeader } from "@/features/landing/LandingHeader";
+import { CityStory } from "@/features/landing/story/CityStory";
 
 export default function LandingPage() {
   return (
     <>
-      <SiteHeader className="absolute inset-x-0 top-0" />
-      <main>
-        <Hero />
-        <ShiftLoop />
-        <DistrictLine />
+      <LandingHeader />
+      <main className="bg-bg-0">
+        <CityStory />
+        <FetchBridge />
+        <Faq />
         <FinalCall />
       </main>
       <SiteFooter />

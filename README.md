@@ -10,7 +10,7 @@ Backend repo: `backend-city-backend` · Product spec: [docs/PROJECT_IDEOLOGY.md]
 ## Stack (installed versions)
 
 Next.js 16.3.6 (App Router, Turbopack) · React 19.2.8 · TypeScript 5.9 (strict) ·
-Tailwind CSS 4.3 · Motion 13.4 · PixiJS 8.21 · CodeMirror 6 · Pyodide 314.0.7 (CDN) ·
+Tailwind CSS 4.3 · Motion 13.4 · PixiJS 8.21 · three.js r186 (homepage only) · CodeMirror 6 · Pyodide 314.0.7 (CDN) ·
 TanStack Query 5.103 · Zustand 5.0 · React Hook Form 7.88 + Zod 4.6 · lucide-react ·
 ESLint 9 + Prettier 3.9 · Vitest 5 + Testing Library.
 

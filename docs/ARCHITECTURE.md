@@ -47,6 +47,14 @@ GameScreen ─ useGamePlay ─ HarnessClient.run() ── postMessage ──► 
 `POST /api/games/{slug}/grade {attempt_token, snippet}` → backend sandbox runs public + hidden
 tests for the seed inside the signed token → `GradeResponse` → `ResultOverlay`. Requires login.
 
+## Homepage 3D city
+
+`features/landing/story/CityStory` pins `city3d/City3D` (lazy `import("./cityScene")`) and maps
+scroll progress → `setProgress(0..4)`. `cityScene.ts` is imperative three.js: one InstancedMesh
+for all towers with a ShaderMaterial (windows, floor slabs, rim edges via `fwidth`, per-district
+`uLit` uniforms), Reflector ground, packet trails, UnrealBloom. Chapters live in
+`story/chapters.ts`; chapter i = camera stop i (`STOPS`).
+
 ## Key decisions
 
 - **Static module worker** in `public/workers/`: Turbopack emits bundled workers as classic
