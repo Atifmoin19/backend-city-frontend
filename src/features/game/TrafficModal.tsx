@@ -97,7 +97,7 @@ export function TrafficModal({
           </button>
         </div>
         <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto]">
-          <div className="relative min-h-0">{stage}</div>
+          <div className="relative min-h-0 [background:var(--bc-viz-stage)]">{stage}</div>
           <div className="border-t border-line p-3 sm:p-4">{log}</div>
         </div>
       </div>

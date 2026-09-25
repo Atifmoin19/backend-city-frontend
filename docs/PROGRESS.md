@@ -2,6 +2,14 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 8: golden-hour Daybreak scenes
+
+### Done
+
+- 3D city (Daybreak): directional face colors in the tower shader (warm sun side, blush front, violet shade, cream roofs), district color wash (Academy mint, Signal cyan, Gatehouse amber), cobalt sky-glass windows with neon signage in lit districts, AO at street level, navy rims, sand blocks + slate roads, positioned sky stops melting into warm fog, Neutral tone mapping. Night look untouched.
+- Map (Daybreak): diorama tokens (`--bc-plate-*`, `--bc-tower-*`, `--bc-road`, `--bc-skyline`): cream plates on clay sides, cobalt open towers with warm windows, mint cleared, lavender WIP; towers have side + roof faces in both themes; saturated dawn sky.
+- Traffic stage: `--bc-viz-*` tokens (cobalt server tower, sky gradient stage).
+
 ## 2026-09-25 — Round 7: Daybreak theme, real preloader, request relay
 
 ### Done

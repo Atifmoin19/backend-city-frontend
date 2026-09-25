@@ -32,7 +32,7 @@ export function MapRoads({ progress }: { progress: Record<string, DistrictState>
           d={s.d}
           fill="none"
           vectorEffect="non-scaling-stroke"
-          stroke="var(--bc-bg-3)"
+          stroke="var(--bc-road)"
           strokeWidth={12}
           strokeLinecap="round"
         />

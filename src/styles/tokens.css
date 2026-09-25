@@ -38,6 +38,24 @@
   --bc-body-b: #213060;
   --bc-window: rgb(170 190 255 / 0.13);
   --bc-byte-bubble: #261d4a; /* Byte (AI) speech surface */
+  /* Map diorama + traffic stage: the 3D-ish objects (plates, towers, server) */
+  --bc-plate-top: #1a274b;
+  --bc-plate-side: #131d3a;
+  --bc-road: #243562;
+  --bc-skyline: #141e3e;
+  --bc-tower-active: #213060;
+  --bc-tower-active-side: #172246;
+  --bc-tower-active-window: var(--bc-cyan);
+  --bc-tower-done: #213060;
+  --bc-tower-done-side: #172246;
+  --bc-tower-done-window: var(--bc-green);
+  --bc-tower-locked: #1a2750;
+  --bc-tower-locked-side: #141e3c;
+  --bc-viz-server: #1a2750;
+  --bc-viz-server-edge: #445890;
+  --bc-viz-window: #30416f;
+  --bc-viz-gate: #445890;
+  --bc-viz-stage: var(--bc-bg-1);
   --bc-map-sky:
     radial-gradient(ellipse 80% 55% at 50% 0%, #22306a 0%, transparent 70%),
     radial-gradient(ellipse 50% 40% at 15% 90%, rgb(77 255 154 / 0.07), transparent 70%),
@@ -163,11 +181,29 @@
   --bc-body-b: #c6d3ee;
   --bc-window: rgb(10 126 164 / 0.16);
   --bc-byte-bubble: #f1eaff;
+  /* Diorama at golden hour: cream plates on clay, cobalt open towers, mint cleared, lavender WIP */
+  --bc-plate-top: #fffaf2;
+  --bc-plate-side: #eeb08f;
+  --bc-road: #ffffff;
+  --bc-skyline: #9aa9ec;
+  --bc-tower-active: #5b7cfa;
+  --bc-tower-active-side: #3a55c8;
+  --bc-tower-active-window: #ffe9a8;
+  --bc-tower-done: #2fc488;
+  --bc-tower-done-side: #1c9464;
+  --bc-tower-done-window: #effff6;
+  --bc-tower-locked: #e6e1f4;
+  --bc-tower-locked-side: #c8bfe3;
+  --bc-viz-server: #5b7cfa;
+  --bc-viz-server-edge: #3a55c8;
+  --bc-viz-window: #8fa6ff;
+  --bc-viz-gate: #3a55c8;
+  --bc-viz-stage: linear-gradient(180deg, #bcd2ff 0%, #e4ecff 45%, #ffe6da 100%);
   --bc-map-sky:
-    radial-gradient(ellipse 80% 55% at 50% 0%, #ffffff 0%, transparent 70%),
-    radial-gradient(ellipse 55% 45% at 85% 100%, rgb(255 150 120 / 0.22), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 12% 95%, rgb(116 56 234 / 0.1), transparent 70%),
-    linear-gradient(180deg, #dce7fb, #e9eefa 60%, #f6ecf0);
+    radial-gradient(ellipse 40% 35% at 82% 92%, rgb(255 190 130 / 0.75), transparent 70%),
+    radial-gradient(ellipse 60% 45% at 15% 100%, rgb(255 140 170 / 0.28), transparent 70%),
+    radial-gradient(ellipse 70% 40% at 50% 0%, rgb(255 255 255 / 0.35), transparent 70%),
+    linear-gradient(180deg, #7fa6f5 0%, #b5cbfb 38%, #e9e4f7 68%, #ffd7c6 100%);
 
   --bc-code-fg: #1b2544;
   --bc-code-gutter-fg: #97a3c2;

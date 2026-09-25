@@ -30,7 +30,7 @@ export interface CityOptions {
 /** Night city vs Daybreak city. Colors are linear RGB for the shader / three.js. */
 const LOOKS = {
   dark: {
-    sky: null as string[] | null,
+    sky: null as [string, number][] | null,
     background: 0x070b18,
     fog: 0x0a1022,
     fogDensity: 0.0082,
@@ -41,6 +41,12 @@ const LOOKS = {
     glass: [0.55, 0.65, 1.0],
     rim: [0.16, 0.22, 0.42],
     day: 0,
+    sun: [0, 0, 0],
+    front: [0, 0, 0],
+    shade: [0, 0, 0],
+    roof: [0, 0, 0],
+    tints: null as number[][] | null,
+    neutral: false,
     street: { block: "#070b16", road: "#0d1428", lane: "rgba(62,230,255,0.55)" },
     reflect: 0x8899bb,
     asphaltOpacity: 0.8,
@@ -51,25 +57,45 @@ const LOOKS = {
     crown: 2.2,
   },
   light: {
-    sky: ["#a9c6f7", "#dfe7fb", "#f6e7ee", "#ffd2bf"],
-    background: 0xe9e6f3,
-    fog: 0xe6e3f1,
-    fogDensity: 0.0052,
-    horizon: ["rgba(255,176,140,0.7)", "rgba(255,140,170,0.22)", "rgba(255,255,255,0)"],
+    // Golden-hour toy city: azure sky, coral horizon, warm fog for depth
+    // [color, stop]: blue zenith, melting into the warm fog right at the horizon line
+    sky: [
+      ["#2553d6", 0],
+      ["#5f8ff0", 0.1],
+      ["#c9b8ec", 0.19],
+      ["#f2d4d6", 0.26],
+      ["#f2d4d6", 1],
+    ] as [string, number][],
+    background: 0xf3d7d6,
+    fog: 0xf2d4d6,
+    fogDensity: 0.0046,
+    horizon: ["rgba(255,170,120,0.9)", "rgba(255,120,160,0.32)", "rgba(255,255,255,0)"],
     additive: false,
     stars: false,
-    base: [0.46, 0.52, 0.68],
-    glass: [0.05, 0.15, 0.36],
-    rim: [0.05, 0.08, 0.2],
+    base: [0.5, 0.5, 0.6],
+    glass: [0.02, 0.07, 0.3],
+    rim: [0.03, 0.04, 0.15],
     day: 1,
-    street: { block: "#cdd6ea", road: "#b3bfd9", lane: "rgba(10,126,164,0.75)" },
-    reflect: 0xc9d3e6,
-    asphaltOpacity: 0.9,
-    bloom: [0.22, 0.4, 0.9],
+    sun: [1.0, 0.76, 0.55],
+    front: [0.9, 0.72, 0.76],
+    shade: [0.3, 0.32, 0.74],
+    roof: [1.0, 0.94, 0.86],
+    tints: [
+      [1.0, 1.0, 1.0],
+      [0.45, 1.0, 0.72],
+      [0.4, 0.82, 1.0],
+      [1.0, 0.7, 0.35],
+      [0.85, 0.82, 0.95],
+    ],
+    street: { block: "#f3e4d6", road: "#8e9bc4", lane: "rgba(255,255,255,0.85)" },
+    reflect: 0xffffff,
+    asphaltOpacity: 0.93,
+    bloom: [0.32, 0.5, 0.82],
     exposure: 1.0,
-    beam: { color: 0xffffff, opacity: 0.1 },
-    packet: { flow: 0x0a7ea4, pass: 0x0c7f47, bounce: 0xd56a00, crash: 0xcf1d45, gain: 1.15 },
-    crown: 1.3,
+    neutral: true,
+    beam: { color: 0xfff1d0, opacity: 0.16 },
+    packet: { flow: 0x00a3d9, pass: 0x0fbf6a, bounce: 0xff8a00, crash: 0xff2d55, gain: 1.05 },
+    crown: 1.6,
   },
 };
 
@@ -175,6 +201,11 @@ uniform vec3 uBase;
 uniform vec3 uGlass;
 uniform vec3 uRim;
 uniform float uDay;
+// Daybreak only: sun-lit, front, shade and roof face colors
+uniform vec3 uSun;
+uniform vec3 uFront;
+uniform vec3 uShade;
+uniform vec3 uRoof;
 varying vec3 vWorld;
 varying vec3 vNormalW;
 varying float vDistrict;
@@ -189,37 +220,48 @@ void main() {
   else if (d == 2) { lit = uLit[2]; tint = uTint[2]; }
   else if (d == 3) { lit = uLit[3]; tint = uTint[3]; }
   else if (d == 4) { lit = uLit[4]; tint = uTint[4]; }
-  vec3 base = uBase;
+
+  // Face color: night = one dark base; day = directional sun, with the district's color washed in
+  vec3 face = vNormalW.x > 0.5 ? uSun : (vNormalW.z > 0.5 ? uFront : uShade);
+  face = mix(face, face * tint * 1.35, clamp(lit - 0.12, 0.0, 1.0) * 0.55);
+  vec3 base = mix(uBase, face, uDay);
   vec3 col = base;
+
   if (abs(vNormalW.y) < 0.5) {
     float u = abs(vNormalW.x) > 0.5 ? vWorld.z : vWorld.x;
     vec2 g = vec2(u / 0.8, vWorld.y / 1.05);
     vec2 f = fract(g);
     float win = step(0.2, f.x) * step(f.x, 0.8) * step(0.28, f.y) * step(f.y, 0.72);
     float r = hash(vec3(floor(g), vSeed));
-    float on = step(r, mix(0.03, 0.5, lit));
     float flick = 0.88 + 0.12 * sin(uTime * (0.4 + r * 1.6) + r * 40.0);
-    vec3 wc = mix(uGlass, tint, 0.4 + 0.6 * lit) * (0.4 + 0.75 * lit * r + 0.2 * lit) * flick;
-    // Daybreak: windows are sky-reflecting glass, lit districts glow through as neon signage
-    vec3 dayGlass = mix(uGlass, vec3(0.35, 0.55, 0.85), 0.35 * f.y) + tint * lit * 0.55 * r;
-    wc = mix(wc, dayGlass, uDay);
-    on = mix(on, max(on, step(r, 0.62)), uDay);
-    // floor slabs every 4 m give the facade structure between window rows
+
+    // Night: sparse lit windows that multiply as the district comes online
+    float onN = step(r, mix(0.03, 0.5, lit));
+    vec3 wcN = mix(uGlass, tint, 0.4 + 0.6 * lit) * (0.4 + 0.75 * lit * r + 0.2 * lit) * flick;
+
+    // Day: every pane is glass reflecting the sky; lit districts glow through as neon signage
+    vec3 sky = mix(uGlass, vec3(0.32, 0.52, 1.0), f.y * 0.8);
+    float neon = step(r, lit * 0.42);
+    vec3 wcD = mix(sky, tint * 1.5 * flick, neon);
+    float onD = step(r, 0.9);
+
+    vec3 wc = mix(wcN, wcD, uDay);
+    float on = mix(onN, onD, uDay);
     float slab = 1.0 - step(0.08, fract(vWorld.y / 4.2));
-    col = mix(base, wc, win * on) * (1.0 - 0.5 * slab);
-    // soft vertical gradient on the facade: lighter near the street glow
-    col += vec3(0.004, 0.014, 0.026) * (1.0 - smoothstep(0.0, 8.0, vWorld.y));
-    // Daybreak: sun-side faces brighter, ground contact shaded
-    col *= mix(1.0, (vNormalW.x > 0.5 ? 1.12 : vNormalW.z > 0.5 ? 0.96 : 0.84) * mix(0.72, 1.0, smoothstep(0.0, 12.0, vWorld.y)), uDay);
+    col = mix(base, wc, win * on) * (1.0 - mix(0.5, 0.22, uDay) * slab);
+    col += vec3(0.004, 0.014, 0.026) * (1.0 - smoothstep(0.0, 8.0, vWorld.y)) * (1.0 - uDay);
+    // Day: soft ambient occlusion where towers meet the street
+    col *= mix(1.0, mix(0.62, 1.0, smoothstep(0.0, 9.0, vWorld.y)), uDay);
   } else {
-    col = base * mix(1.5, 1.14, uDay);
+    vec3 roof = mix(uRoof, uRoof * tint * 1.2, clamp(lit - 0.12, 0.0, 1.0) * 0.6);
+    col = mix(base * 1.5, roof, uDay);
   }
   // Crisp building definition: thin rim on every face edge, constant pixel width
   vec2 fw = max(fwidth(vUv), vec2(1e-4));
   vec2 edge = min(vUv, 1.0 - vUv) / fw;
   float rim = 1.0 - smoothstep(0.6, 1.6, min(edge.x, edge.y));
-  vec3 rimColor = mix(uRim, tint * mix(0.55, 0.4, uDay), lit * mix(1.0, 0.6, uDay));
-  col = mix(col, rimColor, rim * 0.85);
+  vec3 rimColor = mix(mix(uRim, tint * 0.55, lit), uRim, uDay);
+  col = mix(col, rimColor, rim * mix(0.85, 0.7, uDay));
   gl_FragColor = vec4(col, 1.0);
   #include <fog_fragment>
 }
@@ -234,7 +276,8 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     powerPreference: "high-performance",
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, opts.lowFx ? 1 : 1.5));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  // Neutral keeps Daybreak's pastels saturated; ACES gives the night neons their punch
+  renderer.toneMapping = look.neutral ? THREE.NeutralToneMapping : THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = look.exposure;
 
   const scene = new THREE.Scene();
@@ -333,7 +376,16 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
         {
           uTime: { value: 0 },
           uLit: { value: DISTRICTS.map(() => 0.2) },
-          uTint: { value: DISTRICTS.map((d) => new THREE.Vector3(...d.tint)) },
+          uTint: {
+            value: DISTRICTS.map((d, i) => {
+              const t = look.tints?.[i] ?? d.tint;
+              return new THREE.Vector3(t[0], t[1], t[2]);
+            }),
+          },
+          uSun: { value: new THREE.Vector3(...look.sun) },
+          uFront: { value: new THREE.Vector3(...look.front) },
+          uShade: { value: new THREE.Vector3(...look.shade) },
+          uRoof: { value: new THREE.Vector3(...look.roof) },
           uBase: { value: new THREE.Vector3(...look.base) },
           uGlass: { value: new THREE.Vector3(...look.glass) },
           uRim: { value: new THREE.Vector3(...look.rim) },
@@ -796,13 +848,13 @@ function streetTexture(c0: { block: string; road: string; lane: string }): THREE
 }
 
 /** Vertical sky gradient (top -> horizon) used as the Daybreak background. */
-function skyTexture(stops: string[]): THREE.CanvasTexture {
+function skyTexture(stops: [string, number][]): THREE.CanvasTexture {
   const c = document.createElement("canvas");
   c.width = 4;
   c.height = 256;
   const g = c.getContext("2d")!;
   const grad = g.createLinearGradient(0, 0, 0, 256);
-  stops.forEach((s, i) => grad.addColorStop(i / (stops.length - 1), s));
+  stops.forEach(([color, at]) => grad.addColorStop(at, color));
   g.fillStyle = grad;
   g.fillRect(0, 0, 4, 256);
   const tex = new THREE.CanvasTexture(c);

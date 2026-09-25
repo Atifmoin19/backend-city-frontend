@@ -34,7 +34,10 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
   ref,
 ) {
   const building = state === "locked";
-  const windowFill = state === "done" ? "var(--bc-green)" : "var(--bc-cyan)";
+  const tone = state === "done" ? "done" : state === "active" ? "active" : "locked";
+  const front = `var(--bc-tower-${tone})`;
+  const side = `var(--bc-tower-${tone}-side)`;
+  const windowFill = `var(--bc-tower-${tone === "locked" ? "active" : tone}-window)`;
   const plateStroke =
     state === "done"
       ? "var(--bc-green)"
@@ -83,40 +86,54 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
           state === "done" && "drop-shadow-[0_0_14px_rgb(var(--bc-green-rgb)/0.3)]",
         )}
       >
-        {/* plate */}
+        {/* plate: lit top + clay side, like a diorama base */}
         <polygon
           points="55,62 105,78 55,94 5,78"
-          fill="var(--bc-bg-2)"
+          fill="var(--bc-plate-top)"
           stroke={plateStroke}
           strokeWidth={selected ? 2 : 1.2}
         />
-        <polygon points="5,78 55,94 55,96 5,80" fill="var(--bc-bg-1)" />
-        {TOWERS.map((t, i) => (
-          <g key={i} opacity={building ? 0.55 : 1}>
-            <rect
-              x={t.x}
-              y={80 - t.h - 4}
-              width={t.w}
-              height={t.h}
-              fill={i % 2 ? "var(--bc-body-a)" : "var(--bc-body-b)"}
-              stroke={building ? "var(--bc-line-strong)" : "none"}
-              strokeDasharray={building ? "2 2" : undefined}
-            />
-            {!building
-              ? Array.from({ length: Math.floor(t.h / 8) }).map((_, r) => (
-                  <rect
-                    key={r}
-                    x={t.x + 3}
-                    y={80 - t.h + r * 8}
-                    width={t.w - 6}
-                    height={2.5}
-                    fill={windowFill}
-                    opacity={0.35 + ((r + i) % 3) * 0.25}
-                  />
-                ))
-              : null}
-          </g>
-        ))}
+        <polygon points="5,78 55,94 55,99 5,83" fill="var(--bc-plate-side)" />
+        <polygon points="55,94 105,78 105,83 55,99" fill="var(--bc-plate-side)" opacity="0.8" />
+        {TOWERS.map((t, i) => {
+          const top = 80 - t.h - 4;
+          const depth = 5; // side face width: gives each block volume
+          return (
+            <g key={i} opacity={building ? 0.7 : 1}>
+              <polygon
+                points={`${t.x + t.w},${top} ${t.x + t.w + depth},${top - 3} ${t.x + t.w + depth},${top + t.h - 3} ${t.x + t.w},${top + t.h}`}
+                fill={side}
+              />
+              <polygon
+                points={`${t.x},${top} ${t.x + depth},${top - 3} ${t.x + t.w + depth},${top - 3} ${t.x + t.w},${top}`}
+                fill={front}
+                style={{ filter: "brightness(1.18)" }}
+              />
+              <rect
+                x={t.x}
+                y={top}
+                width={t.w}
+                height={t.h}
+                fill={front}
+                stroke={building ? "var(--bc-line-strong)" : "none"}
+                strokeDasharray={building ? "2 2" : undefined}
+              />
+              {!building
+                ? Array.from({ length: Math.floor(t.h / 8) }).map((_, r) => (
+                    <rect
+                      key={r}
+                      x={t.x + 3}
+                      y={80 - t.h + r * 8}
+                      width={t.w - 6}
+                      height={2.5}
+                      fill={windowFill}
+                      opacity={0.45 + ((r + i) % 3) * 0.25}
+                    />
+                  ))
+                : null}
+            </g>
+          );
+        })}
         {building ? (
           <g stroke="var(--bc-text-3)" strokeWidth="1.2" fill="none">
             {/* scaffolding + crane: honest "under construction" */}

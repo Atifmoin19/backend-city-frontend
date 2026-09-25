@@ -82,7 +82,7 @@ export function MapAtmosphere() {
     const cyan = cssVar("--bc-cyan-rgb");
     const green = cssVar("--bc-green-rgb");
     const star = cssVar("--bc-star-rgb");
-    const body = cssVar("--bc-body-a");
+    const body = cssVar("--bc-skyline");
     const draw = (t: number) => {
       ctx.clearRect(0, 0, w, h);
       // far skyline silhouette

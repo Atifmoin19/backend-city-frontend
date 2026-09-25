@@ -18,10 +18,11 @@ function palette() {
     amber: cssHex("--bc-amber"),
     red: cssHex("--bc-red"),
     line: cssHex("--bc-line"),
-    lineStrong: cssHex("--bc-line-strong"),
+    lineStrong: cssHex("--bc-viz-gate"),
+    edge: cssHex("--bc-viz-server-edge"),
     body: cssHex("--bc-body-b"),
-    bodyDark: cssHex("--bc-body-a"),
-    window: cssHex("--bc-line"),
+    bodyDark: cssHex("--bc-viz-server"),
+    window: cssHex("--bc-viz-window"),
     text: cssHex("--bc-text-2"),
   };
 }
@@ -138,7 +139,7 @@ export async function createRequestFlowScene(host: HTMLElement): Promise<Request
     const body = new Graphics()
       .rect(0, 0, L.serverW, L.serverH)
       .fill(C.bodyDark)
-      .stroke({ width: 1, color: C.lineStrong });
+      .stroke({ width: 1.5, color: C.edge });
     server.addChild(body);
     windows = [];
     const cw = L.serverW / WIN_COLS;
