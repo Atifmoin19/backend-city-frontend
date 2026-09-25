@@ -49,8 +49,18 @@ npm run dev            # http://localhost:3000  (runs sync-harness first)
 
 ## Screens
 
-`/` landing · `/signup` `/login` · `/map` world map · `/district/[key]` topic steps ·
-`/learn/[slug]` briefing · `/play/[slug]?mode=practice|checkpoint` game.
+`/` landing (3D city tour, request relay, FAQ) · `/signup` `/login` · `/welcome` orientation ·
+`/map` world map · `/district/[key]` topic steps · `/learn/[slug]` briefing ·
+`/play/[slug]?mode=practice|checkpoint` game (mission brief, editor, traffic view).
+
+## Experience features
+
+- **Themes**: Night (default) and Daybreak (light), plus Auto. Settings → City lighting. Set
+  before first paint, so no flash.
+- **Sound**: synthesized Web Audio cues (clicks, map, answers, runs, results, homepage chapters).
+  On by default; toggle in Settings or the homepage "City sound" pill.
+- **Performance mode** and reduced motion turn off heavy effects everywhere.
+- **Preloader** on the homepage is driven by real 3D load milestones.
 
 ## Deployment (later, at a milestone)
 

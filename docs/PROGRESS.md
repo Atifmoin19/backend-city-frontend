@@ -2,6 +2,28 @@
 
 Newest entry on top. Update at the end of every task.
 
+## Status snapshot (2026-09-25)
+
+**Playable today:** signup/login → orientation → map → Academy + Signal Tower briefings →
+Gatehouse briefing → practice (Pyodide) → server-graded checkpoint → district cleared.
+Night + Daybreak themes, sound, real 3D preloader, interactive homepage. All local; nothing
+pushed or deployed.
+
+### Next up (owner decides the order)
+
+1. **Push + first deploy** (Vercel + Render + Neon): push backend first, bump `harness.lock`, set env vars.
+2. **Progress API** on the backend (`attempts`, `topic_progress`) → replace the localStorage learning store so progress follows the account; apply the hint penalty.
+3. **More content**: 2–3 practice games per topic (ideology requires it), then Level 1 Router Station.
+4. **Retention**: daily challenge + streak, shareable result card, try-before-signup practice.
+5. Password reset + email verify, placement quiz, admin content editor, Rive characters.
+
+### Known issues
+
+- Progress is per browser until the progress API exists.
+- Pyodide first load is 5–7 s on a cold cache; later visits are cached.
+- `harness.lock` points at an unpushed backend commit; Vercel builds need the backend pushed.
+- Audio starts only after the first click/key press (browser rule).
+
 ## 2026-09-25 — Round 9: sound + stronger night palette
 
 ### Done
@@ -124,7 +146,7 @@ Newest entry on top. Update at the end of every task.
 - Hint penalty on the score (needs persisted attempts).
 - Levels 0–1 content (Signal Tower, Router Station) and more games per topic (2–3 required).
 - Onboarding placement quiz, forgot/reset password screens (backend email flows first).
-- Rive characters, sound (Howler), Recharts admin, admin panel.
+- Rive characters, Recharts admin, admin panel. (Sound shipped in round 9 with Web Audio, no Howler.)
 - Formal Impeccable finish review + documenter pass (not run this session; see known issues).
 
 ### Known issues

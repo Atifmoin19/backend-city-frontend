@@ -34,8 +34,9 @@ GameScreen ─ useGamePlay ─ HarnessClient.run() ── postMessage ──► 
                                                                  splice(starter, snippet) (harness/splice.py)
                                                                  run(source, public_tests) (harness/runner.py, in-process ASGI)
    ◄── RunReport {ok, results[]} ──────────────────────────────────
-   ├─► RequestFlowVisualizer.play(results)   Pixi: pass / bounce / crash animation
-   └─► RequestLog + ScoreMeter
+   ├─► TrafficModal opens → RequestFlowVisualizer.play(results)   Pixi: pass / bounce / crash
+   ├─► playSound(pass | bounce | crash) per request
+   └─► RequestLog + RequestsMeter (practice) / ScoreMeter (checkpoint) + MissionBrief stamp
 ```
 
 - The worker boots once per tab; `useHarness` starts it as soon as a game mounts.
@@ -54,6 +55,36 @@ scroll progress → `setProgress(0..4)`. `cityScene.ts` is imperative three.js: 
 for all towers with a ShaderMaterial (windows, floor slabs, rim edges via `fwidth`, per-district
 `uLit` uniforms), Reflector ground, packet trails, UnrealBloom. Chapters live in
 `story/chapters.ts`; chapter i = camera stop i (`STOPS`).
+
+## Game screen layout
+
+Left: `MissionBrief` (objective + rules from the backend variant) → gate card → `RequestLog`.
+Right: editor with its own action bar (Run, Submit, Hint, Reset, boot status). The Pixi stage
+lives in `TrafficModal`, always mounted (`inert` when closed) so the scene never restarts; Run
+opens it. Mobile order: brief → editor → gate → log (`display: contents` + grid areas).
+
+## Themes
+
+`tokens.css` has a night `:root` block and a `:root[data-theme="light"]` (Daybreak) block; every
+color is a token, alpha washes use channel vars (`rgb(var(--bc-cyan-rgb) / a)`).
+`lib/themeBoot.ts` runs inline in `<head>` to set `data-theme` before paint; `Providers` keeps it
+in sync with the store (and `prefers-color-scheme` for Auto). Canvas / WebGL code reads tokens
+with `cssVar` / `cssHex` and rebuilds when `useResolvedTheme()` changes; the 3D city keeps its own
+`LOOKS` table (sky stops, fog, face colors, tone mapping, blending, bloom).
+
+## Sound
+
+`lib/sound/engine.ts` synthesizes every cue with Web Audio (oscillators + filtered noise, master
+gain + compressor). `SoundDelegate` (in `Providers`) unlocks audio on the first gesture and plays a
+default click for buttons/links; `data-sound="<cue>"` overrides, `"none"` opts out. Feature code
+calls `playSound(cue)` for result-dependent sounds.
+
+## Homepage preloader
+
+`City3D` reports real milestones (`chunk` → `built` → `compiled` via `renderer.compile` →
+`frame` after the first presented frame, or `fallback`). `CityPreloader` shows them as a boot
+log, charges a light seam with progress, then opens two gate panels onto the scene; 20 s safety
+exit; reduced motion fades.
 
 ## Key decisions
 

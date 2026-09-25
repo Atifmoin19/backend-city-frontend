@@ -52,6 +52,10 @@ Pinned by ideology §9 (binding):
 - Dark base (deep navy `#0a0e1a`-ish, never pure black), neon accents with fixed meaning:
   cyan = requests/data flow, green = success/2xx, amber = warning/4xx, red = error/5xx,
   purple = AI/magic.
+- Owner decision 2026-09-25: an optional **Daybreak** light theme ships alongside the night
+  default (same color meanings, deeper inks, golden-hour 3D scenes). Never a white card inside
+  the night theme.
+- Owner decision 2026-09-25: soft synthesized UI sound is **on by default**, one toggle turns it off.
 - Glow on active elements, gradient headings, glass panels (blur sparingly), slow animated
   district backgrounds. Monospace for code (JetBrains Mono or Fira Code).
 - The code editor area is always calm: solid background, nothing animating behind code.
@@ -76,4 +80,5 @@ Pinned by ideology §9 (binding):
 ## Accessibility & Inclusion
 
 Respect `prefers-reduced-motion`; performance-mode toggle; never color alone (icons + text);
-keyboard navigable with visible focus; high-contrast editor; always-visible mute toggle.
+keyboard navigable with visible focus; high-contrast editor; sound toggle always reachable
+(Settings / account menu, homepage pill); both themes keep text ≥ 4.5:1.
