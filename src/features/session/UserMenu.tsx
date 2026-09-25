@@ -1,7 +1,9 @@
 "use client";
 
-import { ChevronDown, LogOut, Map } from "lucide-react";
+import { ChevronDown, LogOut, Map, ShieldCheck } from "lucide-react";
 import Link from "next/link";
+
+import { isAdmin } from "@/lib/api/admin";
 import { useRouter } from "next/navigation";
 
 import { Popover } from "@/components/ui/Popover";
@@ -66,6 +68,15 @@ export function UserMenu() {
             >
               <Map aria-hidden className="size-4 text-cyan" /> City map
             </Link>
+            {isAdmin(user.role) ? (
+              <Link
+                href="/admin"
+                onClick={close}
+                className="flex items-center gap-3 rounded-md px-2.5 py-2 text-sm text-text-1 hover:bg-bg-3/70"
+              >
+                <ShieldCheck aria-hidden className="size-4 text-amber" /> Admin
+              </Link>
+            ) : null}
           </div>
           <div className="mt-1 border-t border-line pt-1">
             <p className="px-2.5 pt-2 pb-1 text-[0.7rem] font-semibold tracking-[0.12em] text-text-3 uppercase">

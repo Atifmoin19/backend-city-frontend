@@ -15,7 +15,8 @@ import type { Lesson } from "@/content/lessons";
 import type { Topic } from "@/content/topics";
 import { InlineCode } from "@/features/game/InlineCode";
 import { cn } from "@/lib/cn";
-import { useLearning } from "@/stores/learning";
+import { checkpointHref, practiceHref } from "@/features/progress/stats";
+import { useLearning } from "@/features/progress/useLearning";
 
 import { CheckQuestion } from "./CheckQuestion";
 import { CodeSample } from "./CodeSample";
@@ -27,7 +28,7 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
   const [reached, setReached] = useState(0);
   const [complete, setComplete] = useState(false);
   const [solved, setSolved] = useState<Record<number, boolean>>({});
-  const { update } = useLearning();
+  const { completeLesson } = useLearning();
   const router = useRouter();
   const step = lesson.steps[index]!;
   const last = index === lesson.steps.length - 1;
@@ -42,8 +43,10 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
 
   const next = () => {
     if (!last) return go(index + 1);
-    update(topic.slug, { lessonDone: true });
-    if (topic.game) router.push(`/play/${topic.game}?mode=practice`);
+    completeLesson.mutate(topic.slug);
+    const firstGame = topic.practice[0];
+    if (firstGame) router.push(practiceHref(firstGame.slug));
+    else if (topic.checkpoint) router.push(checkpointHref(topic.checkpoint.slug));
     else {
       setComplete(true);
       window.scrollTo({ top: 0 });
@@ -157,7 +160,7 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
                 <span className="text-sm text-text-3">Answer the check to continue</span>
               ) : null}
               <Button onClick={next} disabled={!canContinue} size="lg">
-                {last ? (topic.game ? "Start practice" : "Finish briefing") : "Next"}
+                {last ? (topic.checkpoint ? "Start practice" : "Finish briefing") : "Next"}
                 <ArrowRight aria-hidden className="size-4" />
               </Button>
             </div>
@@ -209,10 +212,11 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
           </Panel>
           <Panel className="p-5">
             <h2 className="text-sm font-semibold text-text-1">After this</h2>
-            {topic.game ? (
+            {topic.checkpoint ? (
               <p className="mt-2 flex items-start gap-2 text-sm text-text-2">
                 <Play aria-hidden className="mt-0.5 size-4 shrink-0 text-cyan" />
-                Practice in a real FastAPI server, then take the checkpoint.
+                {topic.practice.length} practice games in a real FastAPI server, then the
+                checkpoint.
               </p>
             ) : (
               <p className="mt-2 text-sm text-text-2">

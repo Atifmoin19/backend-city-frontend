@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 import { useSlowPending } from "@/lib/useSlowPending";
-import { useLearningStore } from "@/stores/learning";
+import { hasOnboarded } from "@/features/progress/legacy";
 
 import { AuthShell } from "./AuthShell";
 import { mapAuthError } from "./errors";
@@ -45,8 +45,8 @@ export function LoginForm() {
     setFormError(null);
     try {
       const { user } = await login.mutateAsync(data);
-      // First visit on this browser: show the orientation before the map
-      router.push(useLearningStore.getState().onboarded[user.id] ? next : "/welcome");
+      // First visit: show the orientation before the map
+      router.push(hasOnboarded(user) ? next : "/welcome");
     } catch (err) {
       setFormError(mapAuthError(err)[0]?.message ?? "Something went wrong.");
     }

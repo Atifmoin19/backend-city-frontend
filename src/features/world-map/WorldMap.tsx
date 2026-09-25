@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Byte } from "@/components/characters/Byte";
 import { DISTRICTS, type DistrictKey } from "@/content/districts";
-import { useLearning } from "@/stores/learning";
+import { useLearning } from "@/features/progress/useLearning";
 
 import { DistrictNode } from "./DistrictNode";
 import { DistrictPanel } from "./DistrictPanel";

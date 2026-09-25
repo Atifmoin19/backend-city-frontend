@@ -2,37 +2,28 @@
 
 Newest entry on top. Update at the end of every task.
 
-## Status snapshot (2026-09-26)
+## Status snapshot (2026-09-26, session 2)
 
 **Live:** https://backend-city-frontend-two.vercel.app (Vercel) · API
 https://backend-city-api.onrender.com (Render free, Docker, Singapore) · Postgres 17 on Neon.
-Push to `main` auto-deploys both. Verified end to end in production with Playwright:
-signup → orientation → map → Gatehouse briefing → practice (Pyodide) → server-graded
-checkpoint (100%, 12/12 hidden, ~7 s) → district cleared → reload keeps the session.
+Push to `main` auto-deploys both. **Session 2 work is on branch `feat/progress-content-admin`
+in both repos, not released yet** (release steps: DEPLOY.md, "Releasing the progress /
+content / admin update").
 
-**Playable today:** Academy (Python for JS devs, briefing), Signal Tower (HTTP, briefing),
-Gatehouse (validation: briefing + practice + checkpoint). Night + Daybreak themes, sound,
-real 3D preloader, interactive homepage, account + settings menus.
+**Playable (after release):** Academy (briefing), Signal Tower (briefing + 2 practice +
+checkpoint), Router Station (new briefing + 2 practice + checkpoint), Gatehouse (briefing +
+2 practice + checkpoint). Progress is saved on the server. Admin panel at `/admin`.
 
 ### What's left (from ideology §21, in suggested order)
 
 **Finish Phase 1 (MVP)**
 
-1. **Progress API** (`attempts`, `topic_progress`, `GET/PUT /me/progress`): progress is still
-   per browser (localStorage). Also unlocks the hint penalty on the checkpoint score and a
-   retest cooldown.
-2. **Content depth**: the spec wants **2–3 practice games + a checkpoint per topic**. Today:
-   Gatehouse has 1 game; Academy and Signal Tower are briefing-only (need games, e.g.
-   Status Code Speed Round, Pick the Line). **Level 1 Router Station** (Route Dispatcher game)
-   is not built yet.
-3. **Auth emails**: verify email + forgot/reset password (EmailJS per §14.2).
-4. **Admin MVP** (§10.5): content CRUD + game builder, test-run with reference solution,
-   draft/publish, basic user list/detail. Content is static TS/JSON today.
-5. **Ops**: keep-alive ping for Render; warm sandbox (pre-imported fork server) to cut grading
-   from ~7–11 s to ~1 s; confirm rate limits key on the real client IP behind Vercel.
-6. **Mobile games** (pick-the-line / drag) with the "Best on desktop" tag (§9.5); placement
-   quiz for beginners vs frontend devs (§3).
-7. Phase 0 leftover: **PGlite vs sql.js** spike for the Data Vaults query games.
+1. **Auth emails**: verify email + forgot/reset password (EmailJS per §14.2).
+2. **Admin**: create games/topics from the panel; the district page should read its game list
+   from the API (`practice_games` / `checkpoint_game` are already in `/me/progress`).
+3. **Content**: Academy practice games; a quiz-style game UI (Status Code Speed Round, Pick the
+   Line) for mobile; placement quiz (§3).
+4. Phase 0 leftover: **PGlite vs sql.js** spike for the Data Vaults query games.
 
 **Phase 2 — Engagement & AI**
 
@@ -40,27 +31,51 @@ real 3D preloader, interactive homepage, account + settings menus.
   Robot" concept chat, with daily limits and the never-the-answer guardrail (§7).
 - XP, streaks, combos, badges (stars exist), city restoration visuals per topic.
 - Levels 3–4: Data Vaults (SQL, ORM, N+1) and Citadel (auth, permissions).
-- Admin analytics (drop-off funnel, hardest games), feedback inbox.
+- Admin analytics (drop-off funnel, hardest games), feedback inbox, audit log.
 - Rive characters (Byte, Bouncer, Librarian, Glitch...). Sound + performance mode: done early.
 
 **Phase 3 — Depth**: Levels 5–6 (Speedway caching, Factory queues), boss fights
 (3 AM Incident), Break It Mode, weekly leaderboard, spaced repetition / daily review,
-audit log, announcements, usage monitor.
+announcements, usage monitor.
 
 **Phase 4 — Mastery & growth**: Levels 7–8 (Control Room, Skyline) + System Builder,
 Capstone export, certificates + shareable profiles, community levels, other tracks
-(Node/Express).
+(Node/Express, a Frontend City: the backend is per-track already).
 
 **Growth ideas (not in the spec)**: try-before-signup practice, shareable checkpoint result
 card, daily challenge.
 
 ### Known issues
 
-- Progress is per browser until the progress API exists.
-- Render free tier: sleeps after 15 min idle (first request 30–60 s); grading ~7–11 s on 0.1 CPU.
+- Render free tier sleeps after 15 min idle unless the keep-alive Action runs.
 - Pyodide first load is 5–7 s on a cold cache; later visits are cached.
 - Audio starts only after the first click/key press (browser rule).
+- Topic → game list is static in `src/content/topics.ts` (must match backend seed slugs).
 - Open decisions (§22): final name, AI provider, monetization, i18n, OAuth, leaderboard privacy.
+
+## 2026-09-26 — Session 2: server progress, new districts, admin
+
+### Done
+
+- **Progress on the server**: `features/progress/useLearning` (React Query on `/me/progress`)
+  replaces the localStorage store. First load moves browser-kept onboarding + briefings to the
+  account (`legacy.ts`); checkpoints are left behind on purpose (server-graded only).
+  Onboarding is a user flag (`user.onboarded`), so login skips `/welcome` on any device.
+- Topics now have **2 practice games + a checkpoint**: district page lists each step with
+  locks; "Next practice" / "Take the checkpoint" CTAs; step trail and mission cards follow.
+- **Router Station opened** with a new 5-step briefing (routes, path/query params, order);
+  Signal Tower and Gatehouse briefings end with their new games.
+- Checkpoint result: hint penalty line, retest cooldown time, recap nudge after 2 fails;
+  cooldown errors shown in the editor.
+- Request log shows `METHOD path?query {json}` and marks body checks (`+`).
+- **Admin panel** (`/admin`, content editors + super admins): content tree with topic
+  settings, game editor (fields + JSON sections, versions, test-run with every hidden case,
+  publish), learner list/search, learner detail with topic progress, attempts and account
+  actions. "Admin" link in the account menu for admins.
+- `src/proxy.ts`: stamps the real client IP + `PROXY_SHARED_SECRET` on `/api/*` for rate limits.
+- Verified in Chrome (Playwright) against the local stack: signup → server onboarding →
+  practice in Pyodide saved → checkpoint graded with a hint (95%, 2★) → admin edit → test-run
+  → publish → learners get v2. `npm run check` and `npm run build` pass.
 
 ## 2026-09-26 — Deployed + hardening
 

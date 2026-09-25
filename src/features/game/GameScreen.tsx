@@ -13,7 +13,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { Button, buttonClasses } from "@/components/ui/Button";
 import { Kbd } from "@/components/ui/Kbd";
@@ -27,7 +27,10 @@ import { useSession } from "@/features/auth/useSession";
 import { SessionMenu } from "@/features/session/SessionMenu";
 import { cn } from "@/lib/cn";
 import { useSlowPending } from "@/lib/useSlowPending";
-import { useLearning } from "@/stores/learning";
+import { EMPTY_RECORD } from "@/features/progress/records";
+import { checkpointHref, nextPractice, practiceHref } from "@/features/progress/stats";
+import { useLearning } from "@/features/progress/useLearning";
+import { ApiError } from "@/lib/api/errors";
 
 import { BootStatus } from "./BootStatus";
 import { CharacterCorner } from "./CharacterCorner";
@@ -47,36 +50,55 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const [trafficOpen, setTrafficOpen] = useState(false);
   const gradingSlow = useSlowPending(g.grade.isPending, 1200);
   const topic = topicByGame(slug);
-  const { record, update } = useLearning();
-  const rec = topic ? record(topic.slug) : {};
+  const learning = useLearning();
+  const { recordPractice, refresh } = learning;
+  const rec = topic ? learning.record(topic.slug) : EMPTY_RECORD;
   const allPublicPass = !!g.report?.ok && g.report.results.every((r) => r.passed);
+  // After this game: the next practice game still to clear, else the checkpoint
+  const upNext = topic
+    ? nextPractice(topic, { ...rec, practiceDone: [...rec.practiceDone, slug] })
+    : undefined;
+  const nextHref = upNext
+    ? practiceHref(upNext.slug)
+    : topic?.checkpoint
+      ? checkpointHref(topic.checkpoint.slug)
+      : null;
+  const nextLabel = upNext ? `Next practice: ${upNext.title}` : "Take the checkpoint";
 
-  // Practice cleared -> unlock the checkpoint
+  // Practice cleared -> save it once per variant (unlocks the next step)
+  const savedFor = useRef<string | null>(null);
+  const token = g.game?.attempt_token;
   useEffect(() => {
-    if (mode === "practice" && allPublicPass && topic && !rec.practicePassed) {
-      update(topic.slug, { practicePassed: true });
+    if (mode !== "practice" || !allPublicPass || !user || !token || savedFor.current === token) {
+      return;
     }
-  }, [mode, allPublicPass, topic, rec.practicePassed, update]);
+    savedFor.current = token;
+    recordPractice.mutate({ slug, token, passed: true, score: 100 });
+  }, [mode, allPublicPass, user, token, slug, recordPractice]);
 
-  // Checkpoint passed -> clear the district (keep the best score)
+  // A scored checkpoint changes stars, fails and cooldowns: reload progress
   useEffect(() => {
-    const r = g.result;
-    if (!r?.passed || !topic) return;
-    if (!rec.checkpoint || r.score > rec.checkpoint.score) {
-      update(topic.slug, { checkpoint: { score: r.score, stars: r.stars } });
+    if (g.result && g.result.verdict !== "rejected" && g.result.verdict !== "crashed") {
+      void refresh();
     }
-  }, [g.result, topic, rec.checkpoint, update]);
+  }, [g.result, refresh]);
 
-  if (mode === "checkpoint" && topic && !rec.practicePassed) {
+  if (mode === "checkpoint" && topic && learning.loading) {
+    return <CenterNote>Loading your record…</CenterNote>;
+  }
+  if (mode === "checkpoint" && topic && user && !rec.practicePassed) {
+    const todo = nextPractice(topic, rec);
     return (
       <CenterNote>
         <span className="flex max-w-md flex-col items-center gap-4">
           <span className="text-lg text-text-1">
-            The checkpoint unlocks after you pass the practice.
+            The checkpoint unlocks after you pass every practice game.
           </span>
-          <Link href={`/play/${slug}?mode=practice`} className="text-cyan underline">
-            Go to practice
-          </Link>
+          {todo ? (
+            <Link href={practiceHref(todo.slug)} className="text-cyan underline">
+              Go to practice: {todo.title}
+            </Link>
+          ) : null}
           <Link href={`/learn/${topic.lesson}`} className="text-sm text-text-2 underline">
             or read the briefing again
           </Link>
@@ -139,12 +161,14 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
                 },
                 {
                   label: "Practice",
-                  href: `/play/${slug}?mode=practice`,
+                  href: practiceHref(
+                    mode === "practice" ? slug : (topic.practice[0]?.slug ?? slug),
+                  ),
                   state: mode === "practice" ? "current" : "done",
                 },
                 {
                   label: "Checkpoint",
-                  href: `/play/${slug}?mode=checkpoint`,
+                  href: topic.checkpoint ? checkpointHref(topic.checkpoint.slug) : "#",
                   state:
                     mode === "checkpoint"
                       ? "current"
@@ -260,13 +284,20 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
             >
               <span className="text-sm text-text-1">
                 Practice cleared. Every request landed where it should.
+                {!user ? " Log in to save it to your record." : null}
               </span>
-              <Link
-                href={`/play/${slug}?mode=checkpoint`}
-                className={buttonClasses({ variant: "success", size: "sm", className: "ml-auto" })}
-              >
-                Take the checkpoint <ArrowRight aria-hidden className="size-4" />
-              </Link>
+              {nextHref ? (
+                <Link
+                  href={nextHref}
+                  className={buttonClasses({
+                    variant: "success",
+                    size: "sm",
+                    className: "ml-auto",
+                  })}
+                >
+                  {nextLabel} <ArrowRight aria-hidden className="size-4" />
+                </Link>
+              ) : null}
             </div>
           ) : null}
           {gradingSlow ? (
@@ -279,6 +310,14 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
               </StatusLight>
               Grading on the server: your code is facing the hidden requests. This takes about 10
               seconds.
+            </p>
+          ) : null}
+          {g.grade.error instanceof ApiError && g.grade.error.code === "retest_cooldown" ? (
+            <p
+              role="alert"
+              className="border-t border-amber/40 bg-amber/[0.07] px-4 py-2.5 text-sm text-amber"
+            >
+              {g.grade.error.message}. Review the briefing or replay a practice game meanwhile.
             </p>
           ) : null}
           {needLogin && !user ? (
@@ -360,7 +399,7 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
       <TrafficModal
         open={trafficOpen}
         onClose={() => setTrafficOpen(false)}
-        title="Live traffic at the gate"
+        title={`Live traffic at ${district?.name ?? "the district"}`}
         summary={
           mode === "checkpoint" ? (
             <ScoreMeter score={g.score} threshold={game.pass_threshold} label="Public requests" />
@@ -383,12 +422,9 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
         }
         log={<RequestLog tests={game.public_tests} results={results} />}
         action={
-          mode === "practice" && allPublicPass ? (
-            <Link
-              href={`/play/${slug}?mode=checkpoint`}
-              className={buttonClasses({ variant: "success", size: "sm" })}
-            >
-              Take the checkpoint <ArrowRight aria-hidden className="size-4" />
+          mode === "practice" && allPublicPass && nextHref ? (
+            <Link href={nextHref} className={buttonClasses({ variant: "success", size: "sm" })}>
+              {nextLabel} <ArrowRight aria-hidden className="size-4" />
             </Link>
           ) : null
         }
@@ -399,6 +435,8 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
           result={g.result}
           character={game.character}
           backHref={`/district/${game.district}`}
+          lessonHref={topic ? `/learn/${topic.lesson}` : undefined}
+          fails={rec.fails}
           onRetry={g.newVariant}
           onClose={() => g.setResult(null)}
         />

@@ -133,9 +133,9 @@ class SignupRequest(BaseModel):
       title: "Your shift",
       byte: "Your turn. I'll be right there if you need a hint.",
       body: [
-        "In the practice you get the signup server with a model that has no limits. You only edit the highlighted lines between the edit markers.",
-        "Press Run and watch the traffic. Practice runs in your browser as often as you like. When every public request lands where it should, the checkpoint unlocks.",
-        "The checkpoint uses a new variant with different field names and limits, and hidden requests that test exactly on and just past every boundary. You need 70% to clear the Gatehouse.",
+        "Two practice games first: **Ticket Booth** (number limits) and **Badge Check** (text limits). You only edit the highlighted lines between the edit markers.",
+        "Press Run and watch the traffic. Practice runs in your browser as often as you like. When both practice games are cleared, the checkpoint unlocks.",
+        "The checkpoint, **Guard the Signup Gate**, uses a new variant with different field names and limits, and hidden requests that test exactly on and just past every boundary. You need 70% to clear the Gatehouse.",
       ],
     },
   ],

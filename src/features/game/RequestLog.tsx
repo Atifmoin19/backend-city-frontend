@@ -8,6 +8,13 @@ function statusOf(r: TestResult): Status {
   return outcomeOf(r.status) === "bounced" ? "bounce" : "pass";
 }
 
+/** `POST /signup {"age": 5}` or `GET /trains/7?line=red`: what the city actually sends. */
+function requestLine({ request: r }: PublicTest): string {
+  const query = r.query ? `?${r.query}` : "";
+  const json = r.json === undefined ? "" : ` ${JSON.stringify(r.json)}`;
+  return `${r.method} ${r.path}${query}${json}`;
+}
+
 /** One line per public request: what it sends, what it should get, what your server did. */
 export function RequestLog({
   tests,
@@ -36,17 +43,24 @@ export function RequestLog({
         <tbody className="divide-y divide-line">
           {tests.map((t, i) => {
             const r = results?.[i];
-            const body = JSON.stringify(t.request.json);
+            const line = requestLine(t);
+            const expectBody = t.expect_body == null ? "" : JSON.stringify(t.expect_body);
             return (
               <tr key={t.name}>
                 <td
                   className="truncate px-3.5 py-2"
-                  title={`${t.request.method} ${t.request.path} ${body}`}
+                  title={`${line}${expectBody ? ` → ${expectBody}` : ""}`}
                 >
                   <span className="text-text-1">{t.name}</span>{" "}
-                  <span className="font-mono text-xs text-text-3">{body}</span>
+                  <span className="font-mono text-xs text-text-3">{line}</span>
                 </td>
-                <td className="tabular py-2 text-right font-mono text-text-2">{t.expect_status}</td>
+                <td
+                  className="tabular py-2 text-right font-mono text-text-2"
+                  title={expectBody ? `and the JSON contains ${expectBody}` : undefined}
+                >
+                  {t.expect_status}
+                  {expectBody ? <span className="text-text-3">+</span> : null}
+                </td>
                 <td className="py-2 pr-3.5 text-right">
                   {r ? (
                     <StatusLight status={statusOf(r)} className="justify-end">

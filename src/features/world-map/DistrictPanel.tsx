@@ -10,7 +10,7 @@ import { StatusLight } from "@/components/ui/StatusLight";
 import type { District } from "@/content/districts";
 import { topicsFor } from "@/content/topics";
 import { topicComplete } from "@/features/progress/stats";
-import type { TopicRecord } from "@/stores/learning";
+import type { TopicRecord } from "@/features/progress/records";
 
 import type { DistrictState } from "./progress";
 
@@ -60,7 +60,9 @@ export function DistrictPanel({ district, state, records }: DistrictPanelProps) 
                 <span className="text-text-1">
                   {t.title}
                   <span className="block text-text-3">
-                    {t.game ? "Briefing · practice · checkpoint" : `Briefing · ${t.minutes} min`}
+                    {t.checkpoint
+                      ? `Briefing · ${t.practice.length} practice games · checkpoint`
+                      : `Briefing · ${t.minutes} min`}
                   </span>
                 </span>
               </li>

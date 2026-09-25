@@ -12,13 +12,25 @@ import type { District } from "@/content/districts";
 import type { Topic } from "@/content/topics";
 import { SkylineCanvas } from "@/features/landing/skyline/SkylineCanvas";
 import { NextStepCard } from "@/features/progress/NextStepCard";
-import { topicComplete } from "@/features/progress/stats";
+import {
+  checkpointHref,
+  nextPractice,
+  practiceHref,
+  topicComplete,
+} from "@/features/progress/stats";
 import { cn } from "@/lib/cn";
-import { useLearning, type TopicRecord } from "@/stores/learning";
+import type { TopicRecord } from "@/features/progress/records";
+import { useLearning } from "@/features/progress/useLearning";
 
 type StepState = "done" | "ready" | "locked";
 
 const DISTRICT_CHARACTER: Record<string, { key: string; name: string; line: string }> = {
+  "signal-tower": { key: "byte", name: "Byte", line: "Every answer starts with three digits." },
+  "router-station": {
+    key: "byte",
+    name: "Byte",
+    line: "Every train has a platform. Send it to the right one.",
+  },
   gatehouse: {
     key: "bouncer",
     name: "The Bouncer",
@@ -36,28 +48,41 @@ function stepsFor(topic: Topic, r: TopicRecord) {
     href: `/learn/${topic.lesson}`,
     cta: r.lessonDone ? "Review briefing" : "Start briefing",
   };
-  if (!topic.game) return [briefing];
+  if (!topic.checkpoint) return [briefing];
+  const upNext = nextPractice(topic, r);
+  const practice = topic.practice.map((game, i) => {
+    const done = r.practiceDone.includes(game.slug);
+    const ready = r.lessonDone && (done || game.slug === upNext?.slug);
+    return {
+      key: game.slug,
+      icon: Play,
+      title: `Practice ${i + 1}: ${game.title}`,
+      body: `${game.blurb} Runs in your browser, unlimited tries.`,
+      state: (done ? "done" : ready ? "ready" : "locked") as StepState,
+      href: practiceHref(game.slug),
+      cta: done ? "Play again" : "Start practice",
+      lockedWhy: r.lessonDone
+        ? "Clear the practice before this one."
+        : "Finish the briefing first.",
+    };
+  });
+  const cooling = r.retryAt ? new Date(r.retryAt) > new Date() : false;
   return [
     briefing,
-    {
-      key: "practice",
-      icon: Play,
-      title: "Practice",
-      body: "Edit a few lines and watch real requests hit your server. Runs in your browser, unlimited tries.",
-      state: (r.practicePassed ? "done" : r.lessonDone ? "ready" : "locked") as StepState,
-      href: `/play/${topic.game}?mode=practice`,
-      cta: r.practicePassed ? "Practice again" : "Start practice",
-      lockedWhy: "Finish the briefing first.",
-    },
+    ...practice,
     {
       key: "checkpoint",
       icon: ShieldCheck,
-      title: "Checkpoint",
-      body: "A new variant with hidden requests at every boundary, graded on the server. Score 70% to clear.",
-      state: (r.checkpoint ? "done" : r.practicePassed ? "ready" : "locked") as StepState,
-      href: `/play/${topic.game}?mode=checkpoint`,
-      cta: r.checkpoint ? "Retake for more stars" : "Take the checkpoint",
-      lockedWhy: "Pass the practice first.",
+      title: `Checkpoint: ${topic.checkpoint.title}`,
+      body: `${topic.checkpoint.blurb} A new variant with hidden requests, graded on the server. Score 70% to clear.`,
+      state: (r.checkpoint
+        ? "done"
+        : r.lessonDone && r.practicePassed
+          ? "ready"
+          : "locked") as StepState,
+      href: checkpointHref(topic.checkpoint.slug),
+      cta: r.checkpoint ? "Retake for more stars" : cooling ? "Opens soon" : "Take the checkpoint",
+      lockedWhy: r.lessonDone ? "Pass every practice game first." : "Finish the briefing first.",
     },
   ];
 }
@@ -194,7 +219,7 @@ export function DistrictScreen({ district, topics }: { district: District; topic
               Finish every topic. Topics with a checkpoint need 70%; 85% earns two stars and 95%
               with no hints earns three.
             </p>
-            <p className="mt-3 text-xs text-text-3">Progress is saved in this browser for now.</p>
+            <p className="mt-3 text-xs text-text-3">Progress is saved to your account.</p>
           </Panel>
         </aside>
       </div>

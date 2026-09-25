@@ -8,6 +8,8 @@ export interface UserPublic {
   display_name: string;
   role: Role;
   is_verified: boolean;
+  /** Finished the first-run orientation (/welcome). */
+  onboarded: boolean;
 }
 
 export interface AuthResponse {
@@ -26,10 +28,18 @@ export interface PublicTest {
   name: string;
   request: SimRequest;
   expect_status: number;
+  /** Keys/values the response JSON must contain (routing games). Null = status only. */
+  expect_body?: unknown;
 }
+
+export type GameMode = "practice" | "checkpoint";
 
 export interface GameVariant {
   slug: string;
+  mode: GameMode;
+  version: number;
+  /** Topic slug this game belongs to. */
+  topic: string;
   game_type: string;
   title: string;
   district: string;
@@ -61,7 +71,11 @@ export type GradeVerdict = "graded" | "rejected" | "load_error" | "timeout" | "c
 
 export interface GradeResponse {
   verdict: GradeVerdict;
+  /** After the hint penalty. */
   score: number;
+  raw_score: number;
+  hints_used: number;
+  hint_penalty: number;
   passed: boolean;
   stars: number;
   pass_threshold: number;
@@ -70,4 +84,33 @@ export interface GradeResponse {
   hidden_total: number;
   violations: { line: number; message: string }[];
   error: string | null;
+  /** Set when a retest cooldown started after this failed attempt. */
+  retry_at: string | null;
+}
+
+export interface CheckpointProgress {
+  best_score: number;
+  stars: number;
+  attempts: number;
+  passed: boolean;
+  passed_at: string | null;
+}
+
+export interface TopicProgress {
+  topic: string;
+  track: string;
+  status: "locked" | "unlocked" | "passed";
+  complete: boolean;
+  lesson_done: boolean;
+  practice_games: string[];
+  checkpoint_game: string | null;
+  practice_passed: string[];
+  checkpoint: CheckpointProgress | null;
+  consecutive_fails: number;
+  retry_at: string | null;
+}
+
+export interface Progress {
+  onboarded: boolean;
+  topics: TopicProgress[];
 }

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/Button";
 import { districtByKey } from "@/content/districts";
 import { cn } from "@/lib/cn";
-import { useLearning } from "@/stores/learning";
+import { useLearning } from "@/features/progress/useLearning";
 
 import { nextMission } from "./stats";
 

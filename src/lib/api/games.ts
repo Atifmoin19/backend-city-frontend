@@ -1,17 +1,24 @@
 import { api } from "./client";
-import type { GameVariant, GradeResponse, Hint } from "./types";
+import type { GameMode, GameVariant, GradeResponse, Hint, TopicProgress } from "./types";
+
+const game = (slug: string) => `/games/${encodeURIComponent(slug)}`;
 
 export const gamesApi = {
-  variant: (slug: string, seed?: number) =>
-    api<GameVariant>(`/games/${encodeURIComponent(slug)}/variant${seed ? `?seed=${seed}` : ""}`),
+  variant: (slug: string, mode: GameMode, seed?: number) =>
+    api<GameVariant>(`${game(slug)}/variant?mode=${mode}${seed ? `&seed=${seed}` : ""}`),
   hint: (slug: string, attemptToken: string, tier: number) =>
-    api<Hint>(`/games/${encodeURIComponent(slug)}/hint`, {
+    api<Hint>(`${game(slug)}/hint`, {
       method: "POST",
       body: { attempt_token: attemptToken, tier },
     }),
   grade: (slug: string, attemptToken: string, snippet: string) =>
-    api<GradeResponse>(`/games/${encodeURIComponent(slug)}/grade`, {
+    api<GradeResponse>(`${game(slug)}/grade`, {
       method: "POST",
       body: { attempt_token: attemptToken, snippet },
+    }),
+  practice: (slug: string, attemptToken: string, passed: boolean, score: number) =>
+    api<TopicProgress>(`${game(slug)}/practice`, {
+      method: "POST",
+      body: { attempt_token: attemptToken, passed, score },
     }),
 };

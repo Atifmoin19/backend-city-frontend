@@ -1,9 +1,10 @@
 import { DISTRICTS } from "@/content/districts";
-import { TOPICS, type Topic } from "@/content/topics";
-import type { TopicRecord } from "@/stores/learning";
+import { TOPICS, type GameRef, type Topic } from "@/content/topics";
 
-export function topicComplete(topic: Topic, r: TopicRecord | undefined): boolean {
-  return topic.game ? !!r?.checkpoint : !!r?.lessonDone;
+import type { TopicRecord } from "./records";
+
+export function topicComplete(_topic: Topic, r: TopicRecord | undefined): boolean {
+  return !!r?.complete;
 }
 
 export interface CityStats {
@@ -29,6 +30,14 @@ export function cityStats(records: Record<string, TopicRecord>): CityStats {
   };
 }
 
+/** First practice game not passed yet (the one to play next), if any. */
+export function nextPractice(topic: Topic, r: TopicRecord | undefined): GameRef | undefined {
+  return topic.practice.find((g) => !r?.practiceDone.includes(g.slug));
+}
+
+export const practiceHref = (slug: string) => `/play/${slug}?mode=practice`;
+export const checkpointHref = (slug: string) => `/play/${slug}?mode=checkpoint`;
+
 export interface Mission {
   topic: Topic;
   step: "briefing" | "practice" | "checkpoint";
@@ -39,9 +48,9 @@ export interface Mission {
 /** The next thing to do, in curriculum order. Null when every open topic is complete. */
 export function nextMission(records: Record<string, TopicRecord>): Mission | null {
   for (const topic of TOPICS) {
-    const r = records[topic.slug] ?? {};
+    const r = records[topic.slug];
     if (topicComplete(topic, r)) continue;
-    if (!r.lessonDone) {
+    if (!r?.lessonDone || !topic.checkpoint) {
       return {
         topic,
         step: "briefing",
@@ -49,19 +58,20 @@ export function nextMission(records: Record<string, TopicRecord>): Mission | nul
         href: `/learn/${topic.lesson}`,
       };
     }
-    if (topic.game && !r.practicePassed) {
+    const practice = nextPractice(topic, r);
+    if (practice) {
       return {
         topic,
         step: "practice",
-        label: `Practice: ${topic.title}`,
-        href: `/play/${topic.game}?mode=practice`,
+        label: `Practice: ${practice.title}`,
+        href: practiceHref(practice.slug),
       };
     }
     return {
       topic,
       step: "checkpoint",
-      label: `Checkpoint: ${topic.title}`,
-      href: `/play/${topic.game}?mode=checkpoint`,
+      label: `Checkpoint: ${topic.checkpoint.title}`,
+      href: checkpointHref(topic.checkpoint.slug),
     };
   }
   return null;

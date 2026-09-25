@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import { EMPTY_RECORD, type TopicRecord } from "./records";
 import { cityStats, nextMission } from "./stats";
+
+const rec = (r: Partial<TopicRecord>): TopicRecord => ({ ...EMPTY_RECORD, ...r });
 
 describe("city progress", () => {
   it("a new learner has nothing cleared and starts at the Academy briefing", () => {
@@ -8,19 +11,27 @@ describe("city progress", () => {
     expect(nextMission({})?.href).toBe("/learn/academy-python");
   });
 
-  it("lesson-only topics complete with the briefing; game topics need the checkpoint", () => {
+  it("walks briefing, then each practice game, then the checkpoint", () => {
     const records = {
-      "python-for-js": { lessonDone: true },
-      "how-requests-travel": { lessonDone: true },
-      "validate-signups": { lessonDone: true, practicePassed: true },
+      "python-for-js": rec({ lessonDone: true, complete: true }),
+      "how-requests-travel": rec({ lessonDone: true }),
     };
-    expect(cityStats(records).districtsCleared).toBe(2);
-    expect(nextMission(records)?.step).toBe("checkpoint");
+    expect(cityStats(records).districtsCleared).toBe(1);
+    expect(nextMission(records)?.href).toBe("/play/signal-codes?mode=practice");
+
+    records["how-requests-travel"] = rec({ lessonDone: true, practiceDone: ["signal-codes"] });
+    expect(nextMission(records)?.href).toBe("/play/method-lanes?mode=practice");
+
+    records["how-requests-travel"] = rec({
+      lessonDone: true,
+      practiceDone: ["signal-codes", "method-lanes"],
+      practicePassed: true,
+    });
+    expect(nextMission(records)?.href).toBe("/play/tower-relay?mode=checkpoint");
   });
 
   it("counts stars from checkpoints", () => {
-    expect(cityStats({ "validate-signups": { checkpoint: { score: 96, stars: 3 } } }).stars).toBe(
-      3,
-    );
+    const records = { "validate-signups": rec({ checkpoint: { score: 96, stars: 3 } }) };
+    expect(cityStats(records).stars).toBe(3);
   });
 });

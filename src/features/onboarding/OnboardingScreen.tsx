@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { SignHeading } from "@/components/ui/SignHeading";
 import { useSession } from "@/features/auth/useSession";
 import { cn } from "@/lib/cn";
-import { useLearning } from "@/stores/learning";
+import { useLearning } from "@/features/progress/useLearning";
 
 import { OnboardingVisual } from "./OnboardingVisual";
 import { SLIDES } from "./slides";
@@ -26,7 +26,7 @@ export function OnboardingScreen() {
   const last = i === SLIDES.length - 1;
 
   const finish = () => {
-    markOnboarded();
+    markOnboarded.mutate();
     router.push("/map");
   };
 

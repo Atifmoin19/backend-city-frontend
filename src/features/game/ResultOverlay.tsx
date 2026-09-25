@@ -24,6 +24,9 @@ interface ResultOverlayProps {
   result: GradeResponse;
   character: string;
   backHref: string;
+  lessonHref?: string;
+  /** Checkpoint fails in a row (from the saved record); after 2 we suggest a recap. */
+  fails: number;
   onRetry: () => void;
   onClose: () => void;
 }
@@ -33,9 +36,12 @@ export function ResultOverlay({
   result,
   character,
   backHref,
+  lessonHref,
+  fails,
   onRetry,
   onClose,
 }: ResultOverlayProps) {
+  const retryAt = result.retry_at ? new Date(result.retry_at) : null;
   const dialog = useRef<HTMLDivElement>(null);
   useEffect(() => {
     playSound(result.passed ? "win" : "lose");
@@ -68,7 +74,7 @@ export function ResultOverlay({
               <StatusLight status="bounce">Not yet</StatusLight>
             )}
             <SignHeading as="h2" id="result-title" className="mt-3 text-2xl sm:text-3xl">
-              {result.passed ? "The gate holds." : "Some fakes got through."}
+              {result.passed ? "Checkpoint cleared." : "Some requests went the wrong way."}
             </SignHeading>
           </div>
           <Character name={character} state={result.passed ? "celebrating" : "sad"} size={72} />
@@ -89,10 +95,30 @@ export function ResultOverlay({
               {result.public_results.length} · Hidden requests: {result.hidden_passed}/
               {result.hidden_total}
             </p>
+            {result.hint_penalty > 0 ? (
+              <p className="mt-1 text-sm text-text-3">
+                {result.raw_score}% correct, minus {result.hint_penalty} for {result.hints_used}{" "}
+                {result.hints_used === 1 ? "hint" : "hints"}.
+              </p>
+            ) : null}
             {!result.passed ? (
               <p className="mt-3 text-sm text-text-2">
-                Hidden requests probe the edges: exactly at the limits, one past them, missing
-                fields. Check every boundary in the goal.
+                Hidden requests probe the edges: exact limits, one past them, missing pieces, and
+                cases the public requests don&apos;t show. Check every rule in the brief.
+              </p>
+            ) : null}
+            {!result.passed && fails >= 2 && lessonHref ? (
+              <p className="mt-3 rounded-md border border-purple/40 bg-(--bc-byte-bubble) px-3 py-2 text-sm text-text-1">
+                Two tries in a row. A quick look at the briefing usually unlocks it.{" "}
+                <Link href={lessonHref} className="text-cyan underline">
+                  Review the briefing
+                </Link>
+              </p>
+            ) : null}
+            {retryAt ? (
+              <p className="mt-3 text-sm text-amber">
+                Next attempt opens at{" "}
+                {retryAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.
               </p>
             ) : null}
           </>

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { cityStats, nextMission } from "@/features/progress/stats";
-import type { TopicRecord } from "@/stores/learning";
+import type { TopicRecord } from "@/features/progress/records";
 
 /** HUD: the next thing to do, plus real progress through the open content. */
 export function MissionCard({ records }: { records: Record<string, TopicRecord> }) {

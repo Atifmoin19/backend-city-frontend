@@ -11,21 +11,32 @@ src/engine/*         game engine (harness client, editor, visualizer)   src/lib/
    ▼                                                                      ▼
 public/workers/pyodide.worker.mjs  (Python in the browser)               /api/* rewrite -> FastAPI
 src/components/*     design-system primitives, characters, layout
-src/stores/*         Zustand: preferences, learning progress
+src/stores/*         Zustand: preferences
 src/content/*        static curriculum: districts, topics, lessons
 ```
 
 ## Learning flow
 
 ```
-/map ─► /district/gatehouse ─► /learn/gatehouse-validation ─► /play/signup-gate?mode=practice ─► ?mode=checkpoint
-          3 steps with locks      5 steps, quick check gates      runs in browser; all public       new variant; hidden
-          (useLearning store)     each step; marks lessonDone     pass -> practicePassed            tests on server
+/map ─► /district/gatehouse ─► /learn/gatehouse-validation ─► /play/ticket-booth ─► /play/badge-check ─► /play/signup-gate?mode=checkpoint
+          steps with locks        quick checks gate each step     practice games: in the browser;          new variant; hidden
+                                  POST /me/progress/lessons/..    each clear POSTs /games/../practice      tests on the server
 ```
 
-Progress lives in `stores/learning.ts` (localStorage, keyed by user id) until the backend
-progress API exists. The map derives district state from it (`progressFrom`): nothing is ever
-pre-cleared; districts without content show "In production".
+Progress comes from the backend: `features/progress/useLearning` wraps `GET /me/progress`
+(React Query, per user) and turns it into `TopicRecord`s (`records.ts`); writes return the
+updated topic, which is patched into the cache. Topic → game lists are static in
+`content/topics.ts` and must match the backend seed. The map derives district state from the
+records (`progressFrom`): nothing is ever pre-cleared; districts without content show "In
+production". `legacy.ts` moves pre-API browser progress (onboarding, briefings) once.
+
+## Admin
+
+`/admin` (route group `(admin)`, `AdminShell`): role-gated in the UI, enforced by the backend.
+`ContentScreen` (tree + topic settings) → `GameEditor` (keyed per version; draft state local,
+JSON sections parsed on save) + `TestRunPanel`; `UsersScreen` → `UserDetail`. Client in
+`lib/api/admin.ts`. These screens show server-only content (hidden tests, reference solutions)
+to admins only.
 
 ## Game run (practice)
 

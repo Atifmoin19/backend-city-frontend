@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { EMPTY_RECORD } from "@/features/progress/records";
+
 import { activeDistrict, neighbor, progressFrom } from "./progress";
 
 describe("world map navigation", () => {
@@ -18,12 +20,12 @@ describe("world map navigation", () => {
     const p = progressFrom({});
     expect(Object.values(p).filter((s) => s === "done")).toHaveLength(0);
     expect(activeDistrict(p).key).toBe("academy");
-    expect(p["router-station"]).toBe("locked");
+    expect(p["data-vaults"]).toBe("locked");
   });
 
   it("a passed checkpoint clears the district", () => {
     expect(
-      progressFrom({ "validate-signups": { checkpoint: { score: 90, stars: 2 } } }).gatehouse,
+      progressFrom({ "validate-signups": { ...EMPTY_RECORD, complete: true } }).gatehouse,
     ).toBe("done");
   });
 });

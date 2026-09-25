@@ -9,7 +9,7 @@ import type { RunReport } from "@/engine/harness/protocol";
 import { useHarness } from "@/engine/harness/useHarness";
 import type { VisualizerHandle } from "@/engine/visualizer/RequestFlowVisualizer";
 import { gamesApi } from "@/lib/api/games";
-import type { GameVariant, GradeResponse } from "@/lib/api/types";
+import type { GameMode, GameVariant, GradeResponse } from "@/lib/api/types";
 
 import type { Speech } from "./CharacterCorner";
 import { playSound } from "@/lib/sound/engine";
@@ -19,15 +19,15 @@ export function practiceScore(report: RunReport | null): number | null {
   return Math.round((100 * report.results.filter((r) => r.passed).length) / report.results.length);
 }
 
-/** All game-screen state: variant, editor doc, practice runs, hints, checkpoint grading. */
-export type GameMode = "practice" | "checkpoint";
+export type { GameMode };
 
+/** All game-screen state: variant, editor doc, practice runs, hints, checkpoint grading. */
 export function useGamePlay(slug: string, mode: GameMode) {
   const [seed, setSeed] = useState<number | undefined>(undefined);
   // Practice and checkpoint get different variants: the checkpoint is never the one you practised
   const variant = useQuery({
     queryKey: ["variant", slug, mode, seed ?? "first"],
-    queryFn: () => gamesApi.variant(slug, seed),
+    queryFn: () => gamesApi.variant(slug, mode, seed),
     staleTime: Infinity,
   });
   const { client, status: harness } = useHarness();

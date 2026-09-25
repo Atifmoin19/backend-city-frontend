@@ -9,7 +9,7 @@ import { cityStats } from "@/features/progress/stats";
 import { RequireSession } from "@/features/session/RequireSession";
 import { UserMenu } from "@/features/session/UserMenu";
 import { cn } from "@/lib/cn";
-import { useLearning } from "@/stores/learning";
+import { useLearning } from "@/features/progress/useLearning";
 
 import { Wordmark } from "./Wordmark";
 

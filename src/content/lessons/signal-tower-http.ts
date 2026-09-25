@@ -115,5 +115,13 @@ Authorization: Bearer eyJhbGci...
           "Identity travels with every request. The server keeps no memory of the conversation.",
       },
     },
+    {
+      title: "Your shift",
+      byte: "No new syntax yet: you only set a few values in a real FastAPI server.",
+      body: [
+        "**Signal Codes**: set the status code the tower sends back for each outcome. **Method Lanes**: put each action on the right HTTP method.",
+        "Then the **Tower Relay** checkpoint combines both, plus visitors with no pilot badge (who are you?) and pilots who aren't allowed (we know you, and no). Hidden requests are graded on the server; 70% clears the tower.",
+      ],
+    },
   ],
 };
