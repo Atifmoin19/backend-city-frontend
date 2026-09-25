@@ -3,11 +3,12 @@
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui/Button";
+import { SettingsMenu } from "@/components/ui/SettingsMenu";
 import { useSession } from "@/features/auth/useSession";
 
 import { UserMenu } from "./UserMenu";
 
-/** Public-page header nav: "Log in" for visitors, map + account for signed-in engineers. */
+/** Public-page header nav: log in / sign up + settings for visitors, map + account for engineers. */
 export function HeaderSessionNav() {
   const { data: user, isPending } = useSession();
   if (isPending) return <span className="h-9 w-20" aria-hidden />;
@@ -22,8 +23,20 @@ export function HeaderSessionNav() {
     );
   }
   return (
-    <Link href="/login" className="text-sm font-medium text-text-2 hover:text-text-1">
-      Log in
-    </Link>
+    <>
+      <Link
+        href="/login"
+        className="px-2 text-sm font-medium text-text-2 transition-colors hover:text-text-1"
+      >
+        Log in
+      </Link>
+      <Link
+        href="/signup"
+        className={buttonClasses({ size: "sm", className: "hidden sm:inline-flex" })}
+      >
+        Sign up free
+      </Link>
+      <SettingsMenu />
+    </>
   );
 }

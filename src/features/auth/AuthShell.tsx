@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Wordmark } from "@/components/layout/Wordmark";
-import { PreferenceToggles } from "@/components/ui/PreferenceToggles";
+import { SettingsMenu } from "@/components/ui/SettingsMenu";
 import { SignHeading } from "@/components/ui/SignHeading";
 import { SkylineCanvas } from "@/features/landing/skyline/SkylineCanvas";
 
@@ -56,7 +56,7 @@ export function AuthShell({ title, subtitle, children, tagline, aside, footer }:
             <Wordmark />
           </span>
           <span className="hidden lg:block" />
-          <PreferenceToggles />
+          <SettingsMenu />
         </header>
         <main className="relative flex flex-1 items-center px-5 py-10 sm:px-10">
           <div className="mx-auto w-full max-w-md">

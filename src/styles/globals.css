@@ -121,6 +121,58 @@
     backdrop-filter: blur(var(--bc-glass-blur)) saturate(1.2);
     -webkit-backdrop-filter: blur(var(--bc-glass-blur)) saturate(1.2);
   }
+  /* Button plates (Button.tsx). Lit neon face + bevel + halo; the sheen sweeps on hover */
+  .plate {
+    isolation: isolate;
+    overflow: hidden;
+    text-shadow: 0 1px 0 rgb(255 255 255 / 0.35);
+  }
+  .plate::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      rgb(255 255 255 / 0.45) 48%,
+      transparent 62%
+    );
+    transform: translateX(-120%);
+    transition: transform 700ms var(--bc-ease-out);
+  }
+  .plate:hover::after {
+    transform: translateX(120%);
+  }
+  .plate-cyan {
+    background: var(--bc-plate-cyan-face);
+    box-shadow: var(--bc-plate-bevel), var(--bc-plate-cyan-halo);
+  }
+  .plate-cyan:hover {
+    background: var(--bc-plate-cyan-face-hover);
+    box-shadow: var(--bc-plate-bevel), var(--bc-plate-cyan-halo-hover);
+  }
+  .plate-green {
+    background: var(--bc-plate-green-face);
+    box-shadow: var(--bc-plate-bevel), var(--bc-plate-green-halo);
+  }
+  .plate-red {
+    background: var(--bc-plate-red-face);
+    box-shadow: var(--bc-plate-bevel), var(--bc-plate-red-halo);
+  }
+  .plate-ghost {
+    background: var(--bc-plate-ghost-face);
+    box-shadow: var(--bc-plate-ghost-bevel);
+  }
+  .plate-ghost:hover {
+    box-shadow: var(--bc-plate-ghost-glow);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .plate::after {
+      display: none;
+    }
+  }
+
   /* Street grid: ONLY on map and simulation surfaces (world map, visualizer) */
   .city-grid {
     background-image:

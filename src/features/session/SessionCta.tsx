@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui/Button";
@@ -13,13 +14,13 @@ export function SessionCta({ size = "lg", className }: { size?: Size; className?
   if (!isPending && user) {
     return (
       <Link href="/map" className={buttonClasses({ size, className })}>
-        Continue your shift
+        Continue your shift <ArrowRight aria-hidden className="size-4" />
       </Link>
     );
   }
   return (
     <Link href="/signup" className={buttonClasses({ size, className })}>
-      Start your first shift
+      Start your first shift <ArrowRight aria-hidden className="size-4" />
     </Link>
   );
 }

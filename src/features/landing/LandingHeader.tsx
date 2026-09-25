@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import { Wordmark } from "@/components/layout/Wordmark";
-import { PreferenceToggles } from "@/components/ui/PreferenceToggles";
 import { HeaderSessionNav } from "@/features/session/HeaderSessionNav";
 import { cn } from "@/lib/cn";
 
@@ -44,7 +43,6 @@ export function LandingHeader() {
         </nav>
         <div className="ml-auto flex items-center gap-3">
           <HeaderSessionNav />
-          <PreferenceToggles />
         </div>
       </div>
     </header>

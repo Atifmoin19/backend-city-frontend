@@ -74,15 +74,15 @@ in performance mode.
 
 ## Components (`src/components`)
 
-| Component                                     | Notes                                                                          |
-| --------------------------------------------- | ------------------------------------------------------------------------------ |
-| `ui/Button` (+ `buttonClasses` for links)     | variants primary · ghost · quiet · success · danger; sizes sm/md/lg; `loading` |
-| `ui/StatusLight`, `ui/Led`                    | status → icon + color + label (flow, pass, bounce, crash, ai, locked, busy)    |
-| `ui/Panel`                                    | solid / glass / editor surfaces                                                |
-| `ui/SignHeading`                              | display type; `lit` = gradient                                                 |
-| `ui/TextField`                                | label, hint, error (amber + icon), aria wiring                                 |
-| `ui/Kbd`, `ui/PreferenceToggles`              | shortcuts; always-visible mute + performance mode                              |
-| `layout/SiteHeader`, `Wordmark`, `SiteFooter` | chrome                                                                         |
+| Component                                      | Notes                                                                            |
+| ---------------------------------------------- | -------------------------------------------------------------------------------- |
+| `ui/Button` (+ `buttonClasses` for links)      | variants primary · ghost · quiet · success · danger; sizes sm/md/lg; `loading`   |
+| `ui/StatusLight`, `ui/Led`                     | status → icon + color + label (flow, pass, bounce, crash, ai, locked, busy)      |
+| `ui/Panel`                                     | solid / glass / editor surfaces                                                  |
+| `ui/SignHeading`                               | display type; `lit` = gradient                                                   |
+| `ui/TextField`                                 | label, hint, error (amber + icon), aria wiring                                   |
+| `ui/Kbd`, `ui/SettingsMenu`, `ui/SettingsRows` | shortcuts; labeled sound + performance switches (in account menu when signed in) |
+| `layout/SiteHeader`, `Wordmark`, `SiteFooter`  | chrome                                                                           |
 
 ## Homepage 3D city
 

@@ -2,6 +2,14 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 5 (owner feedback: buttons, mission clarity, headers)
+
+### Done
+
+- Buttons are lit sign plates: gradient face, bevel, tinted halo, hover sheen (`.plate-*` in globals.css, tokens `--bc-plate-*`). Ghost buttons are glass plates. Hero secondary CTA is a real ghost button.
+- Game screen: `MissionBrief` states the win condition, numbered rules from the backend (`objective`, `rules` on the variant), and the three moves. Editor has a `main.py` tab bar naming the editable lines. Practice shows "x/3 requests correct" instead of a % meter. `StepTrail` (Briefing → Practice → Checkpoint) in the header; back button names the district.
+- Headers: mystery icon buttons replaced. Signed in: account menu (avatar, email, map, labeled sound/performance switches, log out). Visitors: Log in + Sign up free + a labeled Settings menu. Stat chips say "districts cleared" / "stars earned".
+
 ## 2026-09-25 — Round 4 (owner feedback)
 
 ### Done

@@ -38,6 +38,10 @@ export interface GameVariant {
   is_checkpoint: boolean;
   pass_threshold: number;
   scenario: { intro: string; goal: string };
+  /** One sentence: what winning looks like. */
+  objective: string;
+  /** The exact requirements for this variant, one per item (may contain `code`). */
+  rules: string[];
   starter_code: string;
   editable_region: { start_marker: string; end_marker: string };
   public_tests: PublicTest[];

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { PreferenceToggles } from "@/components/ui/PreferenceToggles";
 import { cityStats } from "@/features/progress/stats";
 import { RequireSession } from "@/features/session/RequireSession";
 import { UserMenu } from "@/features/session/UserMenu";
@@ -64,17 +63,16 @@ function AppBar() {
               label="Districts cleared"
             >
               {stats.districtsCleared}/{stats.districtsTotal}{" "}
-              <span className="font-normal text-text-2">districts</span>
+              <span className="font-normal text-text-2">districts cleared</span>
             </StatChip>
             <StatChip
               icon={<Star aria-hidden className="size-4 fill-amber text-amber" />}
               label="Stars"
             >
-              {stats.stars} <span className="font-normal text-text-2">stars</span>
+              {stats.stars} <span className="font-normal text-text-2">stars earned</span>
             </StatChip>
           </dl>
           <UserMenu />
-          <PreferenceToggles />
         </div>
       </div>
     </header>
@@ -92,7 +90,7 @@ function StatChip({
 }) {
   return (
     <div
-      className="flex h-9 items-center gap-2 rounded-md border border-line bg-bg-2 px-3 text-sm"
+      className="plate-ghost flex h-9 items-center gap-2 rounded-full border border-line-strong px-3.5 text-sm"
       title={label}
     >
       {icon}

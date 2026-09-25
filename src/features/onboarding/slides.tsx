@@ -73,12 +73,12 @@ const CONTROLS: { icon: typeof Map; keys: ReactNode; body: string }[] = [
   {
     icon: Volume2,
     keys: <span>Sound toggle</span>,
-    body: "Top right on every screen. Off by default.",
+    body: "In your account menu, top right on every screen. Off by default.",
   },
   {
     icon: Gauge,
     keys: <span>Performance mode</span>,
-    body: "Turns off heavy effects on slower machines.",
+    body: "Same menu. Turns off heavy effects on slower machines.",
   },
 ];
 

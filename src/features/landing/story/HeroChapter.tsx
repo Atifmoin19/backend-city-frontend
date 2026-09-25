@@ -3,6 +3,7 @@
 import { ChevronDown } from "lucide-react";
 import { motion } from "motion/react";
 
+import { buttonClasses } from "@/components/ui/Button";
 import { SessionCta } from "@/features/session/SessionCta";
 
 import { LiveLegend, type TrafficCounts } from "../LiveLegend";
@@ -50,10 +51,7 @@ export function HeroChapter({ counts }: { counts: TrafficCounts }) {
         className="mt-9 flex flex-wrap items-center gap-4"
       >
         <SessionCta />
-        <a
-          href="#academy"
-          className="inline-flex items-center gap-2 text-sm font-medium text-text-2 hover:text-text-1"
-        >
+        <a href="#academy" className={buttonClasses({ variant: "ghost", size: "lg" })}>
           Fly through the city <ChevronDown aria-hidden className="size-4 animate-bounce" />
         </a>
       </motion.div>

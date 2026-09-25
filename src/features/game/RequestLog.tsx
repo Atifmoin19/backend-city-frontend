@@ -19,11 +19,11 @@ export function RequestLog({
   return (
     <div className="rounded-lg border border-line bg-bg-2">
       <div className="flex items-center justify-between border-b border-line px-4 py-2.5 text-xs text-text-3">
-        <span>Public requests</span>
+        <span>Requests the city sends to your server</span>
         <span>
           {results
             ? `${results.filter((r) => r.passed).length}/${results.length} as expected`
-            : "Not run yet"}
+            : "Press Run requests to send them"}
         </span>
       </div>
       <ul className="divide-y divide-line">
@@ -36,7 +36,7 @@ export function RequestLog({
             >
               <span className="truncate text-text-1">{t.name}</span>
               <span className="text-right text-xs text-text-3">
-                expects <span className="tabular font-mono text-text-2">{t.expect_status}</span>
+                should get <span className="tabular font-mono text-text-2">{t.expect_status}</span>
               </span>
               <span className="truncate font-mono text-xs text-text-3">
                 <span className="text-cyan">{t.request.method}</span> {t.request.path}{" "}
@@ -49,7 +49,7 @@ export function RequestLog({
                     <span className="sr-only">{r.passed ? "as expected" : "not as expected"}</span>
                   </StatusLight>
                 ) : (
-                  <span className="text-xs text-text-3">waiting</span>
+                  <span className="text-xs text-text-3">not sent</span>
                 )}
               </span>
             </li>
