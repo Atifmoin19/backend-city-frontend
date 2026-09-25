@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "motion/react";
 import { useCallback, useState } from "react";
 
 import { buttonClasses } from "@/components/ui/Button";
 import { SignHeading } from "@/components/ui/SignHeading";
+import { SessionCta } from "@/features/session/SessionCta";
 
 import { LiveLegend, type TrafficCounts } from "./LiveLegend";
 import { SkylineCanvas } from "./skyline/SkylineCanvas";
@@ -42,15 +42,10 @@ export function Hero() {
             bounce, or crash it.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link href="/signup" className={buttonClasses({ size: "lg" })}>
-              Start your first shift
-            </Link>
-            <Link
-              href="/learn/gatehouse-validation"
-              className={buttonClasses({ variant: "ghost", size: "lg" })}
-            >
-              Try the Gatehouse
-            </Link>
+            <SessionCta />
+            <a href="#how" className={buttonClasses({ variant: "ghost", size: "lg" })}>
+              See how it works
+            </a>
           </div>
         </motion.div>
         <motion.div

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Lock } from "lucide-react";
+import { Check, Construction } from "lucide-react";
 import { forwardRef } from "react";
 
 import type { District } from "@/content/districts";
@@ -18,16 +18,29 @@ interface DistrictNodeProps {
 const STATE_LABEL: Record<DistrictState, string> = {
   done: "cleared",
   active: "open",
-  locked: "not available yet",
+  locked: "under construction",
 };
 
-/** A district as a little cluster of towers. Lit windows = cleared, pulsing ring = current. */
+const TOWERS = [
+  { x: 26, w: 16, h: 30 },
+  { x: 44, w: 18, h: 46 },
+  { x: 64, w: 14, h: 36 },
+  { x: 80, w: 12, h: 22 },
+];
+
+/** An illustrated city block on an isometric plate. */
 export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(function DistrictNode(
   { district, state, selected, onSelect },
   ref,
 ) {
-  const windows =
-    state === "done" ? "fill-green" : state === "active" ? "fill-cyan" : "fill-line-strong";
+  const building = state === "locked";
+  const windowFill = state === "done" ? "var(--bc-green)" : "var(--bc-cyan)";
+  const plateStroke =
+    state === "done"
+      ? "var(--bc-green)"
+      : state === "active"
+        ? "var(--bc-cyan)"
+        : "var(--bc-line-strong)";
   return (
     <button
       ref={ref}
@@ -35,86 +48,95 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
       onClick={onSelect}
       aria-pressed={selected}
       aria-label={`${district.name}, level ${district.level}, ${STATE_LABEL[state]}`}
-      className="group absolute -translate-x-1/2 -translate-y-[78%] rounded-md outline-offset-4"
+      className="group absolute w-28 -translate-x-1/2 -translate-y-[72%] rounded-lg outline-offset-4 sm:w-32"
       style={{ left: `${district.map.x}%`, top: `${district.map.y}%` }}
     >
-      {state === "active" ? (
-        <span
-          aria-hidden
-          data-ambient
-          className="absolute -inset-3 animate-pulse-led rounded-full border border-cyan/60 shadow-glow-cyan"
-        />
-      ) : null}
-      <svg
-        viewBox="0 0 48 40"
+      {/* level badge */}
+      <span
         className={cn(
-          "h-12 w-14 transition-transform duration-(--bc-dur-2) ease-out group-hover:-translate-y-0.5 sm:h-14 sm:w-16",
-          selected && "-translate-y-1",
+          "absolute -top-2 left-1/2 z-10 -translate-x-1/2 rounded-sm border px-1.5 py-0.5 font-mono text-[10px] leading-none",
+          state === "locked"
+            ? "border-line-strong bg-bg-2 text-text-3"
+            : "border-cyan/50 bg-bg-1 text-cyan",
         )}
       >
-        <rect
-          x="4"
-          y="16"
-          width="12"
-          height="24"
-          className={state === "locked" ? "fill-bg-3" : "fill-[#213060]"}
+        L{district.level}
+      </span>
+      <svg
+        viewBox="0 0 110 96"
+        className={cn(
+          "w-full transition-transform duration-(--bc-dur-2) ease-out group-hover:-translate-y-1",
+          selected && "-translate-y-1.5",
+          state === "active" && "drop-shadow-[0_0_18px_rgb(62_230_255/0.45)]",
+          state === "done" && "drop-shadow-[0_0_14px_rgb(77_255_154/0.3)]",
+        )}
+      >
+        {/* plate */}
+        <polygon
+          points="55,62 105,78 55,94 5,78"
+          fill="var(--bc-bg-2)"
+          stroke={plateStroke}
+          strokeWidth={selected ? 2 : 1.2}
         />
-        <rect
-          x="18"
-          y="4"
-          width="13"
-          height="36"
-          className={state === "locked" ? "fill-bg-3" : "fill-[#1a2750]"}
-        />
-        <rect
-          x="33"
-          y="12"
-          width="11"
-          height="28"
-          className={state === "locked" ? "fill-bg-3" : "fill-[#213060]"}
-        />
-        {[
-          [7, 20],
-          [11, 26],
-          [7, 32],
-          [21, 9],
-          [26, 15],
-          [21, 21],
-          [26, 27],
-          [21, 33],
-          [36, 17],
-          [40, 23],
-          [36, 30],
-        ].map(([x, y]) => (
-          <rect
-            key={`${x}-${y}`}
-            x={x}
-            y={y}
-            width="2.5"
-            height="2.5"
-            className={windows}
-            opacity={state === "locked" ? 0.5 : 0.95}
-          />
+        <polygon points="5,78 55,94 55,96 5,80" fill="var(--bc-bg-1)" />
+        {TOWERS.map((t, i) => (
+          <g key={i} opacity={building ? 0.55 : 1}>
+            <rect
+              x={t.x}
+              y={80 - t.h - 4}
+              width={t.w}
+              height={t.h}
+              fill={i % 2 ? "#1a2750" : "#213060"}
+              stroke={building ? "var(--bc-line-strong)" : "none"}
+              strokeDasharray={building ? "2 2" : undefined}
+            />
+            {!building
+              ? Array.from({ length: Math.floor(t.h / 8) }).map((_, r) => (
+                  <rect
+                    key={r}
+                    x={t.x + 3}
+                    y={80 - t.h + r * 8}
+                    width={t.w - 6}
+                    height={2.5}
+                    fill={windowFill}
+                    opacity={0.35 + ((r + i) % 3) * 0.25}
+                  />
+                ))
+              : null}
+          </g>
         ))}
-        <rect
-          x="0"
-          y="39"
-          width="48"
-          height="1"
-          className={state === "locked" ? "fill-line-strong" : "fill-cyan/60"}
-        />
+        {building ? (
+          <g stroke="var(--bc-text-3)" strokeWidth="1.2" fill="none">
+            {/* scaffolding + crane: honest "under construction" */}
+            <path d="M24 76 V44 M36 76 V44 M24 60 H36 M24 48 H36 M24 60 L36 48" />
+            <path d="M86 76 V18 M86 18 H60 M86 24 L70 18 M64 18 V30" />
+            <rect x="60" y="30" width="8" height="6" fill="var(--bc-text-3)" stroke="none" />
+          </g>
+        ) : null}
+        {state === "active" ? (
+          <circle
+            cx="55"
+            cy="10"
+            r="3"
+            fill="var(--bc-cyan)"
+            className="animate-pulse-led"
+            data-ambient
+          />
+        ) : null}
       </svg>
       <span
         className={cn(
-          "absolute top-full left-1/2 mt-1.5 flex -translate-x-1/2 items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs font-medium whitespace-nowrap",
-          state === "locked" ? "text-text-2" : "text-text-1",
-          selected && "bg-bg-2 ring-1 ring-cyan/50",
+          "mx-auto mt-1 flex w-fit items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap",
+          selected
+            ? "border-cyan/60 bg-bg-1 text-text-1 shadow-glow-cyan"
+            : "border-line bg-bg-1/80 text-text-1",
+          state === "locked" && !selected && "text-text-2",
         )}
       >
-        {state === "done" ? <Check aria-hidden className="size-3 text-green" /> : null}
-        {state === "locked" ? <Lock aria-hidden className="size-3" /> : null}
-        <span className="hidden sm:inline">{district.name.replace("The ", "")}</span>
-        <span className="font-mono sm:hidden">L{district.level}</span>
+        {state === "done" ? <Check aria-hidden className="size-3.5 text-green" /> : null}
+        {state === "locked" ? <Construction aria-hidden className="size-3.5 text-text-3" /> : null}
+        {state === "active" ? <span aria-hidden className="size-1.5 rounded-full bg-cyan" /> : null}
+        {district.name.replace("The ", "")}
       </span>
     </button>
   );

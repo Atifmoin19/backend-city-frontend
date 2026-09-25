@@ -37,7 +37,7 @@ export function SignupForm() {
     setFormError(null);
     try {
       await register.mutateAsync(data);
-      router.push("/map");
+      router.push("/welcome");
     } catch (err) {
       for (const e of mapAuthError(err)) {
         if (e.field && (FIELDS as readonly string[]).includes(e.field)) {

@@ -1,4 +1,4 @@
-export type DiagramKey = "gate-traffic" | "request-pipeline" | "status-families";
+export type DiagramKey = "gate-traffic" | "request-pipeline" | "status-families" | "http-exchange";
 
 export interface CheckQuestion {
   prompt: string;

@@ -9,6 +9,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import { useSlowPending } from "@/lib/useSlowPending";
+import { useLearningStore } from "@/stores/learning";
 
 import { AuthShell } from "./AuthShell";
 import { mapAuthError } from "./errors";
@@ -40,8 +41,9 @@ export function LoginForm() {
   const onSubmit = form.handleSubmit(async (data) => {
     setFormError(null);
     try {
-      await login.mutateAsync(data);
-      router.push(next);
+      const { user } = await login.mutateAsync(data);
+      // First visit on this browser: show the orientation before the map
+      router.push(useLearningStore.getState().onboarded[user.id] ? next : "/welcome");
     } catch (err) {
       setFormError(mapAuthError(err)[0]?.message ?? "Something went wrong.");
     }

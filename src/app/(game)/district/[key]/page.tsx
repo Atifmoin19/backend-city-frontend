@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { AppShell } from "@/components/layout/AppShell";
 import { districtByKey } from "@/content/districts";
 import { topicsFor } from "@/content/topics";
 import { DistrictScreen } from "@/features/district/DistrictScreen";
@@ -12,5 +13,9 @@ export default async function DistrictPage({ params }: PageProps<"/district/[key
   const district = districtByKey(key);
   const topics = district ? topicsFor(district.key) : [];
   if (!district || topics.length === 0) notFound();
-  return <DistrictScreen district={district} topics={topics} />;
+  return (
+    <AppShell>
+      <DistrictScreen district={district} topics={topics} />
+    </AppShell>
+  );
 }

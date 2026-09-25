@@ -1,5 +1,6 @@
 import { DISTRICTS, type DistrictKey } from "@/content/districts";
 import { OPEN_DISTRICTS, topicsFor } from "@/content/topics";
+import { topicComplete } from "@/features/progress/stats";
 import type { TopicRecord } from "@/stores/learning";
 
 export type DistrictState = "done" | "active" | "locked";
@@ -15,7 +16,7 @@ export function progressFrom(
       continue;
     }
     const topics = topicsFor(d.key);
-    out[d.key] = topics.every((t) => records[t.slug]?.checkpoint) ? "done" : "active";
+    out[d.key] = topics.every((t) => topicComplete(t, records[t.slug])) ? "done" : "active";
   }
   return out;
 }

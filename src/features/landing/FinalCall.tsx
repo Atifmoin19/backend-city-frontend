@@ -1,8 +1,6 @@
-import Link from "next/link";
-
 import { Byte } from "@/components/characters/Byte";
-import { buttonClasses } from "@/components/ui/Button";
 import { SignHeading } from "@/components/ui/SignHeading";
+import { SessionCta } from "@/features/session/SessionCta";
 
 export function FinalCall() {
   return (
@@ -21,9 +19,7 @@ export function FinalCall() {
           Free while in early access. Everything runs in your browser, so the first lesson loads
           before your coffee does.
         </p>
-        <Link href="/signup" className={buttonClasses({ size: "lg", className: "mt-9" })}>
-          Start your first shift
-        </Link>
+        <SessionCta className="mt-9" />
       </div>
     </section>
   );

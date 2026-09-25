@@ -1,5 +1,6 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+
+import { HeaderSessionNav } from "@/features/session/HeaderSessionNav";
 
 import { PreferenceToggles } from "@/components/ui/PreferenceToggles";
 import { cn } from "@/lib/cn";
@@ -16,11 +17,7 @@ export function SiteHeader({ children, className }: { children?: ReactNode; clas
     >
       <Wordmark />
       <nav className="flex items-center gap-2 sm:gap-4" aria-label="Main">
-        {children ?? (
-          <Link href="/login" className="text-sm font-medium text-text-2 hover:text-text-1">
-            Log in
-          </Link>
-        )}
+        {children ?? <HeaderSessionNav />}
         <PreferenceToggles />
       </nav>
     </header>

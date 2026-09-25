@@ -17,8 +17,8 @@ describe("world map navigation", () => {
   it("a brand-new learner has nothing cleared and starts at the first open district", () => {
     const p = progressFrom({});
     expect(Object.values(p).filter((s) => s === "done")).toHaveLength(0);
-    expect(activeDistrict(p).key).toBe("gatehouse");
-    expect(p["signal-tower"]).toBe("locked");
+    expect(activeDistrict(p).key).toBe("academy");
+    expect(p["router-station"]).toBe("locked");
   });
 
   it("a passed checkpoint clears the district", () => {

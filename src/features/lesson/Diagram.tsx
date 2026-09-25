@@ -1,11 +1,13 @@
 import type { DiagramKey } from "@/content/lessons/types";
 
 import { GateTraffic } from "./diagrams/GateTraffic";
+import { HttpExchange } from "./diagrams/HttpExchange";
 import { RequestPipeline } from "./diagrams/RequestPipeline";
 import { StatusFamilies } from "./diagrams/StatusFamilies";
 
 const DIAGRAMS: Record<DiagramKey, () => React.JSX.Element> = {
   "gate-traffic": GateTraffic,
+  "http-exchange": HttpExchange,
   "request-pipeline": RequestPipeline,
   "status-families": StatusFamilies,
 };

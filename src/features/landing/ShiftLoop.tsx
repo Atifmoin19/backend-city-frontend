@@ -33,7 +33,8 @@ const STEPS = [
 export function ShiftLoop() {
   return (
     <section
-      className="border-t border-line bg-bg-0 px-5 py-24 sm:px-8 lg:py-32"
+      id="how"
+      className="scroll-mt-4 border-t border-line bg-bg-0 px-5 py-24 sm:px-8 lg:py-32"
       aria-labelledby="shift-title"
     >
       <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-20">

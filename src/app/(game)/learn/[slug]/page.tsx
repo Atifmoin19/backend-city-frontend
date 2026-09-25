@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { AppShell } from "@/components/layout/AppShell";
 import { lessonBySlug } from "@/content/lessons";
 import { topicByLesson } from "@/content/topics";
 import { LessonScreen } from "@/features/lesson/LessonScreen";
@@ -12,5 +13,9 @@ export default async function LearnPage({ params }: PageProps<"/learn/[slug]">) 
   const lesson = lessonBySlug(slug);
   const topic = topicByLesson(slug);
   if (!lesson || !topic) notFound();
-  return <LessonScreen lesson={lesson} topic={topic} />;
+  return (
+    <AppShell>
+      <LessonScreen lesson={lesson} topic={topic} />
+    </AppShell>
+  );
 }

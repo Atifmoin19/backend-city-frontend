@@ -13,7 +13,9 @@ export interface TopicRecord {
 
 interface LearningState {
   byUser: Record<string, Record<string, TopicRecord>>;
+  onboarded: Record<string, boolean>;
   update: (userKey: string, topic: string, patch: Partial<TopicRecord>) => void;
+  setOnboarded: (userKey: string) => void;
 }
 
 /**
@@ -24,6 +26,8 @@ export const useLearningStore = create<LearningState>()(
   persist(
     (set) => ({
       byUser: {},
+      onboarded: {},
+      setOnboarded: (userKey) => set((s) => ({ onboarded: { ...s.onboarded, [userKey]: true } })),
       update: (userKey, topic, patch) =>
         set((s) => ({
           byUser: {
@@ -46,8 +50,12 @@ export function useLearning() {
   const key = user?.id ?? "guest";
   const records = useLearningStore((s) => s.byUser[key] ?? EMPTY);
   const update = useLearningStore((s) => s.update);
+  const onboarded = useLearningStore((s) => !!s.onboarded[key]);
+  const setOnboarded = useLearningStore((s) => s.setOnboarded);
   return {
     records,
+    onboarded,
+    markOnboarded: () => setOnboarded(key),
     record: (topic: string): TopicRecord => records[topic] ?? {},
     update: (topic: string, patch: Partial<TopicRecord>) => update(key, topic, patch),
   };
