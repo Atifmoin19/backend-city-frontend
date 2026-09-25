@@ -13,12 +13,12 @@ const C = {
   green: 0x4dff9a,
   amber: 0xffb547,
   red: 0xff4d6d,
-  line: 0x1f2a4a,
-  lineStrong: 0x2f3d68,
-  body: 0x111a3a,
-  bodyDark: 0x0d1430,
-  window: 0x1a2447,
-  text: 0xaab5d3,
+  line: 0x2c3b69,
+  lineStrong: 0x445890,
+  body: 0x213060,
+  bodyDark: 0x1a2750,
+  window: 0x2a3a6e,
+  text: 0xc5cee8,
 };
 
 const WIN_COLS = 4;

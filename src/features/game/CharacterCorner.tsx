@@ -34,7 +34,7 @@ export function CharacterCorner({
             className={cn(
               "pointer-events-auto mt-3 max-w-64 rounded-md border px-3.5 py-2.5 text-sm shadow-panel",
               isByte
-                ? "border-purple/50 bg-[#1a1433] text-text-1 shadow-glow-purple"
+                ? "border-purple/50 bg-[#261d4a] text-text-1 shadow-glow-purple"
                 : "border-line-strong bg-bg-2 text-text-1",
             )}
             aria-live="polite"

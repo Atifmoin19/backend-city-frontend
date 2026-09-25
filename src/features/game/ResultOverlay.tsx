@@ -22,12 +22,19 @@ const VERDICT_TEXT: Record<Exclude<GradeResponse["verdict"], "graded">, string> 
 interface ResultOverlayProps {
   result: GradeResponse;
   character: string;
+  backHref: string;
   onRetry: () => void;
   onClose: () => void;
 }
 
 /** Checkpoint result. Dramatic, never humiliating (ideology 9.2). */
-export function ResultOverlay({ result, character, onRetry, onClose }: ResultOverlayProps) {
+export function ResultOverlay({
+  result,
+  character,
+  backHref,
+  onRetry,
+  onClose,
+}: ResultOverlayProps) {
   const dialog = useRef<HTMLDivElement>(null);
   useEffect(() => {
     dialog.current?.focus();
@@ -103,8 +110,8 @@ export function ResultOverlay({ result, character, onRetry, onClose }: ResultOve
 
         <div className="mt-8 flex flex-wrap gap-3">
           {result.passed ? (
-            <Link href="/map" className={buttonClasses({ variant: "success" })}>
-              Back to the map
+            <Link href={backHref} className={buttonClasses({ variant: "success" })}>
+              Back to the district
             </Link>
           ) : null}
           <Button variant={result.passed ? "ghost" : "primary"} onClick={onRetry}>

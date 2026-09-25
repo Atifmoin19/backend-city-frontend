@@ -17,8 +17,8 @@ interface DistrictNodeProps {
 
 const STATE_LABEL: Record<DistrictState, string> = {
   done: "cleared",
-  active: "in progress",
-  locked: "locked",
+  active: "open",
+  locked: "not available yet",
 };
 
 /** A district as a little cluster of towers. Lit windows = cleared, pulsing ring = current. */
@@ -57,21 +57,21 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
           y="16"
           width="12"
           height="24"
-          className={state === "locked" ? "fill-bg-2" : "fill-[#111a3a]"}
+          className={state === "locked" ? "fill-bg-3" : "fill-[#213060]"}
         />
         <rect
           x="18"
           y="4"
           width="13"
           height="36"
-          className={state === "locked" ? "fill-bg-2" : "fill-[#0d1430]"}
+          className={state === "locked" ? "fill-bg-3" : "fill-[#1a2750]"}
         />
         <rect
           x="33"
           y="12"
           width="11"
           height="28"
-          className={state === "locked" ? "fill-bg-2" : "fill-[#111a3a]"}
+          className={state === "locked" ? "fill-bg-3" : "fill-[#213060]"}
         />
         {[
           [7, 20],
@@ -107,7 +107,7 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
       <span
         className={cn(
           "absolute top-full left-1/2 mt-1.5 flex -translate-x-1/2 items-center gap-1 rounded-sm px-1.5 py-0.5 text-xs font-medium whitespace-nowrap",
-          state === "locked" ? "text-text-3" : "text-text-1",
+          state === "locked" ? "text-text-2" : "text-text-1",
           selected && "bg-bg-2 ring-1 ring-cyan/50",
         )}
       >

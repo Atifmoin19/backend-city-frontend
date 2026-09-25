@@ -4,7 +4,8 @@ import { GameScreen } from "@/features/game/GameScreen";
 
 export const metadata: Metadata = { title: "Play" };
 
-export default async function PlayPage({ params }: PageProps<"/play/[slug]">) {
+export default async function PlayPage({ params, searchParams }: PageProps<"/play/[slug]">) {
   const { slug } = await params;
-  return <GameScreen slug={slug} />;
+  const { mode } = await searchParams;
+  return <GameScreen slug={slug} mode={mode === "checkpoint" ? "checkpoint" : "practice"} />;
 }

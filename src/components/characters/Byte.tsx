@@ -35,8 +35,8 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
     >
       <defs>
         <radialGradient id="byte-body" cx="40%" cy="30%" r="80%">
-          <stop offset="0%" stopColor="#2a3766" />
-          <stop offset="100%" stopColor="#121a33" />
+          <stop offset="0%" stopColor="#3a4c88" />
+          <stop offset="100%" stopColor="#1d2a52" />
         </radialGradient>
       </defs>
       {/* antenna */}
@@ -70,7 +70,7 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
         strokeWidth="2"
       />
       {/* visor */}
-      <rect x="26" y="34" width="48" height="26" rx="11" fill="#070b16" />
+      <rect x="26" y="34" width="48" height="26" rx="11" fill="#0b1124" />
       <motion.g animate={{ y: eye.y }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
         <motion.ellipse
           cx="40"
@@ -98,7 +98,7 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
         width="32"
         height="14"
         rx="6"
-        fill="#121a33"
+        fill="#1d2a52"
         stroke="var(--bc-line-strong)"
         strokeWidth="2"
       />

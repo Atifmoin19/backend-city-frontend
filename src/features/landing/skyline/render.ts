@@ -5,10 +5,10 @@ const COLORS = {
   green: "#4dff9a",
   amber: "#ffb547",
   red: "#ff4d6d",
-  bodyA: "#0d1430",
-  bodyB: "#111a3a",
-  line: "rgba(62,230,255,0.13)",
-  window: "rgba(170,190,255,0.07)",
+  bodyA: "#1a2750",
+  bodyB: "#213060",
+  line: "rgba(62,230,255,0.2)",
+  window: "rgba(170,190,255,0.13)",
 };
 
 export function render(ctx: CanvasRenderingContext2D, scene: Scene): void {

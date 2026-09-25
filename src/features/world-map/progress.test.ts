@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { activeDistrict, DEMO_PROGRESS, neighbor } from "./progress";
+import { activeDistrict, neighbor, progressFrom } from "./progress";
 
 describe("world map navigation", () => {
   it("left/right follow the road in level order", () => {
@@ -14,7 +14,16 @@ describe("world map navigation", () => {
     expect(neighbor("skyline", "up")).toBe("skyline");
   });
 
-  it("starts the learner on the active district", () => {
-    expect(activeDistrict(DEMO_PROGRESS).key).toBe("gatehouse");
+  it("a brand-new learner has nothing cleared and starts at the first open district", () => {
+    const p = progressFrom({});
+    expect(Object.values(p).filter((s) => s === "done")).toHaveLength(0);
+    expect(activeDistrict(p).key).toBe("gatehouse");
+    expect(p["signal-tower"]).toBe("locked");
+  });
+
+  it("a passed checkpoint clears the district", () => {
+    expect(
+      progressFrom({ "validate-signups": { checkpoint: { score: 90, stars: 2 } } }).gatehouse,
+    ).toBe("done");
   });
 });

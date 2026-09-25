@@ -4,19 +4,19 @@
  */
 :root {
   /* Night ground: deep navy, never pure black */
-  --bc-bg-0: #060913; /* deepest: page edges, map void */
-  --bc-bg-1: #0a0e1a; /* base */
-  --bc-bg-2: #0f1528; /* raised panel */
-  --bc-bg-3: #161e38; /* hover / active row */
-  --bc-editor: #0c1121; /* calm, solid code surface */
-  --bc-editor-gutter: #0a0f1d;
+  --bc-bg-0: #0b1124; /* deepest: page edges, map void */
+  --bc-bg-1: #10182f; /* base */
+  --bc-bg-2: #172242; /* raised panel */
+  --bc-bg-3: #203057; /* hover / active row */
+  --bc-editor: #121a33; /* calm, solid code surface */
+  --bc-editor-gutter: #0f162c;
 
-  --bc-line: #1f2a4a; /* hairlines, cables at rest */
-  --bc-line-strong: #2f3d68;
+  --bc-line: #2c3b69; /* hairlines, cables at rest */
+  --bc-line-strong: #445890;
 
-  --bc-text-1: #e9eefb; /* primary */
-  --bc-text-2: #aab5d3; /* secondary, 9:1 on bg-1 */
-  --bc-text-3: #7d8bb0; /* tertiary, >=4.5:1 on bg-1 */
+  --bc-text-1: #f2f5fd; /* primary */
+  --bc-text-2: #c5cee8; /* secondary, ~10:1 on bg-1 */
+  --bc-text-3: #9aa8cc; /* tertiary, ~6:1 on bg-1 */
 
   /* Semantic neons: meaning is fixed (ideology 9.1). Never use one for another meaning. */
   --bc-cyan: #3ee6ff; /* requests, data flow, focus */
@@ -37,8 +37,8 @@
   --bc-shadow-panel: 0 18px 50px -20px rgb(0 0 0 / 0.7), 0 2px 6px -2px rgb(0 0 0 / 0.5);
 
   /* Glass: only for panels floating over a moving scene */
-  --bc-glass-bg: rgb(15 21 40 / 0.72);
-  --bc-glass-border: rgb(120 150 220 / 0.16);
+  --bc-glass-bg: rgb(23 34 66 / 0.8);
+  --bc-glass-border: rgb(140 170 235 / 0.26);
   --bc-glass-blur: 14px;
 
   /* Signage gradient: hero/section display headings only */

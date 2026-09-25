@@ -30,7 +30,7 @@ export function Bouncer({ state = "idle", size = 96, className, label }: Charact
         width="60"
         height="52"
         rx="14"
-        fill="#141c36"
+        fill="#22305c"
         stroke="var(--bc-line-strong)"
         strokeWidth="2"
       />
@@ -40,7 +40,7 @@ export function Bouncer({ state = "idle", size = 96, className, label }: Charact
         width="44"
         height="36"
         rx="12"
-        fill="#1b2546"
+        fill="#2c3c70"
         stroke="var(--bc-line-strong)"
         strokeWidth="2"
       />
@@ -53,7 +53,7 @@ export function Bouncer({ state = "idle", size = 96, className, label }: Charact
         fill={visor}
         style={{ filter: `drop-shadow(0 0 6px ${visor})` }}
       />
-      <rect x="38" y="58" width="24" height="10" rx="3" fill="#0a0f1d" />
+      <rect x="38" y="58" width="24" height="10" rx="3" fill="#10182f" />
       <text
         x="50"
         y="66"

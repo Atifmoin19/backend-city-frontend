@@ -1,28 +1,24 @@
 import { DISTRICTS, type DistrictKey } from "@/content/districts";
+import { OPEN_DISTRICTS, topicsFor } from "@/content/topics";
+import type { TopicRecord } from "@/stores/learning";
 
 export type DistrictState = "done" | "active" | "locked";
 
-/**
- * DEMO progress until GET /me/progress exists. Shown with a "Demo progress" label in the UI;
- * never present it as the learner's real record.
- */
-export const DEMO_PROGRESS: Record<DistrictKey, DistrictState> = {
-  academy: "done",
-  "signal-tower": "done",
-  "router-station": "done",
-  gatehouse: "active",
-  "data-vaults": "locked",
-  citadel: "locked",
-  speedway: "locked",
-  factory: "locked",
-  "control-room": "locked",
-  skyline: "locked",
-};
-
-/** Playable game per district (only the Gatehouse has one so far). */
-export const DISTRICT_GAME: Partial<Record<DistrictKey, string>> = {
-  gatehouse: "signup-gate",
-};
+/** Real state from the learner's records: open districts are active until their checkpoints pass. */
+export function progressFrom(
+  records: Record<string, TopicRecord>,
+): Record<DistrictKey, DistrictState> {
+  const out = {} as Record<DistrictKey, DistrictState>;
+  for (const d of DISTRICTS) {
+    if (!OPEN_DISTRICTS.has(d.key)) {
+      out[d.key] = "locked";
+      continue;
+    }
+    const topics = topicsFor(d.key);
+    out[d.key] = topics.every((t) => records[t.slug]?.checkpoint) ? "done" : "active";
+  }
+  return out;
+}
 
 export const activeDistrict = (progress: Record<DistrictKey, DistrictState>) =>
   DISTRICTS.find((d) => progress[d.key] === "active") ?? DISTRICTS[0]!;

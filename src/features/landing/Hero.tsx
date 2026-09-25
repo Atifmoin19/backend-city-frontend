@@ -23,7 +23,7 @@ export function Hero() {
       {/* legibility scrim behind the copy only */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(6_9_19/0.9)_0%,transparent_45%)] sm:bg-[radial-gradient(ellipse_60%_65%_at_12%_70%,rgb(6_9_19/0.9),transparent_72%)]"
+        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgb(11_17_36/0.9)_0%,transparent_45%)] sm:bg-[radial-gradient(ellipse_60%_65%_at_12%_70%,rgb(11_17_36/0.9),transparent_72%)]"
       />
       <div className="flex flex-1 flex-col justify-between px-5 pt-24 pb-8 sm:flex-none sm:px-8 sm:pb-14 lg:pb-16">
         <motion.div
@@ -46,7 +46,7 @@ export function Hero() {
               Start your first shift
             </Link>
             <Link
-              href="/play/signup-gate"
+              href="/learn/gatehouse-validation"
               className={buttonClasses({ variant: "ghost", size: "lg" })}
             >
               Try the Gatehouse

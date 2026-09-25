@@ -10,7 +10,9 @@ import { DISTRICTS, type DistrictKey } from "@/content/districts";
 import { DistrictNode } from "./DistrictNode";
 import { DistrictPanel } from "./DistrictPanel";
 import { MapRoads } from "./MapRoads";
-import { activeDistrict, DEMO_PROGRESS, neighbor } from "./progress";
+import { useLearning } from "@/stores/learning";
+
+import { activeDistrict, neighbor, progressFrom } from "./progress";
 
 const KEY_DIR: Record<string, "up" | "down" | "left" | "right"> = {
   ArrowUp: "up",
@@ -28,7 +30,8 @@ const KEY_DIR: Record<string, "up" | "down" | "left" | "right"> = {
 };
 
 export function WorldMap() {
-  const progress = DEMO_PROGRESS;
+  const { records } = useLearning();
+  const progress = progressFrom(records);
   const [selected, setSelected] = useState<DistrictKey>(activeDistrict(progress).key);
   const nodes = useRef(new Map<DistrictKey, HTMLButtonElement>());
   const district = DISTRICTS.find((d) => d.key === selected)!;
@@ -90,8 +93,8 @@ export function WorldMap() {
           </motion.div>
         </div>
         <div className="absolute bottom-4 left-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-text-3 sm:left-6">
-          <span className="rounded-sm border border-amber/40 px-1.5 py-0.5 text-amber">
-            Demo progress
+          <span className="rounded-sm border border-line-strong bg-bg-1 px-1.5 py-0.5 text-text-2">
+            Early access: the Gatehouse is the first playable district
           </span>
           <span className="hidden items-center gap-1.5 sm:inline-flex">
             Walk with <Kbd>←</Kbd>

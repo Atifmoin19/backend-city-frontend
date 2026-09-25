@@ -2,16 +2,18 @@
 
 import { ArrowLeft, Lightbulb, Monitor, Play, RotateCcw, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
-import { PreferenceToggles } from "@/components/ui/PreferenceToggles";
 import { Button } from "@/components/ui/Button";
 import { Kbd } from "@/components/ui/Kbd";
 import { Panel } from "@/components/ui/Panel";
+import { PreferenceToggles } from "@/components/ui/PreferenceToggles";
 import { districtByKey } from "@/content/districts";
+import { topicByGame } from "@/content/topics";
 import { CodeEditor } from "@/engine/editor/CodeEditor";
 import { RequestFlowVisualizer } from "@/engine/visualizer/RequestFlowVisualizer";
 import { useSession } from "@/features/auth/useSession";
+import { useLearning } from "@/stores/learning";
 
 import { BootStatus } from "./BootStatus";
 import { CharacterCorner } from "./CharacterCorner";
@@ -19,13 +21,50 @@ import { InlineCode } from "./InlineCode";
 import { RequestLog } from "./RequestLog";
 import { ResultOverlay } from "./ResultOverlay";
 import { ScoreMeter } from "./ScoreMeter";
-import { useGamePlay } from "./useGamePlay";
+import { useGamePlay, type GameMode } from "./useGamePlay";
 
-export function GameScreen({ slug }: { slug: string }) {
-  const { visualizer, ...g } = useGamePlay(slug);
+export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
+  const { visualizer, ...g } = useGamePlay(slug, mode);
   const { data: user } = useSession();
   const [needLogin, setNeedLogin] = useState(false);
+  const topic = topicByGame(slug);
+  const { record, update } = useLearning();
+  const rec = topic ? record(topic.slug) : {};
+  const allPublicPass = !!g.report?.ok && g.report.results.every((r) => r.passed);
 
+  // Practice cleared -> unlock the checkpoint
+  useEffect(() => {
+    if (mode === "practice" && allPublicPass && topic && !rec.practicePassed) {
+      update(topic.slug, { practicePassed: true });
+    }
+  }, [mode, allPublicPass, topic, rec.practicePassed, update]);
+
+  // Checkpoint passed -> clear the district (keep the best score)
+  useEffect(() => {
+    const r = g.result;
+    if (!r?.passed || !topic) return;
+    if (!rec.checkpoint || r.score > rec.checkpoint.score) {
+      update(topic.slug, { checkpoint: { score: r.score, stars: r.stars } });
+    }
+  }, [g.result, topic, rec.checkpoint, update]);
+
+  if (mode === "checkpoint" && topic && !rec.practicePassed) {
+    return (
+      <CenterNote>
+        <span className="flex max-w-md flex-col items-center gap-4">
+          <span className="text-lg text-text-1">
+            The checkpoint unlocks after you pass the practice.
+          </span>
+          <Link href={`/play/${slug}?mode=practice`} className="text-cyan underline">
+            Go to practice
+          </Link>
+          <Link href={`/learn/${topic.lesson}`} className="text-sm text-text-2 underline">
+            or read the briefing again
+          </Link>
+        </span>
+      </CenterNote>
+    );
+  }
   if (g.variant.isPending) return <CenterNote>Loading the district…</CenterNote>;
   if (g.variant.isError || !g.game) {
     return (
@@ -34,6 +73,7 @@ export function GameScreen({ slug }: { slug: string }) {
       </CenterNote>
     );
   }
+
   const game = g.game;
   const district = districtByKey(game.district);
   const ready = g.harness.state === "ready";
@@ -49,21 +89,25 @@ export function GameScreen({ slug }: { slug: string }) {
       {/* Score / hint bar */}
       <header className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-line bg-bg-1 px-4 py-3 sm:px-6">
         <Link
-          href="/map"
+          href={`/district/${game.district}`}
           className="inline-flex items-center gap-1.5 text-sm text-text-2 hover:text-text-1"
         >
-          <ArrowLeft aria-hidden className="size-4" /> Map
+          <ArrowLeft aria-hidden className="size-4" /> District
         </Link>
         <div className="min-w-0">
           <p className="truncate text-xs text-text-3">
-            {district?.name ?? game.district} · {game.is_checkpoint ? "Checkpoint" : "Practice"}
+            {district?.name ?? game.district} · {mode === "checkpoint" ? "Checkpoint" : "Practice"}
           </p>
           <h1 className="truncate font-display text-base font-semibold tracking-tight sm:text-lg">
             {game.title}
           </h1>
         </div>
         <div className="ml-auto flex flex-wrap items-center gap-4">
-          <ScoreMeter score={g.score} threshold={game.pass_threshold} label="Practice score" />
+          <ScoreMeter
+            score={g.score}
+            threshold={game.pass_threshold}
+            label={mode === "checkpoint" ? "Public requests" : "Practice score"}
+          />
           <Button
             variant="ghost"
             size="sm"
@@ -83,6 +127,21 @@ export function GameScreen({ slug }: { slug: string }) {
         {/* Left: brief + calm editor */}
         <section className="flex min-h-0 min-w-0 flex-col gap-3" aria-label="Your code">
           <div className="rounded-lg border border-line bg-bg-2 px-4 py-3">
+            {mode === "practice" && topic && !rec.lessonDone ? (
+              <p className="mb-2 text-sm text-amber">
+                New here?{" "}
+                <Link href={`/learn/${topic.lesson}`} className="underline">
+                  Read the {topic.minutes}-minute briefing first
+                </Link>{" "}
+                to learn what to write.
+              </p>
+            ) : null}
+            {mode === "checkpoint" ? (
+              <p className="mb-2 text-sm text-amber">
+                New variant: field names and limits may differ from practice. Hidden requests test
+                every boundary.
+              </p>
+            ) : null}
             <p className="text-sm text-text-2">{game.scenario.intro}</p>
             <p className="mt-1.5 text-sm leading-relaxed text-text-1">
               <InlineCode text={game.scenario.goal} />
@@ -115,14 +174,16 @@ export function GameScreen({ slug }: { slug: string }) {
             >
               Run requests
             </Button>
-            <Button
-              variant="ghost"
-              onClick={submit}
-              loading={g.grade.isPending}
-              icon={<ShieldCheck aria-hidden className="size-4" />}
-            >
-              Submit checkpoint
-            </Button>
+            {mode === "checkpoint" ? (
+              <Button
+                variant="ghost"
+                onClick={submit}
+                loading={g.grade.isPending}
+                icon={<ShieldCheck aria-hidden className="size-4" />}
+              >
+                Submit checkpoint
+              </Button>
+            ) : null}
             <Button
               variant="quiet"
               size="sm"
@@ -135,10 +196,26 @@ export function GameScreen({ slug }: { slug: string }) {
               <Kbd>⌘/Ctrl</Kbd> + <Kbd>Enter</Kbd> runs
             </span>
           </div>
+          {mode === "practice" && allPublicPass ? (
+            <div
+              role="status"
+              className="flex flex-wrap items-center gap-3 rounded-md border border-green/50 bg-green/[0.07] px-4 py-3"
+            >
+              <span className="text-sm text-text-1">
+                Practice cleared: every public request landed where it should.
+              </span>
+              <Link
+                href={`/play/${slug}?mode=checkpoint`}
+                className="ml-auto text-sm font-semibold text-green underline"
+              >
+                Take the checkpoint
+              </Link>
+            </div>
+          ) : null}
           {needLogin && !user ? (
             <p className="text-sm text-amber">
               Checkpoints are graded on the server and saved to your record.{" "}
-              <Link href={`/login?next=/play/${slug}`} className="underline">
+              <Link href={`/login?next=/play/${slug}?mode=checkpoint`} className="underline">
                 Log in
               </Link>{" "}
               or{" "}
@@ -179,6 +256,7 @@ export function GameScreen({ slug }: { slug: string }) {
         <ResultOverlay
           result={g.result}
           character={game.character}
+          backHref={`/district/${game.district}`}
           onRetry={g.newVariant}
           onClose={() => g.setResult(null)}
         />
@@ -187,7 +265,7 @@ export function GameScreen({ slug }: { slug: string }) {
   );
 }
 
-function CenterNote({ children }: { children: React.ReactNode }) {
+function CenterNote({ children }: { children: ReactNode }) {
   return (
     <div className="grid min-h-dvh place-items-center bg-bg-0 p-6 text-center text-text-2">
       {children}

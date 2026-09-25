@@ -8,10 +8,12 @@ import { SignHeading } from "@/components/ui/SignHeading";
 import { StatusLight } from "@/components/ui/StatusLight";
 import type { District } from "@/content/districts";
 
-import { DISTRICT_GAME, type DistrictState } from "./progress";
+import { OPEN_DISTRICTS } from "@/content/topics";
+
+import type { DistrictState } from "./progress";
 
 export function DistrictPanel({ district, state }: { district: District; state: DistrictState }) {
-  const game = DISTRICT_GAME[district.key];
+  const open = OPEN_DISTRICTS.has(district.key);
   return (
     <Panel surface="glass" className="w-full p-5 sm:p-6" aria-live="polite">
       <div className="flex items-center justify-between gap-3">
@@ -19,9 +21,9 @@ export function DistrictPanel({ district, state }: { district: District; state: 
         {state === "done" ? (
           <StatusLight status="pass">Cleared</StatusLight>
         ) : state === "active" ? (
-          <StatusLight status="flow">In progress</StatusLight>
+          <StatusLight status="flow">Open: start here</StatusLight>
         ) : (
-          <StatusLight status="locked">Locked</StatusLight>
+          <StatusLight status="locked">{open ? "Locked" : "In production"}</StatusLight>
         )}
       </div>
       <SignHeading as="h2" className="mt-3 text-xl sm:text-2xl">
@@ -40,14 +42,17 @@ export function DistrictPanel({ district, state }: { district: District; state: 
         ))}
       </ul>
       <div className="mt-6">
-        {state === "locked" ? (
-          <p className="text-sm text-text-3">Clear the previous district to unlock this one.</p>
-        ) : game ? (
-          <Link href={`/play/${game}`} className={buttonClasses({ className: "w-full" })}>
-            {state === "done" ? "Replay the checkpoint" : "Enter the district"}
+        {open ? (
+          <Link
+            href={`/district/${district.key}`}
+            className={buttonClasses({ className: "w-full" })}
+          >
+            {state === "done" ? "Revisit the district" : "Enter the district"}
           </Link>
         ) : (
-          <p className="text-sm text-text-3">Games for this district arrive in a later build.</p>
+          <p className="text-sm text-text-2">
+            This district is still being built. Its lessons and games arrive in a later update.
+          </p>
         )}
       </div>
     </Panel>

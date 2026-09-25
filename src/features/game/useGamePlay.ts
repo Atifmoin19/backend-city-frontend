@@ -19,10 +19,13 @@ export function practiceScore(report: RunReport | null): number | null {
 }
 
 /** All game-screen state: variant, editor doc, practice runs, hints, checkpoint grading. */
-export function useGamePlay(slug: string) {
+export type GameMode = "practice" | "checkpoint";
+
+export function useGamePlay(slug: string, mode: GameMode) {
   const [seed, setSeed] = useState<number | undefined>(undefined);
+  // Practice and checkpoint get different variants: the checkpoint is never the one you practised
   const variant = useQuery({
-    queryKey: ["variant", slug, seed ?? "first"],
+    queryKey: ["variant", slug, mode, seed ?? "first"],
     queryFn: () => gamesApi.variant(slug, seed),
     staleTime: Infinity,
   });
