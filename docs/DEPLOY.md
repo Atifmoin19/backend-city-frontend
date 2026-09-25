@@ -162,14 +162,15 @@ Free instances sleep after 15 minutes without traffic; the first request then ta
 
 ## Troubleshooting
 
-| Symptom                                                     | Cause → fix                                                                                                          |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Render build fails at `uv sync --frozen`                    | `uv.lock` out of date → run `uv lock` locally, commit, push                                                          |
-| Log: `unexpected keyword argument 'sslmode'`                | Old code without URL normalization → push latest backend                                                             |
-| Log: `prepared statement "__asyncpg_stmt_…" already exists` | Pooled Neon URL → use the direct (non-pooler) string                                                                 |
-| Render deploy fails health check                            | App crashed on start → read the log (usually `DATABASE_URL` or `JWT_SECRET` missing)                                 |
-| Vercel: `/api/...` returns 404                              | `BACKEND_URL` was missing at build time → set it, **Redeploy**                                                       |
-| First click after a while gives 504 / "waking up"           | Render cold start → wait ~60 s; the app retries                                                                      |
-| Signed in, then instantly signed out on reload              | `COOKIE_SECURE` / `REFRESH_COOKIE_PATH` wrong, or `BACKEND_URL` ends in `/api`                                       |
-| Practice stuck on "Starting your server"                    | Open `/harness/manifest.json` on the site; if 404 the harness download failed → check the build log                  |
-| Everyone gets 429 at once                                   | Rate limiter sees one shared IP → check client IPs in the Render log; tell Claude to key limits on `X-Forwarded-For` |
+| Symptom                                                        | Cause → fix                                                                                                                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Render build fails at `uv sync --frozen`                       | `uv.lock` out of date → run `uv lock` locally, commit, push                                                                                                  |
+| Log: `unexpected keyword argument 'sslmode'`                   | Old code without URL normalization → push latest backend                                                                                                     |
+| Log: `prepared statement "__asyncpg_stmt_…" already exists`    | Pooled Neon URL → use the direct (non-pooler) string                                                                                                         |
+| Render deploy fails health check                               | App crashed on start → read the log (usually `DATABASE_URL` or `JWT_SECRET` missing)                                                                         |
+| Vercel: `/api/...` returns 404                                 | `BACKEND_URL` was missing at build time → set it, **Redeploy**                                                                                               |
+| First click after a while gives 504 / "waking up"              | Render cold start → wait ~60 s; the app retries                                                                                                              |
+| Signed in, then instantly signed out on reload                 | `COOKIE_SECURE` / `REFRESH_COOKIE_PATH` wrong, or `BACKEND_URL` ends in `/api`                                                                               |
+| Practice stuck on "Starting your server"                       | Open `/harness/manifest.json` on the site; if 404 the harness download failed → check the build log                                                          |
+| Checkpoint says "Your code took too long" for a correct answer | Sandbox startup was counted against the learner on the slow free CPU → fixed with `SANDBOX_STARTUP_SECONDS` (default 20); grading takes ~10 s on Render free |
+| Everyone gets 429 at once                                      | Rate limiter sees one shared IP → check client IPs in the Render log; tell Claude to key limits on `X-Forwarded-For`                                         |
