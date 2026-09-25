@@ -6,7 +6,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
+import { ArrowRight, Mail } from "lucide-react";
+
 import { Button } from "@/components/ui/Button";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 import { useSlowPending } from "@/lib/useSlowPending";
 import { useLearningStore } from "@/stores/learning";
@@ -61,6 +64,11 @@ export function LoginForm() {
   return (
     <AuthShell
       title="Back on shift"
+      tagline={
+        <>
+          The city kept your lights on. <span className="sign-text">Welcome back.</span>
+        </>
+      }
       subtitle="Log in and pick up where the city left off."
       footer={
         <>
@@ -96,13 +104,15 @@ export function LoginForm() {
         <TextField
           label="Email"
           type="email"
+          icon={<Mail />}
+          placeholder="you@example.com"
           autoComplete="email"
           error={errors.email?.message}
           {...form.register("email")}
         />
-        <TextField
+        <PasswordField
           label="Password"
-          type="password"
+          placeholder="Your password"
           autoComplete="current-password"
           error={errors.password?.message}
           {...form.register("password")}
@@ -113,8 +123,8 @@ export function LoginForm() {
             Waking up the server… this is literally what a cold start is.
           </FormAlert>
         ) : null}
-        <Button type="submit" size="lg" loading={login.isPending} className="mt-1">
-          Log in
+        <Button type="submit" size="lg" loading={login.isPending} className="mt-2 w-full">
+          Log in <ArrowRight aria-hidden className="size-4" />
         </Button>
       </form>
     </AuthShell>

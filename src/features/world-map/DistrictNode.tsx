@@ -51,6 +51,18 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
       className="group absolute w-28 -translate-x-1/2 -translate-y-[72%] rounded-lg outline-offset-4 sm:w-32"
       style={{ left: `${district.map.x}%`, top: `${district.map.y}%` }}
     >
+      {/* light pool under the plate */}
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute top-[58%] left-1/2 h-16 w-40 -translate-x-1/2 rounded-[50%] blur-xl transition-opacity duration-(--bc-dur-3)",
+          state === "done" && "bg-green/25",
+          state === "active" && "bg-cyan/30",
+          state === "locked" && "bg-line-strong/20",
+          selected && "opacity-100",
+          !selected && state === "locked" && "opacity-60",
+        )}
+      />
       {/* level badge */}
       <span
         className={cn(

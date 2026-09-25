@@ -130,6 +130,77 @@
   }
 }
 
+/* Landing finale: rotating reactor ring */
+.reactor-ring {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgb(62 230 255 / 0.9) 60deg,
+    transparent 120deg,
+    rgb(178 124 255 / 0.8) 200deg,
+    transparent 260deg,
+    rgb(77 255 154 / 0.7) 320deg,
+    transparent 360deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 2px));
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 3px),
+    black calc(100% - 2px)
+  );
+  filter: drop-shadow(0 0 10px rgb(62 230 255 / 0.6));
+  animation: reactor 9s linear infinite;
+}
+@keyframes reactor {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* World map atmosphere */
+.map-beam {
+  background: conic-gradient(
+    from 180deg at 50% 100%,
+    transparent 170deg,
+    rgb(62 230 255 / 0.1) 180deg,
+    transparent 190deg
+  );
+  animation: map-beam 14s var(--bc-ease-in-out) infinite alternate;
+}
+.map-beam--late {
+  animation-duration: 18s;
+  animation-delay: -6s;
+  background: conic-gradient(
+    from 180deg at 50% 100%,
+    transparent 172deg,
+    rgb(178 124 255 / 0.09) 180deg,
+    transparent 188deg
+  );
+}
+@keyframes map-beam {
+  from {
+    transform: rotate(-16deg);
+  }
+  to {
+    transform: rotate(16deg);
+  }
+}
+.map-fog {
+  background:
+    radial-gradient(ellipse 30% 60% at 20% 50%, rgb(120 150 230 / 0.1), transparent 70%),
+    radial-gradient(ellipse 35% 55% at 70% 60%, rgb(62 230 255 / 0.07), transparent 70%);
+  filter: blur(8px);
+  animation: map-fog 40s linear infinite alternate;
+}
+@keyframes map-fog {
+  from {
+    transform: translateX(-6%);
+  }
+  to {
+    transform: translateX(6%);
+  }
+}
+
 /* Performance mode: kill blur, particles, and ambient animation (set on <html>) */
 [data-perf="on"] .glass {
   backdrop-filter: none;

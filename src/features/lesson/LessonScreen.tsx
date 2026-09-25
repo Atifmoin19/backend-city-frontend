@@ -20,10 +20,12 @@ import { useLearning } from "@/stores/learning";
 import { CheckQuestion } from "./CheckQuestion";
 import { CodeSample } from "./CodeSample";
 import { Diagram } from "./Diagram";
+import { LessonComplete } from "./LessonComplete";
 
 export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }) {
   const [index, setIndex] = useState(0);
   const [reached, setReached] = useState(0);
+  const [complete, setComplete] = useState(false);
   const [solved, setSolved] = useState<Record<number, boolean>>({});
   const { update } = useLearning();
   const router = useRouter();
@@ -41,8 +43,25 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
   const next = () => {
     if (!last) return go(index + 1);
     update(topic.slug, { lessonDone: true });
-    router.push(topic.game ? `/play/${topic.game}?mode=practice` : `/district/${topic.district}`);
+    if (topic.game) router.push(`/play/${topic.game}?mode=practice`);
+    else {
+      setComplete(true);
+      window.scrollTo({ top: 0 });
+    }
   };
+
+  if (complete) {
+    return (
+      <LessonComplete
+        lesson={lesson}
+        topic={topic}
+        onReview={() => {
+          setComplete(false);
+          go(0);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-5 sm:px-8">

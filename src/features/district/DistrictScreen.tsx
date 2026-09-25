@@ -11,6 +11,7 @@ import { SignHeading } from "@/components/ui/SignHeading";
 import type { District } from "@/content/districts";
 import type { Topic } from "@/content/topics";
 import { SkylineCanvas } from "@/features/landing/skyline/SkylineCanvas";
+import { NextStepCard } from "@/features/progress/NextStepCard";
 import { topicComplete } from "@/features/progress/stats";
 import { cn } from "@/lib/cn";
 import { useLearning, type TopicRecord } from "@/stores/learning";
@@ -161,6 +162,7 @@ export function DistrictScreen({ district, topics }: { district: District; topic
         </div>
 
         <aside className="flex flex-col gap-4">
+          {done === topics.length ? <NextStepCard /> : null}
           {cast ? (
             <Panel className="flex items-start gap-4 p-5">
               <Character name={cast.key} size={64} />

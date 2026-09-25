@@ -6,7 +6,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 
+import { ArrowRight, Mail, ShieldCheck, User } from "lucide-react";
+
 import { Button } from "@/components/ui/Button";
+import { PasswordField } from "@/components/ui/PasswordField";
 import { TextField } from "@/components/ui/TextField";
 import { useSlowPending } from "@/lib/useSlowPending";
 
@@ -66,6 +69,11 @@ export function SignupForm() {
   return (
     <AuthShell
       title="Get your city badge"
+      tagline={
+        <>
+          Every request needs papers. <span className="sign-text">Get yours.</span>
+        </>
+      }
       subtitle="New engineer on the night shift? Sign up and the first district unlocks right away."
       footer={
         <>
@@ -98,6 +106,8 @@ export function SignupForm() {
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
         <TextField
           label="Display name"
+          icon={<User />}
+          placeholder="How the city should call you"
           autoComplete="nickname"
           hint="Shown on the weekly leaderboard."
           error={errors.display_name?.message}
@@ -106,15 +116,17 @@ export function SignupForm() {
         <TextField
           label="Email"
           type="email"
+          icon={<Mail />}
+          placeholder="you@example.com"
           autoComplete="email"
           error={errors.email?.message}
           {...form.register("email")}
         />
-        <TextField
+        <PasswordField
           label="Password"
-          type="password"
           autoComplete="new-password"
-          hint="8 characters or more."
+          placeholder="8 characters or more"
+          strengthOf={values.password ?? ""}
           error={errors.password?.message}
           {...form.register("password")}
         />
@@ -124,9 +136,13 @@ export function SignupForm() {
             Waking up the server… this is literally what a cold start is.
           </FormAlert>
         ) : null}
-        <Button type="submit" size="lg" loading={register.isPending} className="mt-1">
-          Start your first shift
+        <Button type="submit" size="lg" loading={register.isPending} className="mt-2 w-full">
+          Start your first shift <ArrowRight aria-hidden className="size-4" />
         </Button>
+        <p className="flex items-center justify-center gap-2 text-xs text-text-3">
+          <ShieldCheck aria-hidden className="size-3.5 text-green" /> Free in early access. Password
+          stored as an Argon2 hash.
+        </p>
       </form>
     </AuthShell>
   );

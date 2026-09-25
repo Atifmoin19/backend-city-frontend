@@ -9,23 +9,26 @@ interface GateAsideProps {
   children: ReactNode;
 }
 
-/** The Bouncer watching your request, with a speech line above the preview. */
+/** The Bouncer watching your request, as a glass card floating over the city. */
 export function GateAside({ mood, line, children }: GateAsideProps) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="glass max-w-xl rounded-2xl p-5 shadow-panel">
       <div className="flex items-end gap-4">
-        <Bouncer state={mood} size={84} />
-        <p
-          className="relative mb-3 rounded-md border border-line bg-bg-2 px-4 py-3 text-sm text-text-1"
-          aria-live="polite"
-        >
-          {line}
-        </p>
+        <Bouncer state={mood} size={76} />
+        <div className="mb-2">
+          <p className="text-xs font-semibold text-text-2">The Bouncer</p>
+          <p
+            className="mt-1 rounded-md border border-line bg-bg-1/80 px-3.5 py-2.5 text-sm text-text-1"
+            aria-live="polite"
+          >
+            {line}
+          </p>
+        </div>
       </div>
-      {children}
-      <p className="text-sm text-text-3">
-        This is the exact request your form sends. In the Gatehouse district you&apos;ll write the
-        rules that check it.
+      <div className="mt-4">{children}</div>
+      <p className="mt-3 text-xs text-text-3">
+        This is the exact request your form sends. In the Gatehouse you&apos;ll write the rules that
+        check it.
       </p>
     </div>
   );

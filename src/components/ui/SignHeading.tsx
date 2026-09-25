@@ -17,8 +17,9 @@ export function SignHeading({ as: Tag = "h2", id, children, className, lit }: Si
     <Tag
       id={id}
       className={cn(
-        "font-display font-bold tracking-[-0.02em] text-text-1",
-        lit && "sign-text w-fit",
+        "font-display font-bold tracking-[-0.02em]",
+        // utilities beat component classes, so the solid color must be absent when lit
+        lit ? "sign-text w-fit" : "text-text-1",
         className,
         // last: twMerge drops leading-* when a text-[size] class follows it
         "leading-[1.04]",

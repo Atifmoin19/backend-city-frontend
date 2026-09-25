@@ -2,6 +2,21 @@
 
 Newest entry on top. Update at the end of every task.
 
+## 2026-09-25 — Round 4 (owner feedback)
+
+### Done
+
+- Finishing a lesson-only briefing now shows a completion screen (recap, district cleared) with a
+  **Next up** card for the real next mission; district pages show it once complete.
+- Map: living backdrop (far skyline with twinkling windows, rising data particles, sweeping search
+  beams, drifting fog) and a colored light pool under each district plate.
+- Homepage: FAQ rebuilt as the city's API (request rows, `200 OK` answer cards, live `city.log`);
+  finale rebuilt with animated skyline, reactor ring, both characters and a real-facts strip.
+- Login / signup: split screen (living city + Bouncer gate card | focused form), field icons,
+  show/hide password, strength meter, truthful small print.
+- Byte and the Bouncer redrawn with lighting (key + rim light, glass visor, speculars, floor shadow).
+- Fix: `SignHeading lit` never showed its gradient (the `text-text-1` utility overrode `.sign-text`).
+
 ## 2026-09-25 — Round 3: 3D homepage
 
 ### Done
