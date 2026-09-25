@@ -22,7 +22,8 @@ import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const dest = join(root, "public", "harness");
-const localPath = resolve(root, process.env.HARNESS_LOCAL_PATH ?? "../backend/harness");
+// An empty env var (e.g. an unset field in a hosting dashboard) means "not set".
+const localPath = resolve(root, process.env.HARNESS_LOCAL_PATH?.trim() || "../backend/harness");
 
 // Only runtime Python files are shipped; requirements.txt stays in the backend.
 function harnessFiles(dir) {
@@ -45,7 +46,8 @@ function fromGitHub() {
 }
 
 function main() {
-  const source = existsSync(localPath)
+  // Use the local checkout only if it really is the harness; otherwise download the pinned commit.
+  const source = existsSync(join(localPath, "__init__.py"))
     ? { dir: localPath, cleanup: () => {}, ref: "local" }
     : fromGitHub();
   try {
