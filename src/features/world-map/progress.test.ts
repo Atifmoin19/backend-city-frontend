@@ -20,7 +20,8 @@ describe("world map navigation", () => {
     const p = progressFrom({});
     expect(Object.values(p).filter((s) => s === "done")).toHaveLength(0);
     expect(activeDistrict(p).key).toBe("academy");
-    expect(p["data-vaults"]).toBe("locked");
+    expect(p["data-vaults"]).toBe("active");
+    expect(p.citadel).toBe("locked");
   });
 
   it("a passed checkpoint clears the district", () => {
@@ -38,6 +39,6 @@ describe("restoration", () => {
       "how-requests-travel": { ...EMPTY_RECORD, lessonDone: true, practiceDone: ["signal-codes"] },
     });
     expect(half["signal-tower"]).toBe(0.5);
-    expect(half["data-vaults"]).toBeUndefined(); // not open yet
+    expect(half.citadel).toBeUndefined(); // not open yet
   });
 });

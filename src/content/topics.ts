@@ -124,6 +124,32 @@ export const TOPICS: Topic[] = [
     },
     minutes: 5,
   },
+  {
+    slug: "query-the-vault",
+    district: "data-vaults",
+    title: "Ask the vault the right question",
+    summary:
+      "Tables and rows, SELECT / WHERE / ORDER BY, safe ? parameters instead of pasted input, and JOIN.",
+    lesson: "data-vaults-sql",
+    practice: [
+      {
+        slug: "shelf-search",
+        title: "Shelf Search",
+        blurb: "Filter and sort the vault's items with WHERE, ORDER BY and a ? parameter.",
+      },
+      {
+        slug: "item-floors",
+        title: "Item Floors",
+        blurb: "JOIN items with vaults to find each item's floor, and 404 for the missing ones.",
+      },
+    ],
+    checkpoint: {
+      slug: "vault-ledger",
+      title: "Vault Ledger",
+      blurb: "Filter, sort, count and total a vault's items, and shut the SQL injection hole.",
+    },
+    minutes: 7,
+  },
 ];
 
 export const topicsFor = (district: DistrictKey, topics: Topic[] = TOPICS) =>

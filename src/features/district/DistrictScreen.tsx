@@ -26,6 +26,11 @@ import { useLearning } from "@/features/progress/useLearning";
 type StepState = "done" | "ready" | "locked";
 
 const DISTRICT_CHARACTER: Record<string, { key: string; name: string; line: string }> = {
+  "data-vaults": {
+    key: "librarian",
+    name: "The Librarian",
+    line: "Ask me anything, as long as you ask in SQL.",
+  },
   "signal-tower": { key: "byte", name: "Byte", line: "Every answer starts with three digits." },
   "router-station": {
     key: "byte",

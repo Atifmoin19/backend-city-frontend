@@ -27,7 +27,7 @@ interface DistrictPanelProps {
 const KEEPERS: Partial<Record<DistrictKey, { name: string; line: string }>> = {
   "data-vaults": {
     name: "The Librarian",
-    line: "Every record gets a shelf. I'm still labelling them. Come back soon.",
+    line: "Every record has a shelf. Ask for it in SQL and I'll fetch it.",
   },
 };
 

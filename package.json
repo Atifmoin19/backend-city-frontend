@@ -1,6 +1,6 @@
 {
   "name": "backend-city-frontend",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "private": true,
   "scripts": {
     "predev": "node scripts/sync-harness.mjs",

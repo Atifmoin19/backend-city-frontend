@@ -11,9 +11,35 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.12.1**
+Current version: **v1.13.0**
 
 ---
+
+## v1.13.0 — The Data Vaults open (2026-09-26)
+
+**New district and chapter**
+
+- **The Data Vaults** (Level 3) opens with the chapter _SQL: asking the database_ and the topic
+  **Ask the vault the right question**. The Librarian runs it.
+- New briefing: tables and rows, `SELECT` / `WHERE` / `ORDER BY`, `?` parameters instead of
+  pasted input (SQL injection), and `JOIN`, with quick checks.
+
+**New games** (real SQL against an in-memory SQLite vault, in the browser and on the grader)
+
+- **Shelf Search** (practice): filter and sort with `WHERE`, `ORDER BY` and a `?` parameter.
+- **Item Floors** (practice): `JOIN` items with vaults for each item's floor; 404 for missing
+  items.
+- **Vault Ledger** (checkpoint): filter, sort, count and total a vault's items. Hidden requests
+  include a SQL-injection attempt, so only parameterized queries pass.
+
+**Homepage**
+
+- The Data Vaults chapter of the tour now says it's open.
+
+**Under the hood**
+
+- The grading sandbox allows SQLite in memory only: no database files, no `ATTACH`, no
+  extensions. Learner code can't remove the vault's guard.
 
 ## v1.12.1 — Game lists follow the admin panel (2026-09-26)
 

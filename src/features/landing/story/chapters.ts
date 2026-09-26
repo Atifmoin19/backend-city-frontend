@@ -113,10 +113,10 @@ export const CHAPTERS: Chapter[] = [
   {
     id: "vaults",
     level: "Floor 3 · The Data Vaults",
-    title: "The vault is being fitted.",
-    body: "Shelves, a vault door, no lights yet. Databases, SQL, models and the N+1 problem open here next, then the Citadel (auth) on the floor above.",
-    points: ["SQL", "SQLAlchemy", "transactions", "auth"],
-    status: "construction",
+    title: "Ask the vault the right question.",
+    body: "Shelves of records behind a vault door. Write the SQL your handlers run: filter, sort, join, and never let a quote mark open the vault. SQLAlchemy and the N+1 problem come next, then the Citadel (auth) above.",
+    points: ["SELECT · WHERE", "JOIN", "? parameters", "SQL injection"],
+    status: "open",
     align: "left",
   },
   {
