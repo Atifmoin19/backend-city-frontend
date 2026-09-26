@@ -32,7 +32,7 @@ export function NextStepCard({ className }: { className?: string }) {
           href="/map"
           className={buttonClasses({ variant: "ghost", size: "sm", className: "mt-4" })}
         >
-          <Map aria-hidden className="size-4" /> Open the city map
+          <Map aria-hidden className="size-4" /> Open the Backend District
         </Link>
       </div>
     );

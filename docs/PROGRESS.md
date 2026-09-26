@@ -62,6 +62,10 @@ card, daily challenge.
   windows into the tower) and **Choose your side**, now composed over the scene.
 - Phones swipe the three side cards; cards drop body text and chips below `sm`.
 - Checked night + Daybreak, desktop + 390px phone.
+- Onboarding step 1 "Which side of the city?" saves `learning_goal` (coming-soon sides also get
+  Notify me) before orientation. Verified end to end: `/signup?goal=frontend` → preselected →
+  goal + interest saved; backend pick continues to orientation.
+- Copy pass: "City map" labels → "Backend District" (nav, menus, back links, onboarding).
 
 ## 2026-09-26 — Session 3: Full Stack City homepage
 

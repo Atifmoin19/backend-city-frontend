@@ -81,7 +81,7 @@ function AdminOnly({ children }: { children: ReactNode }) {
         This area is for content editors and super admins. Ask a super admin to change your role.
       </p>
       <Link href="/map" className="text-cyan underline">
-        Back to the city map
+        Back to the Backend District
       </Link>
     </div>
   );

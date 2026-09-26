@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -21,12 +22,13 @@ import { FormAlert } from "./FormAlert";
 import { GateAside } from "./GateAside";
 import { RequestPreview } from "./RequestPreview";
 import { signupSchema, type SignupValues } from "./schemas";
-import { useRegister } from "./useSession";
+import { SESSION_KEY, useRegister } from "./useSession";
 
 const FIELDS = ["display_name", "email", "password"] as const;
 
 export function SignupForm() {
   const router = useRouter();
+  const qc = useQueryClient();
   const register = useRegister();
   const slow = useSlowPending(register.isPending);
   const [formError, setFormError] = useState<string | null>(null);
@@ -44,7 +46,11 @@ export function SignupForm() {
     try {
       await register.mutateAsync(data);
       // Picked a side on the homepage ("Notify me" / "Start"): save it before orientation
-      if (goal) await tracksApi.chooseGoal(goal).catch(() => undefined);
+      if (goal)
+        await tracksApi
+          .chooseGoal(goal)
+          .then((user) => qc.setQueryData(SESSION_KEY, user))
+          .catch(() => undefined);
       router.push("/welcome");
     } catch (err) {
       for (const e of mapAuthError(err)) {

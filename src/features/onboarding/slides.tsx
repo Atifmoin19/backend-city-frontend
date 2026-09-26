@@ -63,7 +63,7 @@ const CONTROLS: { icon: typeof Map; keys: ReactNode; body: string }[] = [
         <Kbd>←</Kbd> <Kbd>→</Kbd> <Kbd>↑</Kbd> <Kbd>↓</Kbd> or <Kbd>WASD</Kbd>
       </>
     ),
-    body: "Walk Byte around the city map.",
+    body: "Walk Byte around the district map.",
   },
   {
     icon: Lightbulb,

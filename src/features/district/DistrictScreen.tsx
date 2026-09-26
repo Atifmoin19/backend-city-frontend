@@ -105,7 +105,7 @@ export function DistrictScreen({ district, topics }: { district: District; topic
         <div className="relative mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:py-16">
           <nav aria-label="Breadcrumb" className="text-sm text-text-3">
             <Link href="/map" className="hover:text-text-1">
-              City map
+              Backend District
             </Link>{" "}
             / <span className="text-text-2">{district.name}</span>
           </nav>

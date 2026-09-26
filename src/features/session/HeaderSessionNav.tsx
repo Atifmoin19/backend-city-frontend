@@ -19,7 +19,7 @@ export function HeaderSessionNav() {
         <Link href="/map" className={buttonClasses({ variant: "ghost", size: "sm" })}>
           <Map aria-hidden className="size-4" />
           {/* phones: icon only, so the wordmark keeps its single line */}
-          <span className="sr-only sm:not-sr-only">Open city map</span>
+          <span className="sr-only sm:not-sr-only">Open the Backend District</span>
         </Link>
         <UserMenu />
       </>

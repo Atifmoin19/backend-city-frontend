@@ -5,11 +5,27 @@ import { Bouncer } from "@/components/characters/Bouncer";
 import { StatusLight } from "@/components/ui/StatusLight";
 import { SkylineCanvas } from "@/features/landing/skyline/SkylineCanvas";
 import { GateTraffic } from "@/features/lesson/diagrams/GateTraffic";
+import { SideArt } from "@/features/sides/SideArt";
+import { SIDES } from "@/content/sides";
 
 import type { Slide } from "./slides";
 
 /** Right-hand stage for each onboarding slide. */
-export function OnboardingVisual({ visual }: { visual: Slide["visual"] }) {
+export function OnboardingVisual({ visual }: { visual: Slide["visual"] | "sides" }) {
+  if (visual === "sides") {
+    return (
+      <div className="grid size-full place-items-center p-10">
+        <ul className="grid w-full max-w-xl grid-cols-3 gap-6 text-center">
+          {SIDES.map((s) => (
+            <li key={s.track} className="flex flex-col items-center gap-3">
+              <SideArt side={s.track} className="h-28 w-36 text-cyan" />
+              <span className="font-display text-sm font-semibold text-text-1">{s.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
   if (visual === "skyline") {
     return (
       <div className="relative size-full">

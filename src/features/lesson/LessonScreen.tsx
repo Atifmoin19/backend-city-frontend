@@ -72,7 +72,7 @@ export function LessonScreen({ lesson, topic }: { lesson: Lesson; topic: Topic }
         <div>
           <nav aria-label="Breadcrumb" className="text-sm text-text-3">
             <Link href="/map" className="hover:text-text-1">
-              City map
+              Backend District
             </Link>{" "}
             /{" "}
             <Link href={`/district/${topic.district}`} className="hover:text-text-1">

@@ -3,8 +3,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { SIDES, type Side } from "@/content/sides";
-import { useSession } from "@/features/auth/useSession";
+import { SESSION_KEY, useSession } from "@/features/auth/useSession";
 import { tracksApi } from "@/lib/api/tracks";
+import type { UserPublic } from "@/lib/api/types";
 
 export interface SideState extends Side {
   open: boolean;
@@ -42,4 +43,16 @@ export function useSides() {
     };
   });
   return { sides, signedIn: !!user, notifyMe };
+}
+
+/** Save the learner's side (PUT /me/goal). A coming-soon side also records Notify me. */
+export function useChooseGoal() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (track: string) => tracksApi.chooseGoal(track),
+    onSuccess: (user) => {
+      qc.setQueryData<UserPublic | null>(SESSION_KEY, user);
+      void qc.invalidateQueries({ queryKey: ["interests"] });
+    },
+  });
 }

@@ -66,7 +66,7 @@ export function UserMenu() {
               onClick={close}
               className="flex items-center gap-3 rounded-md px-2.5 py-2 text-sm text-text-1 hover:bg-bg-3/70"
             >
-              <Map aria-hidden className="size-4 text-cyan" /> City map
+              <Map aria-hidden className="size-4 text-cyan" /> Backend District
             </Link>
             {isAdmin(user.role) ? (
               <Link

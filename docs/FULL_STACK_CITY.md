@@ -107,7 +107,13 @@ Mobile / performance mode: lighter building (fewer beams, no reflection).
         pulses running inward; interior packets stop once the facade is closed
   - [x] Picker is the last chapter over the scene (phones swipe the three cards); the separate
         section is gone, `#choose` still anchors it. `SideCard` lives in `features/sides`
-- [ ] **Step 4: onboarding question, copy pass, screenshots (both themes, mobile), docs**
+- [x] **Step 4: onboarding question, copy pass, screenshots (both themes, mobile), docs** (2026-09-26)
+  - [x] `/welcome` opens with "Which side of the city?" (`onboarding/SideStep.tsx`), preselected
+        from `?goal=`. Backend continues to orientation; a coming-soon side saves the goal (and
+        interest) and offers the Backend District meanwhile
+  - [x] Signup writes the saved goal into the session cache, so the step sees it
+  - [x] Copy: every "City map" label is now "Backend District"; API title Full Stack City API
+  - [x] Checked night + Daybreak, desktop + 390px phone (Playwright, local stack)
 
 After this: resume content packs (lessons in DB → admin create/clone → YAML/JSON import/export).
 

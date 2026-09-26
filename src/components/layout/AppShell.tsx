@@ -13,7 +13,7 @@ import { useLearning } from "@/features/progress/useLearning";
 
 import { Wordmark } from "./Wordmark";
 
-const NAV = [{ href: "/map", label: "City map", icon: Map }];
+const NAV = [{ href: "/map", label: "Backend District", icon: Map }];
 
 /** Shell for every signed-in screen: one top bar, real stats, account menu. */
 export function AppShell({ children, bleed = false }: { children: ReactNode; bleed?: boolean }) {
