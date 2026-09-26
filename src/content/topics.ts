@@ -126,10 +126,47 @@ export const TOPICS: Topic[] = [
   },
 ];
 
-export const topicsFor = (district: DistrictKey) => TOPICS.filter((t) => t.district === district);
+export const topicsFor = (district: DistrictKey, topics: Topic[] = TOPICS) =>
+  topics.filter((t) => t.district === district);
 export const topicByLesson = (lesson: string) => TOPICS.find((t) => t.lesson === lesson);
-export const topicByGame = (game: string) =>
-  TOPICS.find((t) => t.checkpoint?.slug === game || t.practice.some((p) => p.slug === game));
+export const topicByGame = (game: string, topics: Topic[] = TOPICS) =>
+  topics.find((t) => t.checkpoint?.slug === game || t.practice.some((p) => p.slug === game));
+
+interface LiveGame {
+  slug: string;
+  title: string;
+  objective: string;
+  is_checkpoint: boolean;
+}
+
+/**
+ * Topics with their game lists taken from the server (what admins published), keeping the
+ * hand-written blurb where there is one. A hidden game drops out; a new one appears with its
+ * objective as the blurb. Without server data the static lists stand.
+ */
+export function withLiveGames(
+  topics: Topic[],
+  live: { topic: string; games?: LiveGame[] }[] | undefined,
+): Topic[] {
+  if (!live) return topics;
+  const byTopic = new Map(live.map((t) => [t.topic, t.games]));
+  return topics.map((topic) => {
+    const games = byTopic.get(topic.slug);
+    if (!games) return topic;
+    const known = [...topic.practice, ...(topic.checkpoint ? [topic.checkpoint] : [])];
+    const ref = (g: LiveGame): GameRef => ({
+      slug: g.slug,
+      title: g.title,
+      blurb: known.find((k) => k.slug === g.slug)?.blurb ?? g.objective,
+    });
+    const checkpoint = games.find((g) => g.is_checkpoint);
+    return {
+      ...topic,
+      practice: games.filter((g) => !g.is_checkpoint).map(ref),
+      checkpoint: checkpoint ? ref(checkpoint) : undefined,
+    };
+  });
+}
 
 /** Districts with playable content today. Everything else is "under construction". */
 export const OPEN_DISTRICTS = new Set<DistrictKey>(TOPICS.map((t) => t.district));

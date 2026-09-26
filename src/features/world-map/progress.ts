@@ -1,5 +1,5 @@
 import { DISTRICTS, type DistrictKey } from "@/content/districts";
-import { OPEN_DISTRICTS, topicsFor } from "@/content/topics";
+import { OPEN_DISTRICTS, TOPICS, topicsFor, type Topic } from "@/content/topics";
 import { topicComplete } from "@/features/progress/stats";
 import type { TopicRecord } from "@/features/progress/records";
 
@@ -27,13 +27,14 @@ export function progressFrom(
  */
 export function restorationFrom(
   records: Record<string, TopicRecord>,
+  topics: Topic[] = TOPICS,
 ): Partial<Record<DistrictKey, number>> {
   const out: Partial<Record<DistrictKey, number>> = {};
   for (const d of DISTRICTS) {
     if (!OPEN_DISTRICTS.has(d.key)) continue;
     let done = 0;
     let total = 0;
-    for (const t of topicsFor(d.key)) {
+    for (const t of topicsFor(d.key, topics)) {
       const r = records[t.slug];
       total += 1 + t.practice.length + (t.checkpoint ? 1 : 0);
       done +=

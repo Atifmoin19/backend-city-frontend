@@ -3,7 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-import { TOPICS } from "@/content/topics";
+import { TOPICS, withLiveGames } from "@/content/topics";
 import { SESSION_KEY, useSession } from "@/features/auth/useSession";
 import { STATS_KEY } from "@/features/rewards/useStats";
 import { gamesApi } from "@/lib/api/games";
@@ -35,7 +35,9 @@ export function useLearning() {
     enabled: !!user,
     staleTime: 30_000,
   });
-  const records = useMemo(() => recordsFrom(TOPICS, query.data), [query.data]);
+  // game lists come from the server, so a game an admin hides disappears from every screen
+  const topics = useMemo(() => withLiveGames(TOPICS, query.data?.topics), [query.data]);
+  const records = useMemo(() => recordsFrom(topics, query.data), [topics, query.data]);
 
   // anything that changes progress can earn XP or a badge
   const restat = () => void qc.invalidateQueries({ queryKey: STATS_KEY });
@@ -61,6 +63,7 @@ export function useLearning() {
 
   return {
     records,
+    topics,
     /** True until the first progress response for a signed-in user. */
     loading: !!user && query.isPending,
     onboarded: !!user?.onboarded,

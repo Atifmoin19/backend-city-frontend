@@ -21,8 +21,8 @@ account menu. Admin: content, learners, analytics, feedback inbox.
 **Phase 1 leftovers**
 
 1. **Auth emails**: verify email + forgot/reset password (EmailJS per §14.2).
-2. **Admin**: create games/topics from the panel (today: edit existing ones); the district
-   page should read its game list from the API instead of `src/content/topics.ts`; audit log.
+2. **Admin**: create games/topics from the panel (today: edit existing ones); audit log.
+   (Game lists already follow the API since v1.12.1; new _topics_ still need `topics.ts`.)
 
 **Phase 2 leftovers**
 
@@ -47,7 +47,6 @@ card, daily challenge.
 - Render free tier sleeps after 15 min idle unless the keep-alive Action runs.
 - Pyodide first load is 5-7 s on a cold cache; later visits are cached.
 - Audio starts only after the first click/key press (browser rule).
-- Topic → game list is static in `src/content/topics.ts` (must match backend seed slugs).
 - Production has test accounts from the first deploy (`@example.com`); delete them in Neon.
 - `PROXY_SHARED_SECRET` must be set on Render + Vercel for per-learner rate limits.
 - Open decisions (§22): AI provider, monetization, i18n, OAuth, leaderboard privacy.

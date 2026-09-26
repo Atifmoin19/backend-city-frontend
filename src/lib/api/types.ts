@@ -114,6 +114,8 @@ export interface TopicProgress {
   lesson_done: boolean;
   practice_games: string[];
   checkpoint_game: string | null;
+  /** Live games in play order (hidden ones are left out). */
+  games?: { slug: string; title: string; objective: string; is_checkpoint: boolean }[];
   practice_passed: string[];
   checkpoint: CheckpointProgress | null;
   consecutive_fails: number;

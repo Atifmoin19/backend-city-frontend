@@ -11,9 +11,17 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.12.0**
+Current version: **v1.12.1**
 
 ---
+
+## v1.12.1 — Game lists follow the admin panel (2026-09-26)
+
+**Fixes**
+
+- A game an admin hides no longer shows up as a step (that then failed to open). District
+  pages, the map, "Next up" and the game screen's next button all use the live game list.
+- A game an admin publishes appears in its topic without a site update.
 
 ## v1.12.0 — Password reset and email verification (2026-09-26)
 

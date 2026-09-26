@@ -53,12 +53,13 @@ export interface Mission {
 export function nextMission(
   records: Record<string, TopicRecord>,
   start?: string | null,
+  topics: Topic[] = TOPICS,
 ): Mission | null {
   const from = Math.max(
     0,
-    TOPICS.findIndex((t) => t.district === start),
+    topics.findIndex((t) => t.district === start),
   );
-  for (const topic of [...TOPICS.slice(from), ...TOPICS.slice(0, from)]) {
+  for (const topic of [...topics.slice(from), ...topics.slice(0, from)]) {
     const r = records[topic.slug];
     if (topicComplete(topic, r)) continue;
     if (!r?.lessonDone || !topic.checkpoint) {

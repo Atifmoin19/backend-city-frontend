@@ -20,9 +20,9 @@ const CTA = {
 
 /** "Next up": the learner's real next mission, so a finished chapter always leads somewhere. */
 export function NextStepCard({ className }: { className?: string }) {
-  const { records } = useLearning();
+  const { records, topics } = useLearning();
   const { data: user } = useSession();
-  const mission = nextMission(records, user?.start_district);
+  const mission = nextMission(records, user?.start_district, topics);
   if (!mission) {
     return (
       <div className={cn("rounded-xl border border-green/40 bg-green/[0.06] p-5", className)}>

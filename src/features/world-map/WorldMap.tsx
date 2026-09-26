@@ -34,9 +34,9 @@ const KEY_DIR: Record<string, "up" | "down" | "left" | "right"> = {
 
 /** Full-screen city map with HUD overlays. Scrolls horizontally on narrow screens. */
 export function WorldMap() {
-  const { records } = useLearning();
+  const { records, topics } = useLearning();
   const progress = progressFrom(records);
-  const restored = restorationFrom(records);
+  const restored = restorationFrom(records, topics);
   const [selected, setSelected] = useState<DistrictKey>(activeDistrict(progress).key);
   const nodes = useRef(new Map<DistrictKey, HTMLButtonElement>());
   const district = DISTRICTS.find((d) => d.key === selected)!;
@@ -102,9 +102,14 @@ export function WorldMap() {
 
       {/* Side HUD */}
       <aside className="relative z-10 flex flex-col gap-4 overflow-y-auto border-line bg-bg-0/40 p-4 backdrop-blur-sm sm:p-5 lg:border-l">
-        <MissionCard records={records} />
+        <MissionCard records={records} topics={topics} />
         <DailyCard />
-        <DistrictPanel district={district} state={progress[selected]} records={records} />
+        <DistrictPanel
+          topics={topics}
+          district={district}
+          state={progress[selected]}
+          records={records}
+        />
         <MapGuide />
       </aside>
     </div>

@@ -50,8 +50,8 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const [needLogin, setNeedLogin] = useState(false);
   const [trafficOpen, setTrafficOpen] = useState(false);
   const gradingSlow = useSlowPending(g.grade.isPending, 1200);
-  const topic = topicByGame(slug);
   const learning = useLearning();
+  const topic = topicByGame(slug, learning.topics);
   const { recordPractice, refresh } = learning;
   const rec = topic ? learning.record(topic.slug) : EMPTY_RECORD;
   const allPublicPass = !!g.report?.ok && g.report.results.every((r) => r.passed);

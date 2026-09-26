@@ -9,7 +9,7 @@ import { SignHeading } from "@/components/ui/SignHeading";
 import { StatusLight } from "@/components/ui/StatusLight";
 import { Librarian } from "@/components/characters";
 import type { District, DistrictKey } from "@/content/districts";
-import { topicsFor } from "@/content/topics";
+import { topicsFor, type Topic } from "@/content/topics";
 import { topicComplete } from "@/features/progress/stats";
 import type { TopicRecord } from "@/features/progress/records";
 
@@ -19,6 +19,8 @@ interface DistrictPanelProps {
   district: District;
   state: DistrictState;
   records: Record<string, TopicRecord>;
+  /** Live topics (game lists from the server). */
+  topics: Topic[];
 }
 
 /** Who greets you at a district that's still being built. */
@@ -30,8 +32,8 @@ const KEEPERS: Partial<Record<DistrictKey, { name: string; line: string }>> = {
 };
 
 /** Floating drawer for the selected district. */
-export function DistrictPanel({ district, state, records }: DistrictPanelProps) {
-  const topics = topicsFor(district.key);
+export function DistrictPanel({ district, state, records, topics: all }: DistrictPanelProps) {
+  const topics = topicsFor(district.key, all);
   return (
     <Panel surface="glass" className="w-full p-5" aria-live="polite">
       <div className="flex items-center justify-between gap-3">

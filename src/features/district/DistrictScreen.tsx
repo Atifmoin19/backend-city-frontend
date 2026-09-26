@@ -91,8 +91,18 @@ function stepsFor(topic: Topic, r: TopicRecord) {
   ];
 }
 
-export function DistrictScreen({ district, topics }: { district: District; topics: Topic[] }) {
-  const { record } = useLearning();
+export function DistrictScreen({
+  district,
+  topics: fallback,
+}: {
+  district: District;
+  topics: Topic[];
+}) {
+  const { record, topics: live } = useLearning();
+  // live game lists once progress loads (hidden games drop out); the server-rendered list until then
+  const topics = live.some((t) => t.district === district.key)
+    ? live.filter((t) => t.district === district.key)
+    : fallback;
   const cast = DISTRICT_CHARACTER[district.key];
   const done = topics.filter((t) => topicComplete(t, record(t.slug))).length;
   const stars = topics.reduce((n, t) => n + (record(t.slug).checkpoint?.stars ?? 0), 0);
