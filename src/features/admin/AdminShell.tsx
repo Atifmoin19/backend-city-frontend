@@ -1,6 +1,6 @@
 "use client";
 
-import { FileCode2, Map, ShieldAlert, Users } from "lucide-react";
+import { BarChart3, FileCode2, Inbox, Map, ShieldAlert, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -15,6 +15,8 @@ import { cn } from "@/lib/cn";
 const NAV = [
   { href: "/admin", label: "Content", icon: FileCode2 },
   { href: "/admin/users", label: "Learners", icon: Users },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/feedback", label: "Feedback", icon: Inbox },
 ];
 
 /** Shell for /admin: its own nav, and a clear stop for accounts without an admin role. */

@@ -71,6 +71,11 @@ card, daily challenge.
   screen's next button goes back to the map for practice-only topics.
 - Request log: when the status is right but the JSON is wrong, a detail line shows what the
   response should contain and what the server sent.
+- **Admin Analytics** (`/admin/analytics`): accounts + activity tiles, 14-day signups chart
+  (hover values, screen-reader table), per-topic drop-off table, hardest games, quiz stats.
+  **Admin Feedback** (`/admin/feedback`): New / Seen / Done tabs with counts and move buttons.
+  Learners send feedback from the account menu ("Send feedback" dialog: kind + message; the
+  page and game are attached automatically).
 - **City restoration** on the map: each open district lights the share of its windows equal to
   the steps done (briefings, practice, checkpoints), bottom-up; cleared districts are fully lit,
   untouched ones dark. The node's label reads "N% restored".

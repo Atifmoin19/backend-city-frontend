@@ -10,6 +10,8 @@ import { Popover } from "@/components/ui/Popover";
 import { SettingsRows } from "@/components/ui/SettingsRows";
 import { useLogout, useSession } from "@/features/auth/useSession";
 
+import { FeedbackDialog } from "./FeedbackDialog";
+
 function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
@@ -75,6 +77,7 @@ export function UserMenu() {
             >
               <Award aria-hidden className="size-4 text-amber" /> Badges &amp; XP
             </Link>
+            <FeedbackDialog className="flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-left text-sm text-text-1 hover:bg-bg-3/70" />
             {isAdmin(user.role) ? (
               <Link
                 href="/admin"
