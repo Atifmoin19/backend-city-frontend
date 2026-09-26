@@ -13,7 +13,7 @@ import { MapBackdrop } from "./MapBackdrop";
 import { MapRoads } from "./MapRoads";
 import { MapGuide } from "./MapGuide";
 import { MissionCard } from "./MissionCard";
-import { activeDistrict, neighbor, progressFrom } from "./progress";
+import { activeDistrict, neighbor, progressFrom, restorationFrom } from "./progress";
 import { playSound } from "@/lib/sound/engine";
 
 const KEY_DIR: Record<string, "up" | "down" | "left" | "right"> = {
@@ -35,6 +35,7 @@ const KEY_DIR: Record<string, "up" | "down" | "left" | "right"> = {
 export function WorldMap() {
   const { records } = useLearning();
   const progress = progressFrom(records);
+  const restored = restorationFrom(records);
   const [selected, setSelected] = useState<DistrictKey>(activeDistrict(progress).key);
   const nodes = useRef(new Map<DistrictKey, HTMLButtonElement>());
   const district = DISTRICTS.find((d) => d.key === selected)!;
@@ -77,6 +78,7 @@ export function WorldMap() {
                 }}
                 district={d}
                 state={progress[d.key]}
+                restored={restored[d.key]}
                 selected={d.key === selected}
                 onSelect={() => select(d.key, false)}
               />

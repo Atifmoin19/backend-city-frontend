@@ -21,6 +21,30 @@ export function progressFrom(
   return out;
 }
 
+/**
+ * How much of each open district is restored (0-1): its briefings, practice games and
+ * checkpoints done out of all of them. The map lights that share of the district's windows.
+ */
+export function restorationFrom(
+  records: Record<string, TopicRecord>,
+): Partial<Record<DistrictKey, number>> {
+  const out: Partial<Record<DistrictKey, number>> = {};
+  for (const d of DISTRICTS) {
+    if (!OPEN_DISTRICTS.has(d.key)) continue;
+    let done = 0;
+    let total = 0;
+    for (const t of topicsFor(d.key)) {
+      const r = records[t.slug];
+      total += 1 + t.practice.length + (t.checkpoint ? 1 : 0);
+      done +=
+        (r?.lessonDone ? 1 : 0) + t.practice.filter((g) => r?.practiceDone.includes(g.slug)).length;
+      if (t.checkpoint && r?.checkpoint) done += 1;
+    }
+    out[d.key] = total ? done / total : 0;
+  }
+  return out;
+}
+
 export const activeDistrict = (progress: Record<DistrictKey, DistrictState>) =>
   DISTRICTS.find((d) => progress[d.key] === "active") ?? DISTRICTS[0]!;
 

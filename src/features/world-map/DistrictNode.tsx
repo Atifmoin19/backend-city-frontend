@@ -13,6 +13,8 @@ interface DistrictNodeProps {
   state: DistrictState;
   selected: boolean;
   onSelect: () => void;
+  /** Share of the district done (0-1): that share of its windows are lit. */
+  restored?: number;
 }
 
 const STATE_LABEL: Record<DistrictState, string> = {
@@ -30,9 +32,14 @@ const TOWERS = [
 
 /** An illustrated city block on an isometric plate. */
 export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(function DistrictNode(
-  { district, state, selected, onSelect },
+  { district, state, selected, onSelect, restored = 0 },
   ref,
 ) {
+  // restoration: windows come back on one by one as the district's steps are done
+  const rows = TOWERS.map((t) => Math.floor(t.h / 8));
+  const totalWindows = rows.reduce((a, b) => a + b, 0);
+  const lit = Math.round((state === "done" ? 1 : restored) * totalWindows);
+  const pct = Math.round((state === "done" ? 1 : restored) * 100);
   const building = state === "locked";
   const tone = state === "done" ? "done" : state === "active" ? "active" : "locked";
   const front = `var(--bc-tower-${tone})`;
@@ -51,7 +58,9 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
       onClick={onSelect}
       aria-pressed={selected}
       data-sound="select"
-      aria-label={`${district.name}, level ${district.level}, ${STATE_LABEL[state]}`}
+      aria-label={`${district.name}, level ${district.level}, ${STATE_LABEL[state]}${
+        state === "active" ? `, ${pct}% restored` : ""
+      }`}
       className="group absolute w-28 -translate-x-1/2 -translate-y-[72%] rounded-lg outline-offset-4 sm:w-32"
       style={{ left: `${district.map.x}%`, top: `${district.map.y}%` }}
     >
@@ -120,17 +129,23 @@ export const DistrictNode = forwardRef<HTMLButtonElement, DistrictNodeProps>(fun
                 strokeDasharray={building ? "2 2" : undefined}
               />
               {!building
-                ? Array.from({ length: Math.floor(t.h / 8) }).map((_, r) => (
-                    <rect
-                      key={r}
-                      x={t.x + 3}
-                      y={80 - t.h + r * 8}
-                      width={t.w - 6}
-                      height={2.5}
-                      fill={windowFill}
-                      opacity={0.45 + ((r + i) % 3) * 0.25}
-                    />
-                  ))
+                ? Array.from({ length: rows[i]! }).map((_, r) => {
+                    // fill bottom-up across the block, so restoration climbs the skyline
+                    const order = rows.slice(0, i).reduce((a, b) => a + b, 0) + (rows[i]! - 1 - r);
+                    const on = order < lit;
+                    return (
+                      <rect
+                        key={r}
+                        x={t.x + 3}
+                        y={80 - t.h + r * 8}
+                        width={t.w - 6}
+                        height={2.5}
+                        fill={windowFill}
+                        opacity={on ? 0.55 + ((r + i) % 3) * 0.2 : 0.12}
+                        className="transition-opacity duration-(--bc-dur-3)"
+                      />
+                    );
+                  })
                 : null}
             </g>
           );

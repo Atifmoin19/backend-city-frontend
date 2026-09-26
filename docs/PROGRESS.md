@@ -71,6 +71,9 @@ card, daily challenge.
   screen's next button goes back to the map for practice-only topics.
 - Request log: when the status is right but the JSON is wrong, a detail line shows what the
   response should contain and what the server sent.
+- **City restoration** on the map: each open district lights the share of its windows equal to
+  the steps done (briefings, practice, checkpoints), bottom-up; cleared districts are fully lit,
+  untouched ones dark. The node's label reads "N% restored".
 - **XP, levels, streaks, badges** (`features/rewards`, from `GET /me/stats` with the browser's
   timezone): header chip (level, XP, streak) linking to `/badges` (level bar, streak, all 11
   badges with earned dates), "Badges & XP" in the account menu, and a toast for badges earned

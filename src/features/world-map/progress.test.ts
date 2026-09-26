@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { EMPTY_RECORD } from "@/features/progress/records";
 
-import { activeDistrict, neighbor, progressFrom } from "./progress";
+import { activeDistrict, neighbor, progressFrom, restorationFrom } from "./progress";
 
 describe("world map navigation", () => {
   it("left/right follow the road in level order", () => {
@@ -27,5 +27,17 @@ describe("world map navigation", () => {
     expect(
       progressFrom({ "validate-signups": { ...EMPTY_RECORD, complete: true } }).gatehouse,
     ).toBe("done");
+  });
+});
+
+describe("restoration", () => {
+  it("lights a district by the share of its steps done", () => {
+    expect(restorationFrom({})["signal-tower"]).toBe(0);
+    // briefing + 1 of 2 practice games, checkpoint not yet: 2 of 4 steps
+    const half = restorationFrom({
+      "how-requests-travel": { ...EMPTY_RECORD, lessonDone: true, practiceDone: ["signal-codes"] },
+    });
+    expect(half["signal-tower"]).toBe(0.5);
+    expect(half["data-vaults"]).toBeUndefined(); // not open yet
   });
 });
