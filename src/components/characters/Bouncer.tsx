@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import { useId } from "react";
 
+import { useReducedMotion } from "@/lib/useReducedMotion";
+
 import type { CharacterProps } from "./types";
 
 /**
@@ -11,6 +13,7 @@ import type { CharacterProps } from "./types";
  */
 export function Bouncer({ state = "idle", size = 96, className, label }: CharacterProps) {
   const id = useId().replace(/:/g, "");
+  const still = useReducedMotion();
   const visor =
     state === "happy" || state === "celebrating"
       ? "#4dff9a"
@@ -27,7 +30,7 @@ export function Bouncer({ state = "idle", size = 96, className, label }: Charact
       aria-label={label}
       aria-hidden={label ? undefined : true}
       overflow="visible"
-      animate={{ rotate: state === "worried" ? [0, -3, 3, 0] : 0 }}
+      animate={{ rotate: state === "worried" && !still ? [0, -3, 3, 0] : 0 }}
       transition={{ duration: 0.5 }}
     >
       <defs>
@@ -134,8 +137,12 @@ export function Bouncer({ state = "idle", size = 96, className, label }: Charact
         rx="3"
         fill={visor}
         filter={`url(#${id}-glow)`}
-        animate={{ opacity: [1, 0.75, 1] }}
-        transition={{ duration: 2.4, repeat: Infinity }}
+        // the visor pulses and, now and then, blinks shut
+        animate={
+          still ? { opacity: 1, scaleY: 1 } : { opacity: [1, 0.75, 1, 1], scaleY: [1, 1, 0.15, 1] }
+        }
+        transition={{ duration: 4.8, times: [0, 0.5, 0.95, 1], repeat: Infinity }}
+        style={{ transformOrigin: "60px 34px" }}
       />
       <rect x="44" y="31.5" width="12" height="1.5" rx="0.75" fill="#fff" opacity="0.6" />
     </motion.svg>

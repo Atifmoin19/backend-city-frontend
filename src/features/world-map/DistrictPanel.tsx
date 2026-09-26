@@ -7,7 +7,8 @@ import { buttonClasses } from "@/components/ui/Button";
 import { Panel } from "@/components/ui/Panel";
 import { SignHeading } from "@/components/ui/SignHeading";
 import { StatusLight } from "@/components/ui/StatusLight";
-import type { District } from "@/content/districts";
+import { Librarian } from "@/components/characters";
+import type { District, DistrictKey } from "@/content/districts";
 import { topicsFor } from "@/content/topics";
 import { topicComplete } from "@/features/progress/stats";
 import type { TopicRecord } from "@/features/progress/records";
@@ -19,6 +20,14 @@ interface DistrictPanelProps {
   state: DistrictState;
   records: Record<string, TopicRecord>;
 }
+
+/** Who greets you at a district that's still being built. */
+const KEEPERS: Partial<Record<DistrictKey, { name: string; line: string }>> = {
+  "data-vaults": {
+    name: "The Librarian",
+    line: "Every record gets a shelf. I'm still labelling them. Come back soon.",
+  },
+};
 
 /** Floating drawer for the selected district. */
 export function DistrictPanel({ district, state, records }: DistrictPanelProps) {
@@ -45,6 +54,15 @@ export function DistrictPanel({ district, state, records }: DistrictPanelProps) 
       </SignHeading>
       <p className="mt-1.5 text-text-1">{district.teaches}</p>
       <p className="mt-0.5 text-sm text-text-3">{district.metaphor}</p>
+      {KEEPERS[district.key] ? (
+        <div className="mt-4 flex items-center gap-3 rounded-lg border border-line bg-bg-1/60 p-3">
+          <Librarian size={56} state="thinking" />
+          <p className="text-sm text-text-2">
+            <span className="block font-semibold text-text-1">{KEEPERS[district.key]!.name}</span>
+            &ldquo;{KEEPERS[district.key]!.line}&rdquo;
+          </p>
+        </div>
+      ) : null}
 
       {topics.length > 0 ? (
         <ul className="mt-5 space-y-2">

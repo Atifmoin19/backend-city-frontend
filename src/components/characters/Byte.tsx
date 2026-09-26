@@ -3,6 +3,8 @@
 import { motion } from "motion/react";
 import { useId } from "react";
 
+import { useReducedMotion } from "@/lib/useReducedMotion";
+
 import type { CharacterProps, CharacterState } from "./types";
 
 const EYES: Record<CharacterState, { ry: number; y: number; color: string }> = {
@@ -23,6 +25,9 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
   const eye = EYES[state];
   const lift = state === "celebrating" ? -9 : state === "sad" ? 2 : -4;
   const dur = state === "celebrating" ? 0.6 : 3;
+  const still = useReducedMotion();
+  // loops only run with motion on; state changes (eye shape, colour) always show
+  const loop = (frames: number[]) => (still ? frames[0] : frames);
   return (
     <svg
       viewBox="0 0 120 130"
@@ -73,14 +78,14 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
         ry="4.5"
         fill="#000"
         initial={{ opacity: 0.45, scaleX: 1 }}
-        animate={{ opacity: [0.45, 0.28, 0.45], scaleX: [1, 0.82, 1] }}
+        animate={{ opacity: loop([0.45, 0.28, 0.45]), scaleX: loop([1, 0.82, 1]) }}
         transition={{ duration: dur, repeat: Infinity, ease: "easeInOut" }}
         style={{ transformOrigin: "60px 124px" }}
       />
 
       <motion.g
         initial={{ y: 0 }}
-        animate={{ y: [0, lift, 0] }}
+        animate={{ y: loop([0, lift, 0]) }}
         transition={{ duration: dur, repeat: Infinity, ease: "easeInOut" }}
       >
         {/* hover jet */}
@@ -94,7 +99,7 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
           r="5"
           fill={eye.color}
           filter={`url(#${id}-glow)`}
-          animate={{ opacity: state === "thinking" ? [1, 0.35, 1] : 1 }}
+          animate={{ opacity: state === "thinking" ? loop([1, 0.35, 1]) : 1 }}
           transition={{ duration: 1, repeat: Infinity }}
         />
         <circle cx="58.5" cy="7.5" r="1.4" fill="#fff" opacity="0.8" />
@@ -157,28 +162,34 @@ export function Byte({ state = "idle", size = 96, className, label }: CharacterP
           fill="none"
         />
 
-        {/* eyes */}
+        {/* eyes: a quick blink every few seconds */}
         <motion.g
           animate={{ y: eye.y }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
           filter={`url(#${id}-glow)`}
         >
-          <motion.ellipse
-            cx="48"
-            cy="53"
-            rx="6"
-            initial={{ ry: eye.ry }}
-            animate={{ ry: eye.ry }}
-            fill={eye.color}
-          />
-          <motion.ellipse
-            cx="72"
-            cy="53"
-            rx="6"
-            initial={{ ry: eye.ry }}
-            animate={{ ry: eye.ry }}
-            fill={eye.color}
-          />
+          <motion.g
+            animate={{ scaleY: loop([1, 1, 0.12, 1]) }}
+            transition={{ duration: 4.2, times: [0, 0.93, 0.965, 1], repeat: Infinity }}
+            style={{ transformOrigin: "60px 53px" }}
+          >
+            <motion.ellipse
+              cx="48"
+              cy="53"
+              rx="6"
+              initial={{ ry: eye.ry }}
+              animate={{ ry: eye.ry }}
+              fill={eye.color}
+            />
+            <motion.ellipse
+              cx="72"
+              cy="53"
+              rx="6"
+              initial={{ ry: eye.ry }}
+              animate={{ ry: eye.ry }}
+              fill={eye.color}
+            />
+          </motion.g>
         </motion.g>
 
         {/* body */}

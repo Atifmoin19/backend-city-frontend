@@ -33,7 +33,7 @@ checkpoint), Router Station (new briefing + 2 practice + checkpoint), Gatehouse 
 - XP, streaks, combos, badges (stars exist), city restoration visuals per topic.
 - Levels 3–4: Data Vaults (SQL, ORM, N+1) and Citadel (auth, permissions).
 - Admin analytics (drop-off funnel, hardest games), feedback inbox, audit log.
-- Rive characters (Byte, Bouncer, Librarian, Glitch...). Sound + performance mode: done early.
+- ~~Rive characters~~ done as animated SVG (owner's call); `.riv` files can replace them later.
 
 **Phase 3 — Depth**: Levels 5–6 (Speedway caching, Factory queues), boss fights
 (3 AM Incident), Break It Mode, weekly leaderboard, spaced repetition / daily review,
@@ -71,6 +71,11 @@ card, daily challenge.
   screen's next button goes back to the map for practice-only topics.
 - Request log: when the status is right but the JSON is wrong, a detail line shows what the
   response should contain and what the server sent.
+- **Characters** (animated SVG behind `CharacterProps`, Rive-swappable later): Byte and the
+  Bouncer now blink; every loop stops under reduced motion / performance mode. New: Glitch
+  (villain, jittering split outline, X eyes when beaten), the Librarian (Data Vaults owl,
+  head tilt when thinking), Packet (request envelope coloured by fate). Glitch taunts on the
+  first orientation slide; the Librarian greets you on the locked Data Vaults map panel.
 - **Admin Analytics** (`/admin/analytics`): accounts + activity tiles, 14-day signups chart
   (hover values, screen-reader table), per-topic drop-off table, hardest games, quiz stats.
   **Admin Feedback** (`/admin/feedback`): New / Seen / Done tabs with counts and move buttons.

@@ -2,6 +2,7 @@
 
 import { Byte } from "@/components/characters/Byte";
 import { Bouncer } from "@/components/characters/Bouncer";
+import { Glitch } from "@/components/characters/Glitch";
 import { StatusLight } from "@/components/ui/StatusLight";
 import { SkylineCanvas } from "@/features/landing/skyline/SkylineCanvas";
 import { GateTraffic } from "@/features/lesson/diagrams/GateTraffic";
@@ -35,6 +36,13 @@ export function OnboardingVisual({ visual }: { visual: Slide["visual"] | "sides"
           <p className="mb-6 rounded-md border border-purple/40 bg-(--bc-byte-bubble) px-4 py-2.5 text-sm text-text-1">
             I&apos;m Byte. I&apos;ll be in your corner the whole way.
           </p>
+        </div>
+        <div className="absolute top-10 right-10 flex items-start gap-3">
+          <p className="mt-4 rounded-md border border-red/40 bg-bg-2 px-4 py-2.5 text-sm text-text-1">
+            <span className="font-semibold text-red">Glitch:</span> Your gate lets anything in.
+            Let&apos;s see how long it lasts.
+          </p>
+          <Glitch size={84} state="happy" />
         </div>
       </div>
     );
