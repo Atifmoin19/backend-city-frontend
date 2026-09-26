@@ -460,6 +460,11 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
           backHref={`/district/${game.district}`}
           lessonHref={topic ? `/learn/${topic.lesson}` : undefined}
           fails={rec.fails}
+          share={{
+            name: user?.display_name ?? "A new engineer",
+            game: game.title,
+            district: district?.name ?? "a district",
+          }}
           onRetry={g.newVariant}
           onClose={() => g.setResult(null)}
         />

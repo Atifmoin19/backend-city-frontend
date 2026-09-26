@@ -11,6 +11,7 @@ import { StatusLight } from "@/components/ui/StatusLight";
 import type { GradeResponse } from "@/lib/api/types";
 
 import { ScoreMeter } from "./ScoreMeter";
+import { ShareResult } from "./ShareResult";
 import { playSound } from "@/lib/sound/engine";
 
 const VERDICT_TEXT: Record<Exclude<GradeResponse["verdict"], "graded">, string> = {
@@ -27,6 +28,8 @@ interface ResultOverlayProps {
   lessonHref?: string;
   /** Checkpoint fails in a row (from the saved record); after 2 we suggest a recap. */
   fails: number;
+  /** Shown on a passed checkpoint's share card. */
+  share?: { name: string; game: string; district: string };
   onRetry: () => void;
   onClose: () => void;
 }
@@ -38,6 +41,7 @@ export function ResultOverlay({
   backHref,
   lessonHref,
   fails,
+  share,
   onRetry,
   onClose,
 }: ResultOverlayProps) {
@@ -143,6 +147,9 @@ export function ResultOverlay({
             <Link href={backHref} className={buttonClasses({ variant: "success" })}>
               Back to the district
             </Link>
+          ) : null}
+          {result.passed && result.verdict === "graded" && share ? (
+            <ShareResult data={{ ...share, score: result.score, stars: result.stars }} />
           ) : null}
           <Button variant={result.passed ? "ghost" : "primary"} onClick={onRetry}>
             Play a new variant

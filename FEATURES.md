@@ -11,9 +11,18 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.9.0**
+Current version: **v1.10.0**
 
 ---
+
+## v1.10.0 — Share your checkpoint result (2026-09-26)
+
+**Learners**
+
+- After passing a checkpoint, **Share your result** draws a card (game, district, your name,
+  score and stars over the city skyline) in the social preview size.
+- Download it, share it straight from a phone, or post to X / LinkedIn with a ready-made line
+  and the site link.
 
 ## v1.9.0 — Try before you sign up (2026-09-26)
 
