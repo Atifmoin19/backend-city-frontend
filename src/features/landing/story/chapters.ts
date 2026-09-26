@@ -128,4 +128,16 @@ export const CHAPTERS: Chapter[] = [
     status: "construction",
     align: "right",
   },
+  // ---- the pull-out: full stack ----
+  {
+    id: "fullstack",
+    level: "Back outside · Full stack",
+    title: "Both sides, wired together.",
+    body: "The glass closes over the frame, but now you can see the lines: every window is wired to the structure inside. Full stack is both ends at once, the screen someone taps and the server that answers it.",
+    points: ["fetch() → route", "form → validation", "state ↔ database"],
+    status: "soon",
+    align: "left",
+  },
+  // the Choose your side picker, composed over the scene (story/ChooseChapter.tsx)
+  { id: "choose", title: "Choose your side of the city.", body: "", align: "left" },
 ];

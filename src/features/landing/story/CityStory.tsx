@@ -8,6 +8,7 @@ import type { Outcome } from "../city3d/cityScene";
 import type { TrafficCounts } from "../LiveLegend";
 
 import { ChapterPanel } from "./ChapterPanel";
+import { ChooseChapter } from "./ChooseChapter";
 import { CHAPTERS } from "./chapters";
 import { HeroChapter } from "./HeroChapter";
 import { playSound } from "@/lib/sound/engine";
@@ -88,7 +89,13 @@ export function CityStory() {
         <div className="absolute inset-0">
           {CHAPTERS.map((c) => (
             <div key={c.id} id={c.id} className="h-dvh">
-              {c.id === "hero" ? <HeroChapter counts={counts} /> : <ChapterPanel chapter={c} />}
+              {c.id === "hero" ? (
+                <HeroChapter counts={counts} />
+              ) : c.id === "choose" ? (
+                <ChooseChapter />
+              ) : (
+                <ChapterPanel chapter={c} />
+              )}
             </div>
           ))}
         </div>

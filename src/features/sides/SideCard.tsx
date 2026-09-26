@@ -4,68 +4,38 @@ import { ArrowRight, BellRing, Check, Clock } from "lucide-react";
 import Link from "next/link";
 
 import { Button, buttonClasses } from "@/components/ui/Button";
-import { SignHeading } from "@/components/ui/SignHeading";
-import { SideArt } from "@/features/sides/SideArt";
-import { useSides, type SideState } from "@/features/sides/useSides";
 import { cn } from "@/lib/cn";
 
-/** End of the tour: pick which side of the city to learn. Open sides enter, others take a
- * Notify me (saved to the account, or carried through signup). */
-export function ChooseYourSide() {
-  const { sides, signedIn, notifyMe } = useSides();
-  return (
-    <section
-      id="choose"
-      aria-labelledby="choose-title"
-      className="relative border-t border-line bg-bg-0 px-3 py-14 sm:px-10 sm:py-24 lg:px-16"
-    >
-      <div className="mx-auto max-w-6xl">
-        <p className="font-mono text-xs text-cyan">Full Stack City</p>
-        <SignHeading as="h2" id="choose-title" className="mt-2 text-[clamp(2rem,4.5vw,3.4rem)]">
-          Choose your side of the city.
-        </SignHeading>
-        <p className="mt-3 max-w-2xl text-base text-text-2 sm:mt-4 sm:text-lg">
-          The surface, the structure, or both wired together. The Backend District is open now; the
-          others are being built.
-        </p>
-        <ul className="mt-6 grid gap-3 sm:mt-12 sm:gap-5 md:grid-cols-3">
-          {sides.map((side) => (
-            <SideCard
-              key={side.track}
-              side={side}
-              signedIn={signedIn}
-              pending={notifyMe.isPending && notifyMe.variables === side.track}
-              onNotify={() => notifyMe.mutate(side.track)}
-            />
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
+import { SideArt } from "./SideArt";
+import type { SideState } from "./useSides";
 
-function SideCard({
+/** One side of the city. Open sides enter; coming-soon sides take a Notify me (saved to the
+ * account, or carried through signup). Phones get a compact card (no body or topic chips). */
+export function SideCard({
   side,
   signedIn,
   pending,
   onNotify,
+  className,
 }: {
   side: SideState;
   signedIn: boolean;
   pending: boolean;
   onNotify: () => void;
+  className?: string;
 }) {
   return (
     <li
       className={cn(
-        "flex flex-col rounded-xl border p-4 sm:p-6",
-        side.open ? "border-cyan/50 bg-bg-2 shadow-glow-cyan" : "border-line bg-bg-1",
+        "flex flex-col rounded-xl border p-4 shadow-panel sm:p-6",
+        side.open ? "border-cyan/50 bg-bg-2 shadow-glow-cyan" : "glass border-line",
+        className,
       )}
     >
       <div className="flex items-start justify-between gap-3">
         <SideArt
           side={side.track}
-          className={cn("h-12 w-14 sm:h-20 sm:w-24", side.open ? "text-cyan" : "text-text-2")}
+          className={cn("h-10 w-12 sm:h-20 sm:w-24", side.open ? "text-cyan" : "text-text-2")}
         />
         {side.open ? (
           <span className="text-xs font-semibold text-green">Open now</span>
@@ -75,12 +45,12 @@ function SideCard({
           </span>
         )}
       </div>
-      <h3 className="mt-3 font-display text-lg font-semibold text-text-1 sm:mt-5 sm:text-xl">
+      <h3 className="mt-2 font-display text-lg font-semibold text-text-1 sm:mt-5 sm:text-xl">
         {side.name}
       </h3>
       <p className="text-sm text-text-3">{side.tagline}</p>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-text-2 sm:mt-3">{side.body}</p>
-      <ul className="mt-3 flex flex-wrap gap-1.5 sm:mt-4">
+      <p className="mt-3 hidden flex-1 text-sm leading-relaxed text-text-2 sm:block">{side.body}</p>
+      <ul className="mt-4 hidden flex-wrap gap-1.5 sm:flex">
         {side.covers.map((c) => (
           <li
             key={c}
@@ -90,7 +60,7 @@ function SideCard({
           </li>
         ))}
       </ul>
-      <div className="mt-4 sm:mt-6">
+      <div className="mt-auto pt-3 sm:pt-6">
         {side.open ? (
           <Link
             href={signedIn ? "/map" : `/signup?goal=${side.track}`}

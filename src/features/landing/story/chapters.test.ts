@@ -14,4 +14,10 @@ describe("scroll story", () => {
     expect(ids.indexOf("components")).toBeLessThan(ids.indexOf("backend"));
     expect(CHAPTERS.filter((c) => c.status === "soon").length).toBeGreaterThanOrEqual(5);
   });
+
+  it("pulls back out for full stack and ends on the side picker", () => {
+    const ids = CHAPTERS.map((c) => c.id);
+    expect(ids.indexOf("fullstack")).toBeGreaterThan(ids.indexOf("construction"));
+    expect(ids.at(-1)).toBe("choose");
+  });
 });

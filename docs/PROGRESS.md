@@ -53,6 +53,16 @@ card, daily challenge.
 - Topic → game list is static in `src/content/topics.ts` (must match backend seed slugs).
 - Open decisions (§22): final name, AI provider, monetization, i18n, OAuth, leaderboard privacy.
 
+## 2026-09-26 — Session 4: Act 3, full stack pull-out
+
+### Done
+
+- Tour ends with two new chapters: **Full stack** (camera exits through the roof, the glass
+  rebuilds bottom-up, risers and floor bands glow through it, light tubes arc from surrounding
+  windows into the tower) and **Choose your side**, now composed over the scene.
+- Phones swipe the three side cards; cards drop body text and chips below `sm`.
+- Checked night + Daybreak, desktop + 390px phone.
+
 ## 2026-09-26 — Session 3: Full Stack City homepage
 
 ### Done

@@ -100,7 +100,13 @@ Mobile / performance mode: lighter building (fewer beams, no reflection).
   - [x] Interior packets: street → door → checkpoint (bounce) → riser → junction → handler
   - [x] Each part powers up as the camera reaches it; night + Daybreak; phone checked
   - [x] Test: one camera stop per chapter (`chapters.test.ts`)
-- [ ] **Step 3: pull-out + light lines (Act 3)**, picker composed over the scene
+- [x] **Step 3: pull-out + light lines (Act 3)**, picker composed over the scene (2026-09-26)
+  - [x] Two new stops (16 chapters): _Full stack_ (camera leaves through the roof, glass rebuilds
+        from the ground up, wiring shows through it) and _Choose your side_ (wide view)
+  - [x] Light lines: glowing tubes arc from windows on nearby towers into the tower's floors,
+        pulses running inward; interior packets stop once the facade is closed
+  - [x] Picker is the last chapter over the scene (phones swipe the three cards); the separate
+        section is gone, `#choose` still anchors it. `SideCard` lives in `features/sides`
 - [ ] **Step 4: onboarding question, copy pass, screenshots (both themes, mobile), docs**
 
 After this: resume content packs (lessons in DB → admin create/clone → YAML/JSON import/export).
@@ -115,7 +121,7 @@ After this: resume content packs (lessons in DB → admin create/clone → YAML/
   hidden) so the 3D stays visible; hero trimmed, live legend hidden. Daybreak inside the tower:
   darker materials, bloom -75% and exposure -10% while the camera is inside.
 
-- Step 1: the picker is a section after the 3D tour for now; step 3 moves it over the scene.
+- Step 1: the picker was a section after the 3D tour; step 3 moved it over the scene.
   Logged-out "Notify me" / "Start" go to `/signup?goal=<track>`, which saves the goal on signup.
 
 - The backend track slug stays `python-backend` (URLs, progress, admin unchanged).

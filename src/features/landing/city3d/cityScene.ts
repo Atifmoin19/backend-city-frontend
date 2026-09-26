@@ -76,6 +76,7 @@ const LOOKS = {
     beam: { color: 0x3ee6ff, opacity: 0.055 },
     packet: { flow: 0x3ee6ff, pass: 0x4dff9a, bounce: 0xffb547, crash: 0xff4d6d, gain: 2.4 },
     crown: 2.2,
+    wire: [0x3ee6ff, 2.4], // full stack: wiring seen through the glass [color, gain]
   },
   light: {
     // Golden-hour toy city: azure sky, coral horizon, warm fog for depth
@@ -117,6 +118,7 @@ const LOOKS = {
     beam: { color: 0xfff1d0, opacity: 0.16 },
     packet: { flow: 0x00a3d9, pass: 0x0fbf6a, bounce: 0xff8a00, crash: 0xff2d55, gain: 1.05 },
     crown: 1.6,
+    wire: [0x0068c9, 0.8],
   },
 };
 
@@ -167,6 +169,9 @@ const STOPS = [
   { pos: v3(SW.x, 18.6, SW.z - 0.4), look: v3(TX - 2, 19.8, TZ - 7.6), arc: 0 }, // F2: racks
   { pos: v3(SW.x, 26.6, SW.z - 0.4), look: v3(TX - 2.6, 26.6, TZ - 8.3), arc: 0 }, // F3: vault
   { pos: v3(SW.x, 45, SW.z), look: v3(TX + 6, 52, TZ - 6), arc: 0 }, // roof: scaffolding
+  // ---- the pull-out: full stack, the surface wired to the structure ----
+  { pos: v3(TX + 44, 34, TZ + 80), look: v3(TX - 16, 14, TZ - 4), arc: 18 }, // glass closes
+  { pos: v3(TX - 30, 64, TZ + 104), look: v3(TX - 22, 8, TZ - 18), arc: 6 }, // choose a side
 ];
 export const STAGE_COUNT = STOPS.length;
 
@@ -248,6 +253,8 @@ uniform vec3 uRim;
 uniform float uDay;
 #ifdef CUTAWAY
 uniform float uCut; // the Backend Tower's facade exists only below this height
+uniform float uWire; // full stack: the wiring inside shows through the closed glass
+uniform vec3 uWireColor;
 #endif
 // Daybreak only: sun-lit, front, shade and roof face colors
 uniform vec3 uSun;
@@ -321,6 +328,16 @@ void main() {
   // a hot cutting line where the glass is being peeled away
   float band = 1.0 - smoothstep(0.0, 0.7, uCut - vWorld.y);
   col = mix(col, vec3(0.45, 0.95, 1.0) * mix(2.4, 1.0, uDay), band * step(0.0, uCut));
+  // risers every 3 m with pulses climbing them, plus a glowing band at each floor slab
+  if (uWire > 0.0 && abs(vNormalW.y) < 0.5) {
+    float wu = abs(vNormalW.x) > 0.5 ? vWorld.z : vWorld.x;
+    float riser = 1.0 - smoothstep(mix(0.04, 0.24, uDay), mix(0.14, 0.36, uDay), abs(fract(wu / 3.0) - 0.5) * 3.0);
+    float pulse = smoothstep(0.82, 1.0, fract(vWorld.y / 9.0 - uTime * 0.45 + floor(wu / 3.0) * 0.37));
+    float fy = fract(vWorld.y / 8.0);
+    float floorBand = 1.0 - smoothstep(mix(0.01, 0.03, uDay), mix(0.05, 0.07, uDay), min(fy, 1.0 - fy));
+    float wire = riser * (mix(0.45, 0.8, uDay) + 1.4 * pulse) + floorBand * mix(0.35, 0.6, uDay);
+    col = mix(col, uWireColor, clamp(wire, 0.0, 1.0) * uWire);
+  }
   #endif
   gl_FragColor = vec4(col, 1.0);
   #include <fog_fragment>
@@ -491,7 +508,12 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       fog: true,
       defines: { CUTAWAY: "" },
       // shares the city's uniform objects (time, lights, theme); only the cut is its own
-      uniforms: { ...towerMat.uniforms, uCut: { value: TOWER_H + 1 } },
+      uniforms: {
+        ...towerMat.uniforms,
+        uCut: { value: TOWER_H + 1 },
+        uWire: { value: 0 },
+        uWireColor: { value: new THREE.Color(look.wire[0]).multiplyScalar(look.wire[1]!) },
+      },
     }),
   );
   const facade = new THREE.InstancedMesh(facadeGeo, facadeMat, 1);
@@ -593,6 +615,8 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   };
   const blend = look.additive ? THREE.AdditiveBlending : THREE.NormalBlending;
   const sparks: { p: THREE.Points; v: Float32Array; life: number }[] = [];
+  // full stack: light lines from the surface's windows into the tower's wiring
+  const links = createLinks();
 
   function launch(
     path: THREE.Vector3[],
@@ -797,6 +821,94 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     }
   }
 
+  /**
+   * Glowing tubes that arc from windows on the surrounding towers to the Backend Tower's
+   * floors: the frontend wired to the backend. Pulses run toward the tower.
+   */
+  function createLinks() {
+    const mat = track(
+      new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: blend,
+        uniforms: {
+          uGrow: { value: 0 },
+          uTime: { value: 0 },
+          uColor: { value: COLORS.flow.clone() },
+          // Daybreak has no glow to carry faint lines: keep them near-solid
+          uMinAlpha: { value: look.day ? 0.9 : 0.4 },
+        },
+        vertexShader: /* glsl */ `
+          varying float vT;
+          void main() {
+            vT = uv.x;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }`,
+        fragmentShader: /* glsl */ `
+          uniform float uGrow;
+          uniform float uTime;
+          uniform vec3 uColor;
+          uniform float uMinAlpha;
+          varying float vT;
+          void main() {
+            if (vT > uGrow) discard;
+            float pulse = smoothstep(0.75, 1.0, fract(vT * 3.0 - uTime * 0.7));
+            float tip = smoothstep(uGrow - 0.08, uGrow, vT) * step(uGrow, 0.999);
+            float a = uMinAlpha + 0.6 * pulse + tip;
+            gl_FragColor = vec4(uColor * (0.8 + pulse + tip * 1.5), clamp(a, 0.0, 1.0));
+          }`,
+      }),
+    );
+    const group = new THREE.Group();
+    group.visible = false;
+    scene.add(group);
+    const sources = towers
+      .filter((t) => {
+        const d = Math.hypot(t.x - TX, t.z - TZ);
+        return t.h > 8 && d > 16 && d < 72 && t !== gateTower;
+      })
+      .sort(() => rand() - 0.5)
+      .slice(0, opts.lowFx ? 12 : 28);
+    const hw = TOWER.w / 2;
+    const hd = TOWER.d / 2;
+    sources.forEach((t, i) => {
+      const dx = TX - t.x;
+      const dz = TZ - t.z;
+      // leave from the source tower's face that looks at the Backend Tower
+      const sideX = Math.abs(dx) > Math.abs(dz);
+      const y0 = t.h * (0.35 + rand() * 0.5);
+      const from = sideX
+        ? v3(t.x + Math.sign(dx) * (t.w / 2 + 0.05), y0, t.z)
+        : v3(t.x, y0, t.z + Math.sign(dz) * (t.d / 2 + 0.05));
+      // arrive on the matching facade face, at one of the floors
+      const floorY = TOWER.floor * (i % TOWER.floors) + TOWER.floor * 0.5;
+      const to = sideX
+        ? v3(TX - Math.sign(dx) * (hw + 0.05), floorY, TZ + Math.max(-hd, Math.min(hd, -dz * 0.25)))
+        : v3(
+            TX + Math.max(-hw, Math.min(hw, -dx * 0.25)),
+            floorY,
+            TZ - Math.sign(dz) * (hd + 0.05),
+          );
+      const mid = from.clone().lerp(to, 0.5);
+      mid.y = Math.max(from.y, to.y) + from.distanceTo(to) * 0.28;
+      const curve = new THREE.QuadraticBezierCurve3(from, mid, to);
+      const tube = new THREE.Mesh(
+        track(new THREE.TubeGeometry(curve, 40, look.day ? 0.28 : 0.22, 5, false)),
+        mat,
+      );
+      group.add(tube);
+    });
+    return {
+      setGrow(g: number) {
+        mat.uniforms.uGrow!.value = g;
+        group.visible = g > 0.001;
+      },
+      update(t: number) {
+        mat.uniforms.uTime!.value = t;
+      },
+    };
+  }
+
   // ---- post-processing ----
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
@@ -833,8 +945,13 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       0.08,
     ];
     // Backend Tower: the facade is cut from the roof down during the dive (stop 6)...
+    // ...and rebuilt from the ground up on the way out (stop 14)
     const cutT = smooth(Math.min(1, Math.max(0, (p - 5.55) / 0.95)));
-    facadeMat.uniforms.uCut!.value = TOWER_H + 1 - cutT * (TOWER_H + 2);
+    const closeT = smooth(Math.min(1, Math.max(0, (p - 13.15) / 0.75)));
+    facadeMat.uniforms.uCut!.value = TOWER_H + 1 - (cutT - closeT) * (TOWER_H + 2);
+    // full stack: the wiring shows through the glass, then the light lines reach out to it
+    facadeMat.uniforms.uWire!.value = on(13.2);
+    links.setGrow(smooth(Math.min(1, Math.max(0, (p - 13.4) / 1.1))));
     // ...then each part of the structure powers up as the camera reaches it
     inside[0] = on(5.6); // steel frame
     inside[1] = on(7.4); // brick core: Academy
@@ -882,13 +999,15 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       b.rotation.x = Math.PI + Math.cos(elapsed * 0.2 + i) * 0.25;
     });
     crown.rotation.z += dt * 0.4;
+    links.update(elapsed);
     interior.update(elapsed, inside);
     interiorClock += dt;
     const insideEvery = opts.lowFx ? 0.9 : 0.42;
     while (interiorClock > insideEvery) {
       interiorClock -= insideEvery;
       const busy = packets.reduce((n, pk) => n + (pk.inside ? 1 : 0), 0);
-      if (progress > 5.7 && busy < (opts.lowFx ? 8 : 16)) spawnInteriorPacket();
+      const open = progress > 5.7 && progress < 13.9; // the facade is closed again after that
+      if (open && busy < (opts.lowFx ? 8 : 16)) spawnInteriorPacket();
     }
     spawnClock += dt;
     const every = opts.lowFx ? 0.35 : 0.16;
@@ -925,7 +1044,7 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
       const p = packets.at(-1)!;
       p.dist = p.total * (0.2 + rand() * 0.6);
     }
-    if (progress > 5.7) {
+    if (progress > 5.7 && progress < 13.9) {
       for (let i = 0; i < 10; i++) {
         spawnInteriorPacket();
         const p = packets.at(-1)!;
