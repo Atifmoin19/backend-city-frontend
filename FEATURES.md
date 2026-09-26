@@ -11,9 +11,18 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.8.0**
+Current version: **v1.9.0**
 
 ---
+
+## v1.9.0 — Try before you sign up (2026-09-26)
+
+**Learners**
+
+- Visitors can play the first practice game (Signal Codes) without an account: "Or try a game
+  first, no account needed" under the homepage buttons.
+- Clearing it as a guest keeps the win on the device for 2 hours with a "Sign up free to keep
+  it" prompt; signing up (or logging in) saves it to the account automatically.
 
 ## v1.8.0 — Characters come alive (2026-09-26)
 

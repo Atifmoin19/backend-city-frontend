@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 
 import { buttonClasses } from "@/components/ui/Button";
 import { SessionCta } from "@/features/session/SessionCta";
+import { TryAsGuest } from "@/features/session/TryAsGuest";
 
 import { CitySoundToggle } from "../CitySoundToggle";
 import { LiveLegend, type TrafficCounts } from "../LiveLegend";
@@ -75,6 +76,7 @@ export function HeroChapter({ counts }: { counts: TrafficCounts }) {
         <span className="hidden sm:contents">
           <CitySoundToggle />
         </span>
+        <TryAsGuest className="basis-full" />
       </motion.div>
       <motion.div
         initial={{ opacity: 0 }}

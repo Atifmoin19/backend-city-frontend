@@ -30,6 +30,7 @@ import { useSlowPending } from "@/lib/useSlowPending";
 import { EMPTY_RECORD } from "@/features/progress/records";
 import { checkpointHref, nextPractice, practiceHref } from "@/features/progress/stats";
 import { useLearning } from "@/features/progress/useLearning";
+import { keepGuestWin } from "@/features/session/guestPractice";
 import { ApiError } from "@/lib/api/errors";
 
 import { BootStatus } from "./BootStatus";
@@ -76,7 +77,11 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const savedFor = useRef<string | null>(null);
   const token = g.game?.attempt_token;
   useEffect(() => {
-    if (mode !== "practice" || !allPublicPass || !user || !token || savedFor.current === token) {
+    if (mode !== "practice" || !allPublicPass || !token || savedFor.current === token) return;
+    if (!user) {
+      // a visitor: keep the win on this device; it's saved to the account after signup
+      savedFor.current = token;
+      keepGuestWin(slug, token);
       return;
     }
     savedFor.current = token;
@@ -291,7 +296,18 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
             >
               <span className="text-sm text-text-1">
                 Practice cleared. Every request landed where it should.
-                {!user ? " Log in to save it to your record." : null}
+                {!user ? (
+                  <>
+                    {" "}
+                    <Link
+                      href="/signup"
+                      className="font-semibold text-green underline underline-offset-2"
+                    >
+                      Sign up free
+                    </Link>{" "}
+                    to keep it; it&apos;s held on this device for 2 hours.
+                  </>
+                ) : null}
               </span>
               {nextHref ? (
                 <Link

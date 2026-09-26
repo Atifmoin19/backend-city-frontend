@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { cityStats } from "@/features/progress/stats";
 import { BadgeToaster } from "@/features/rewards/BadgeToaster";
 import { useStats } from "@/features/rewards/useStats";
+import { ClaimGuestPractice } from "@/features/session/ClaimGuestPractice";
 import { RequireSession } from "@/features/session/RequireSession";
 import { UserMenu } from "@/features/session/UserMenu";
 import { cn } from "@/lib/cn";
@@ -26,6 +27,7 @@ export function AppShell({ children, bleed = false }: { children: ReactNode; ble
         <RequireSession>{children}</RequireSession>
       </main>
       <BadgeToaster />
+      <ClaimGuestPractice />
     </div>
   );
 }
