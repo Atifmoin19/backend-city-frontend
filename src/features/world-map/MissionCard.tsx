@@ -4,13 +4,15 @@ import { Target } from "lucide-react";
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui/Button";
+import { useSession } from "@/features/auth/useSession";
 import { Panel } from "@/components/ui/Panel";
 import { cityStats, nextMission } from "@/features/progress/stats";
 import type { TopicRecord } from "@/features/progress/records";
 
 /** HUD: the next thing to do, plus real progress through the open content. */
 export function MissionCard({ records }: { records: Record<string, TopicRecord> }) {
-  const mission = nextMission(records);
+  const { data: user } = useSession();
+  const mission = nextMission(records, user?.start_district);
   const stats = cityStats(records);
   const pct = Math.round((100 * stats.topicsDone) / Math.max(1, stats.topicsTotal));
   return (

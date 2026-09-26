@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Map, Play, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { buttonClasses } from "@/components/ui/Button";
+import { useSession } from "@/features/auth/useSession";
 import { districtByKey } from "@/content/districts";
 import { cn } from "@/lib/cn";
 import { useLearning } from "@/features/progress/useLearning";
@@ -20,7 +21,8 @@ const CTA = {
 /** "Next up": the learner's real next mission, so a finished chapter always leads somewhere. */
 export function NextStepCard({ className }: { className?: string }) {
   const { records } = useLearning();
-  const mission = nextMission(records);
+  const { data: user } = useSession();
+  const mission = nextMission(records, user?.start_district);
   if (!mission) {
     return (
       <div className={cn("rounded-xl border border-green/40 bg-green/[0.06] p-5", className)}>

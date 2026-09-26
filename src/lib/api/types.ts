@@ -12,6 +12,7 @@ export interface UserPublic {
   onboarded: boolean;
   /** Track slug chosen at signup ("Which side of the city?"). */
   learning_goal: string | null;
+  start_district: string | null;
 }
 
 export interface TrackPublic {

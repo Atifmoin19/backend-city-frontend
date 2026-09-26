@@ -13,6 +13,7 @@ import { cn } from "@/lib/cn";
 import { useLearning } from "@/features/progress/useLearning";
 
 import { OnboardingVisual } from "./OnboardingVisual";
+import { PlacementStep } from "./PlacementStep";
 import { SideStep } from "./SideStep";
 import { SLIDES } from "./slides";
 
@@ -22,7 +23,9 @@ const ease = [0.16, 1, 0.3, 1] as const;
  * lights mean, controls). */
 export function OnboardingScreen() {
   const [i, setI] = useState(0);
-  const [sidePicked, setSidePicked] = useState(false);
+  // side → placement (optional) → orientation slides
+  const [stage, setStage] = useState<"side" | "placement" | "slides">("side");
+  const sidePicked = stage === "slides";
   const { data: user } = useSession();
   const { markOnboarded } = useLearning();
   const router = useRouter();
@@ -40,11 +43,13 @@ export function OnboardingScreen() {
         className="flex flex-col justify-between px-6 py-10 sm:px-10 lg:px-16 lg:py-14"
         aria-live="polite"
       >
-        {!sidePicked ? (
+        {stage === "side" ? (
           <SideStep
             initial={sideByTrack(user?.learning_goal)?.track}
-            onDone={() => setSidePicked(true)}
+            onDone={() => setStage("placement")}
           />
+        ) : stage === "placement" ? (
+          <PlacementStep onDone={() => setStage("slides")} />
         ) : (
           <>
             <div>

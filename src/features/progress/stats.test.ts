@@ -35,3 +35,11 @@ describe("city progress", () => {
     expect(cityStats(records).stars).toBe(3);
   });
 });
+
+describe("placement start", () => {
+  it("begins at the suggested district, then comes back for earlier topics", () => {
+    expect(nextMission({}, "router-station")?.topic.district).toBe("router-station");
+    expect(nextMission({}, null)?.topic.district).toBe("academy");
+    expect(nextMission({}, "moon-base")?.topic.district).toBe("academy");
+  });
+});

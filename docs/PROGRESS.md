@@ -70,6 +70,15 @@ card, daily challenge.
   screen's next button goes back to the map for practice-only topics.
 - Request log: when the status is right but the JSON is wrong, a detail line shows what the
   response should contain and what the server sent.
+- **Quiz games** (`features/quiz`, content in `src/content/quizzes`): one runner for three
+  kinds. Status Code Speed Round (Signal Tower: 60 s clock, instant feedback, combos), Pick
+  the Line: Routes / The Gate (choose the missing line, explanation after each), and the
+  placement check. Graded in the browser like lesson checks; rounds are saved to
+  `/me/quiz-results`. Keys 1-4 + Enter. District pages list them under "Extra practice";
+  `/quiz/[slug]` shows the learner's best in the rail.
+- **Placement**: optional onboarding step after the side question. Eight questions (4 Python,
+  4 HTTP) suggest a start (Academy / Signal Tower / Router Station), saved as
+  `start_district`; "Next up" begins there. Nothing is unlocked or locked by it.
 - Fallbacks: reduced motion = one still per chapter (fixed a packet pile-up on scroll); no WebGL =
   skyline + SVG cutaway of the tower; performance mode = lighter tower interior.
 

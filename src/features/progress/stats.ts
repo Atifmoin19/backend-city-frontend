@@ -45,9 +45,20 @@ export interface Mission {
   href: string;
 }
 
-/** The next thing to do, in curriculum order. Null when every open topic is complete. */
-export function nextMission(records: Record<string, TopicRecord>): Mission | null {
-  for (const topic of TOPICS) {
+/**
+ * The next thing to do, in curriculum order. Null when every open topic is complete.
+ * `start` (the placement suggestion) begins the search at that district; earlier topics
+ * come back once everything after it is done.
+ */
+export function nextMission(
+  records: Record<string, TopicRecord>,
+  start?: string | null,
+): Mission | null {
+  const from = Math.max(
+    0,
+    TOPICS.findIndex((t) => t.district === start),
+  );
+  for (const topic of [...TOPICS.slice(from), ...TOPICS.slice(0, from)]) {
     const r = records[topic.slug];
     if (topicComplete(topic, r)) continue;
     if (!r?.lessonDone || !topic.checkpoint) {

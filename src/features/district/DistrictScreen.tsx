@@ -18,6 +18,7 @@ import {
   practiceHref,
   topicComplete,
 } from "@/features/progress/stats";
+import { ExtraPractice } from "@/features/quiz/ExtraPractice";
 import { cn } from "@/lib/cn";
 import type { TopicRecord } from "@/features/progress/records";
 import { useLearning } from "@/features/progress/useLearning";
@@ -187,6 +188,7 @@ export function DistrictScreen({ district, topics }: { district: District; topic
               </section>
             );
           })}
+          <ExtraPractice district={district.key} />
         </div>
 
         <aside className="flex flex-col gap-4">
