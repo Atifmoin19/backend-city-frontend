@@ -2,44 +2,40 @@
 
 Newest entry on top. Update at the end of every task.
 
-## Status snapshot (2026-09-26, session 2)
+## Status snapshot (2026-09-26, session 4, released)
 
 **Live:** https://backend-city-frontend-two.vercel.app (Vercel) · API
-https://backend-city-api.onrender.com (Render free, Docker, Singapore) · Postgres 17 on Neon.
-Push to `main` auto-deploys both. **Session 2 work is on branch `feat/progress-content-admin`
-in both repos, not released yet** (release steps: DEPLOY.md, "Releasing the progress /
-content / admin update").
+https://backend-city-api.onrender.com (Render free, Docker, Singapore) · Postgres 17 on Neon
+(migration head `37d08d8cd287`). Push to `main` auto-deploys both; Render runs migrations +
+content seed on every start. Sessions 2-4 are all on `main`.
 
-**Playable (after release):** Academy (briefing), Signal Tower (briefing + 2 practice +
-checkpoint), Router Station (new briefing + 2 practice + checkpoint), Gatehouse (briefing +
-2 practice + checkpoint). Progress is saved on the server. Admin panel at `/admin`.
+**Playable:** homepage 3D tour (frontend surface → dive into the Backend Tower → full stack
+pull-out → Choose your side). Academy (briefing + 2 optional warm-ups), Signal Tower, Router
+Station and Gatehouse (briefing + 2 practice + checkpoint each). Extra practice quizzes
+(Status Code Speed Round, Pick the Line ×2), placement check in onboarding, XP / levels /
+streaks / 11 badges (`/badges`), map districts that light up step by step, feedback from the
+account menu. Admin: content, learners, analytics, feedback inbox.
 
-### What's left (from ideology §21, in suggested order)
+### What's left
 
-**Finish Phase 1 (MVP)**
+**Phase 1 leftovers**
 
 1. **Auth emails**: verify email + forgot/reset password (EmailJS per §14.2).
-2. **Admin**: create games/topics from the panel; the district page should read its game list
-   from the API (`practice_games` / `checkpoint_game` are already in `/me/progress`).
-3. **Content**: Academy practice games; a quiz-style game UI (Status Code Speed Round, Pick the
-   Line) for mobile; placement quiz (§3).
-4. ~~Phase 0 leftover: PGlite vs sql.js spike~~ done: Python `sqlite3` in the harness (backend
-   ARCHITECTURE.md).
+2. **Admin**: create games/topics from the panel (today: edit existing ones); the district
+   page should read its game list from the API instead of `src/content/topics.ts`; audit log.
 
-**Phase 2 — Engagement & AI**
+**Phase 2 leftovers**
 
-- AI through Byte: tiered hints (today: static hint text), failure explainer, "Ask the
-  Robot" concept chat, with daily limits and the never-the-answer guardrail (§7).
-- XP, streaks, combos, badges (stars exist), city restoration visuals per topic.
-- Levels 3–4: Data Vaults (SQL, ORM, N+1) and Citadel (auth, permissions).
-- Admin analytics (drop-off funnel, hardest games), feedback inbox, audit log.
-- ~~Rive characters~~ done as animated SVG (owner's call); `.riv` files can replace them later.
+- AI through Byte (tiered hints, failure explainer, Ask the Robot): **skipped for now by the
+  owner**; the AI provider is still an open decision.
+- Levels 3-4: Data Vaults (SQL, ORM, N+1; engine decided: `sqlite3` in the harness) and
+  Citadel (auth, permissions).
 
-**Phase 3 — Depth**: Levels 5–6 (Speedway caching, Factory queues), boss fights
+**Phase 3 — Depth**: Levels 5-6 (Speedway caching, Factory queues), boss fights
 (3 AM Incident), Break It Mode, weekly leaderboard, spaced repetition / daily review,
 announcements, usage monitor.
 
-**Phase 4 — Mastery & growth**: Levels 7–8 (Control Room, Skyline) + System Builder,
+**Phase 4 — Mastery & growth**: Levels 7-8 (Control Room, Skyline) + System Builder,
 Capstone export, certificates + shareable profiles, community levels, other tracks
 (Node/Express, a Frontend City: the backend is per-track already).
 
@@ -49,10 +45,12 @@ card, daily challenge.
 ### Known issues
 
 - Render free tier sleeps after 15 min idle unless the keep-alive Action runs.
-- Pyodide first load is 5–7 s on a cold cache; later visits are cached.
+- Pyodide first load is 5-7 s on a cold cache; later visits are cached.
 - Audio starts only after the first click/key press (browser rule).
 - Topic → game list is static in `src/content/topics.ts` (must match backend seed slugs).
-- Open decisions (§22): final name, AI provider, monetization, i18n, OAuth, leaderboard privacy.
+- Production has test accounts from the first deploy (`@example.com`); delete them in Neon.
+- `PROXY_SHARED_SECRET` must be set on Render + Vercel for per-learner rate limits.
+- Open decisions (§22): AI provider, monetization, i18n, OAuth, leaderboard privacy.
 
 ## 2026-09-26 — Session 4: Act 3, full stack pull-out
 

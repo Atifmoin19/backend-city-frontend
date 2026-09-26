@@ -46,7 +46,9 @@ learner's own code handling live requests.
 - Must run on low-end devices: performance mode, pause heavy animation while typing.
 - Brand **Full Stack City** (renamed from Backend City, 2026-09-26); mascot placeholder name
   **Byte** (configurable).
-- Built so far: auth, Bouncer game (signup-gate). Lessons, XP, AI, admin UI are later phases.
+- Built so far (2026-09-26): auth, onboarding (side question + placement), 4 open districts
+  with lessons, practice games and checkpoints, quizzes, XP / streaks / badges, admin (content,
+  learners, analytics, feedback). AI tutor is deferred (owner decision).
 
 ## Brand Commitments
 
@@ -64,13 +66,15 @@ Pinned by ideology §9 (binding):
 - The code editor area is always calm: solid background, nothing animating behind code.
 - Game feel matters: juice on success, dramatic-but-never-humiliating failure.
 - Characters: Byte (robot mascot), Packet (courier), The Bouncer, The Librarian,
-  Squirrel the Cacher, Glitch (villain). Placeholders now, Rive later.
+  Squirrel the Cacher, Glitch (villain). Animated SVG today (Squirrel not drawn yet); Rive can
+  replace them later behind the same props.
 
 ## Evidence on Hand
 
 - No users, testimonials, metrics, or press yet. Never invent learner counts, ratings, or
   completion stats. Demo progress on the world map must be labeled as demo.
-- Real content: the curriculum (ideology §5) and one real game (`signup-gate`).
+- Real content: the curriculum (ideology §5), 11 games (2 Academy warm-ups, 6 practice, 3
+  checkpoints), 4 briefings, 3 quizzes and the placement check.
 
 ## Product Principles
 

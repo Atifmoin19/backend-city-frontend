@@ -1,6 +1,7 @@
-# Backend City — Frontend
+# Full Stack City — Frontend
 
-Next.js app for **Backend City**, a gamified platform that teaches backend development by
+Next.js app for **Full Stack City** (formerly Backend City), a gamified platform that teaches
+backend development (frontend and full stack tracks coming soon) by
 letting learners edit small snippets inside a real FastAPI server and watch live requests
 pass, bounce, or crash it. Practice runs entirely in the browser (Pyodide); checkpoints are
 graded by the backend.
@@ -51,7 +52,9 @@ npm run dev            # http://localhost:3000  (runs sync-harness first)
 
 `/` landing (3D city tour, request relay, FAQ) · `/signup` `/login` · `/welcome` orientation ·
 `/map` world map · `/district/[key]` topic steps · `/learn/[slug]` briefing ·
-`/play/[slug]?mode=practice|checkpoint` game (mission brief, editor, traffic view).
+`/play/[slug]?mode=practice|checkpoint` game (mission brief, editor, traffic view) ·
+`/quiz/[slug]` Speed Round / Pick the Line · `/badges` XP, streak, badges ·
+`/admin` content, `/admin/users`, `/admin/analytics`, `/admin/feedback`.
 
 ## Experience features
 
@@ -61,6 +64,13 @@ npm run dev            # http://localhost:3000  (runs sync-harness first)
   On by default; toggle in Settings or the homepage "City sound" pill.
 - **Performance mode** and reduced motion turn off heavy effects everywhere.
 - **Preloader** on the homepage is driven by real 3D load milestones.
+- **Fallbacks**: reduced motion shows one still per chapter; no WebGL shows the 2D skyline
+  with a drawn cutaway of the Backend Tower.
+- **Onboarding**: "Which side of the city?", optional placement check, then orientation.
+- **Rewards**: XP / levels / streaks / badges (derived on the server), badge toasts, districts
+  that light up as their steps are done.
+- **Characters**: animated SVG (Byte, Bouncer, Glitch, Librarian, Packet) behind a
+  Rive-ready `CharacterProps` contract.
 
 ## Deployment
 
@@ -71,4 +81,5 @@ Full step-by-step for Neon + Render + Vercel: [docs/DEPLOY.md](docs/DEPLOY.md).
 ## Docs
 
 [ARCHITECTURE](docs/ARCHITECTURE.md) · [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md) ·
+[FULL_STACK_CITY](docs/FULL_STACK_CITY.md) · [DEPLOY](docs/DEPLOY.md) ·
 [PROGRESS](docs/PROGRESS.md) · [CLAUDE.md](CLAUDE.md) · [PRODUCT.md](PRODUCT.md)
