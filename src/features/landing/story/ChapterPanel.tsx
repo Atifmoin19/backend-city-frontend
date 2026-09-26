@@ -1,7 +1,8 @@
 "use client";
 
 import { Clock, Construction, Zap } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 
 import { cn } from "@/lib/cn";
 
@@ -12,9 +13,14 @@ const ease = [0.16, 1, 0.3, 1] as const;
 
 /** Glass panel for one story chapter; reveals as it enters the viewport. */
 export function ChapterPanel({ chapter }: { chapter: Chapter }) {
+  // Watch the still chapter slot, not the moving card: the card's hidden state shifts it, and
+  // watching itself made it flicker in and out when scrolling stopped at the threshold
+  const slot = useRef<HTMLDivElement>(null);
+  const shown = useInView(slot, { amount: 0.35 });
   return (
     // Phones: a compact card at the bottom so the city stays visible above it
     <div
+      ref={slot}
       className={cn(
         "flex h-full items-end px-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center sm:px-10 sm:pb-0 lg:px-16",
         chapter.align === "right" && "sm:justify-end",
@@ -22,9 +28,11 @@ export function ChapterPanel({ chapter }: { chapter: Chapter }) {
     >
       <motion.article
         initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        // low threshold: on phones the card rests at the bottom edge of the screen
-        viewport={{ amount: 0.2 }}
+        animate={
+          shown
+            ? { opacity: 1, y: 0, filter: "blur(0px)" }
+            : { opacity: 0, y: 40, filter: "blur(8px)" }
+        }
         transition={{ duration: 0.8, ease }}
         className="glass w-full max-w-md rounded-xl p-4 shadow-panel sm:p-8"
       >

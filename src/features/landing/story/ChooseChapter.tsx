@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 
 import { SignHeading } from "@/components/ui/SignHeading";
 import { SideCard } from "@/features/sides/SideCard";
@@ -12,12 +13,17 @@ const ease = [0.16, 1, 0.3, 1] as const;
  * Phones swipe through the three cards so the scene stays visible above them. */
 export function ChooseChapter() {
   const { sides, signedIn, notifyMe } = useSides();
+  // watch the still slot, not the moving panel (see ChapterPanel)
+  const slot = useRef<HTMLDivElement>(null);
+  const shown = useInView(slot, { amount: 0.35 });
   return (
-    <div className="flex h-full flex-col justify-end px-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:justify-center sm:px-10 sm:pb-0 lg:px-16">
+    <div
+      ref={slot}
+      className="flex h-full flex-col justify-end px-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:justify-center sm:px-10 sm:pb-0 lg:px-16"
+    >
       <motion.div
         initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ amount: 0.3 }}
+        animate={shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
         transition={{ duration: 0.8, ease }}
         className="mx-auto w-full max-w-6xl"
         aria-labelledby="choose-title"

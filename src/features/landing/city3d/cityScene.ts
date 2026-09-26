@@ -140,6 +140,7 @@ const DISTRICTS = [
   { key: "construction", center: new THREE.Vector2(34, -62), radius: 26, tint: [0.45, 0.5, 0.7] },
 ] as const;
 
+const ROOF_LIFT = 0.12; // glass roof sits just above the interior's top faces
 const TX = TOWER.x;
 const TZ = TOWER.z;
 const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
@@ -520,9 +521,11 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
   facade.setMatrixAt(
     0,
     m4.compose(
-      new THREE.Vector3(TX, TOWER_H / 2, TZ),
+      // a hair taller than the structure: the roof shared a plane with the brick core and the
+      // top slab, and the three z-fought (flickered) when the glass was closed
+      new THREE.Vector3(TX, (TOWER_H + ROOF_LIFT) / 2, TZ),
       new THREE.Quaternion(),
-      new THREE.Vector3(TOWER.w, TOWER_H, TOWER.d),
+      new THREE.Vector3(TOWER.w, TOWER_H + ROOF_LIFT, TOWER.d),
     ),
   );
   scene.add(facade);
