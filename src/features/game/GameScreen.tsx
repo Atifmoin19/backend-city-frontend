@@ -54,7 +54,8 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
   const { recordPractice, refresh } = learning;
   const rec = topic ? learning.record(topic.slug) : EMPTY_RECORD;
   const allPublicPass = !!g.report?.ok && g.report.results.every((r) => r.passed);
-  // After this game: the next practice game still to clear, else the checkpoint
+  // After this game: the next practice game still to clear, else the checkpoint, else (a
+  // practice-only topic such as the Academy) back to the map
   const upNext = topic
     ? nextPractice(topic, { ...rec, practiceDone: [...rec.practiceDone, slug] })
     : undefined;
@@ -62,8 +63,14 @@ export function GameScreen({ slug, mode }: { slug: string; mode: GameMode }) {
     ? practiceHref(upNext.slug)
     : topic?.checkpoint
       ? checkpointHref(topic.checkpoint.slug)
-      : null;
-  const nextLabel = upNext ? `Next practice: ${upNext.title}` : "Take the checkpoint";
+      : topic
+        ? "/map"
+        : null;
+  const nextLabel = upNext
+    ? `Next practice: ${upNext.title}`
+    : topic?.checkpoint
+      ? "Take the checkpoint"
+      : "Back to the Backend District";
 
   // Practice cleared -> save it once per variant (unlocks the next step)
   const savedFor = useRef<string | null>(null);

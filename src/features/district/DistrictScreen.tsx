@@ -48,7 +48,9 @@ function stepsFor(topic: Topic, r: TopicRecord) {
     href: `/learn/${topic.lesson}`,
     cta: r.lessonDone ? "Review briefing" : "Start briefing",
   };
-  if (!topic.checkpoint) return [briefing];
+  // A topic without a checkpoint (the Academy) is complete after the briefing; its practice
+  // games are optional warm-ups
+  const optional = !topic.checkpoint;
   const upNext = nextPractice(topic, r);
   const practice = topic.practice.map((game, i) => {
     const done = r.practiceDone.includes(game.slug);
@@ -56,8 +58,8 @@ function stepsFor(topic: Topic, r: TopicRecord) {
     return {
       key: game.slug,
       icon: Play,
-      title: `Practice ${i + 1}: ${game.title}`,
-      body: `${game.blurb} Runs in your browser, unlimited tries.`,
+      title: `${optional ? "Warm-up" : "Practice"} ${i + 1}: ${game.title}`,
+      body: `${game.blurb} Runs in your browser, unlimited tries.${optional ? " Optional." : ""}`,
       state: (done ? "done" : ready ? "ready" : "locked") as StepState,
       href: practiceHref(game.slug),
       cta: done ? "Play again" : "Start practice",
@@ -66,6 +68,7 @@ function stepsFor(topic: Topic, r: TopicRecord) {
         : "Finish the briefing first.",
     };
   });
+  if (!topic.checkpoint) return [briefing, ...practice];
   const cooling = r.retryAt ? new Date(r.retryAt) > new Date() : false;
   return [
     briefing,

@@ -66,6 +66,10 @@ card, daily challenge.
   Notify me) before orientation. Verified end to end: `/signup?goal=frontend` → preselected →
   goal + interest saved; backend pick continues to orientation.
 - Copy pass: "City map" labels → "Backend District" (nav, menus, back links, onboarding).
+- Academy: two optional warm-up games (Front Desk, Score Board) on the district page; the game
+  screen's next button goes back to the map for practice-only topics.
+- Request log: when the status is right but the JSON is wrong, a detail line shows what the
+  response should contain and what the server sent.
 - Fallbacks: reduced motion = one still per chapter (fixed a packet pile-up on scroll); no WebGL =
   skyline + SVG cutaway of the tower; performance mode = lighter tower interior.
 

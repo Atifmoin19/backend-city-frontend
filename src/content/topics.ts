@@ -30,7 +30,20 @@ export const TOPICS: Topic[] = [
     summary:
       "Variables, dicts, functions, classes with type hints, and async: just enough Python for FastAPI.",
     lesson: "academy-python",
-    practice: [],
+    // practice only: the Academy stays a lesson-completed topic (no checkpoint), so learners
+    // who already finished the briefing keep it cleared
+    practice: [
+      {
+        slug: "front-desk",
+        title: "Front Desk",
+        blurb: "Read a JSON body as a dict and answer with f-strings, len() and `in`.",
+      },
+      {
+        slug: "score-board",
+        title: "Score Board",
+        blurb: "Filter and rank a list with a comprehension and sorted(key=...).",
+      },
+    ],
     minutes: 6,
   },
   {

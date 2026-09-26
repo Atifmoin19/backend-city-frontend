@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 import { StatusLight, type Status } from "@/components/ui/StatusLight";
 import type { TestResult } from "@/engine/harness/protocol";
 import { outcomeOf } from "@/engine/visualizer/outcome";
@@ -45,35 +47,51 @@ export function RequestLog({
             const r = results?.[i];
             const line = requestLine(t);
             const expectBody = t.expect_body == null ? "" : JSON.stringify(t.expect_body);
+            // right status, wrong JSON: show both, or the learner can't see what's off
+            const bodyMiss = !!r && !r.passed && !!expectBody && r.status === t.expect_status;
             return (
-              <tr key={t.name}>
-                <td
-                  className="truncate px-3.5 py-2"
-                  title={`${line}${expectBody ? ` → ${expectBody}` : ""}`}
-                >
-                  <span className="text-text-1">{t.name}</span>{" "}
-                  <span className="font-mono text-xs text-text-3">{line}</span>
-                </td>
-                <td
-                  className="tabular py-2 text-right font-mono text-text-2"
-                  title={expectBody ? `and the JSON contains ${expectBody}` : undefined}
-                >
-                  {t.expect_status}
-                  {expectBody ? <span className="text-text-3">+</span> : null}
-                </td>
-                <td className="py-2 pr-3.5 text-right">
-                  {r ? (
-                    <StatusLight status={statusOf(r)} className="justify-end">
-                      <span className="tabular font-mono">{r.status}</span>
-                      <span className="sr-only">
-                        {r.passed ? "as expected" : "not as expected"}
-                      </span>
-                    </StatusLight>
-                  ) : (
-                    <span className="text-xs text-text-3">not sent</span>
-                  )}
-                </td>
-              </tr>
+              <Fragment key={t.name}>
+                <tr>
+                  <td
+                    className="truncate px-3.5 py-2"
+                    title={`${line}${expectBody ? ` → ${expectBody}` : ""}`}
+                  >
+                    <span className="text-text-1">{t.name}</span>{" "}
+                    <span className="font-mono text-xs text-text-3">{line}</span>
+                  </td>
+                  <td
+                    className="tabular py-2 text-right font-mono text-text-2"
+                    title={expectBody ? `and the JSON contains ${expectBody}` : undefined}
+                  >
+                    {t.expect_status}
+                    {expectBody ? <span className="text-text-3">+</span> : null}
+                  </td>
+                  <td className="py-2 pr-3.5 text-right">
+                    {r ? (
+                      <StatusLight status={statusOf(r)} className="justify-end">
+                        <span className="tabular font-mono">{r.status}</span>
+                        <span className="sr-only">
+                          {r.passed ? "as expected" : "not as expected"}
+                        </span>
+                      </StatusLight>
+                    ) : (
+                      <span className="text-xs text-text-3">not sent</span>
+                    )}
+                  </td>
+                </tr>
+                {bodyMiss ? (
+                  <tr className="border-t-0!">
+                    <td colSpan={3} className="px-3.5 pb-2.5 font-mono text-xs">
+                      <p className="truncate text-text-3" title={expectBody}>
+                        should contain <span className="text-text-2">{expectBody}</span>
+                      </p>
+                      <p className="truncate text-text-3" title={JSON.stringify(r.body)}>
+                        your server sent <span className="text-red">{JSON.stringify(r.body)}</span>
+                      </p>
+                    </td>
+                  </tr>
+                ) : null}
+              </Fragment>
             );
           })}
         </tbody>
