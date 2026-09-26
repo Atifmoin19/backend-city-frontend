@@ -23,7 +23,8 @@ checkpoint), Router Station (new briefing + 2 practice + checkpoint), Gatehouse 
    from the API (`practice_games` / `checkpoint_game` are already in `/me/progress`).
 3. **Content**: Academy practice games; a quiz-style game UI (Status Code Speed Round, Pick the
    Line) for mobile; placement quiz (§3).
-4. Phase 0 leftover: **PGlite vs sql.js** spike for the Data Vaults query games.
+4. ~~Phase 0 leftover: PGlite vs sql.js spike~~ done: Python `sqlite3` in the harness (backend
+   ARCHITECTURE.md).
 
 **Phase 2 — Engagement & AI**
 
