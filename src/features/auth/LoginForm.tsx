@@ -117,6 +117,12 @@ export function LoginForm() {
           error={errors.password?.message}
           {...form.register("password")}
         />
+        <Link
+          href="/forgot-password"
+          className="-mt-2 self-end text-sm text-cyan underline-offset-4 hover:underline"
+        >
+          Forgot password?
+        </Link>
         {formError ? <FormAlert>{formError}</FormAlert> : null}
         {slow ? (
           <FormAlert tone="info">

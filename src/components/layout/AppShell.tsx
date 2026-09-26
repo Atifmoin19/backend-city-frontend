@@ -10,6 +10,7 @@ import { BadgeToaster } from "@/features/rewards/BadgeToaster";
 import { useStats } from "@/features/rewards/useStats";
 import { ClaimGuestPractice } from "@/features/session/ClaimGuestPractice";
 import { RequireSession } from "@/features/session/RequireSession";
+import { VerifyBanner } from "@/features/session/VerifyBanner";
 import { UserMenu } from "@/features/session/UserMenu";
 import { cn } from "@/lib/cn";
 import { useLearning } from "@/features/progress/useLearning";
@@ -23,6 +24,7 @@ export function AppShell({ children, bleed = false }: { children: ReactNode; ble
   return (
     <div className="flex min-h-dvh flex-col bg-bg-0">
       <AppBar />
+      <VerifyBanner />
       <main className={cn("flex-1", !bleed && "pb-16")}>
         <RequireSession>{children}</RequireSession>
       </main>

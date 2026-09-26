@@ -11,9 +11,31 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.11.0**
+Current version: **v1.12.0**
 
 ---
+
+## v1.12.0 — Password reset and email verification (2026-09-26)
+
+**Learners**
+
+- **Forgot password?** on the login page: get an email link (valid 1 hour, works once) and set
+  a new password at `/reset-password`. Your progress, stars and badges stay; every other
+  device is signed out.
+- **Verify your email**: signup sends a link; a slim bar on signed-in screens shows until you
+  verify, with **Resend** (older links stop working) and a close button.
+
+**Validation**
+
+- New passwords: 8 to 128 characters, typed twice.
+- Reset and verification links are single use and expire (reset 1 hour, verify 24 hours).
+- "Forgot password" answers the same for every email, so nobody can check who has an account;
+  at most 5 email requests an hour per visitor.
+
+**Setup**
+
+- Emails go out through EmailJS once its keys are set on Render (steps in DEPLOY.md, "Account
+  emails"). Until then the pages work but no email is sent.
 
 ## v1.11.0 — Daily challenge (2026-09-26)
 
