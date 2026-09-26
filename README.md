@@ -82,4 +82,4 @@ Full step-by-step for Neon + Render + Vercel: [docs/DEPLOY.md](docs/DEPLOY.md).
 
 [ARCHITECTURE](docs/ARCHITECTURE.md) · [DESIGN_SYSTEM](docs/DESIGN_SYSTEM.md) ·
 [FULL_STACK_CITY](docs/FULL_STACK_CITY.md) · [DEPLOY](docs/DEPLOY.md) ·
-[PROGRESS](docs/PROGRESS.md) · [CLAUDE.md](CLAUDE.md) · [PRODUCT.md](PRODUCT.md)
+[FEATURES (release notes)](FEATURES.md) · [PROGRESS](docs/PROGRESS.md) · [CLAUDE.md](CLAUDE.md) · [PRODUCT.md](PRODUCT.md)

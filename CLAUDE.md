@@ -37,6 +37,7 @@ after adding routes. Never `git push` unless the owner asks. Conventional commit
 - Hidden tests / solutions never reach the learner's browser (admin screens only); hint text only via the hint endpoint.
 - `src/proxy.ts` forwards the client IP for rate limits; don't add unrelated logic there.
 - Strict TS, no `any`. Small single-purpose files. Update `docs/PROGRESS.md` after every task.
+- Every user-facing change goes in `FEATURES.md` (release notes, both repos) with a version bump: minor for major additions (new chapter/district/game/page/feature), patch for small ones (fix, validation rule, UI tweak). Keep `package.json` and the backend `pyproject.toml` on the same version. Docs-only changes don't bump.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
