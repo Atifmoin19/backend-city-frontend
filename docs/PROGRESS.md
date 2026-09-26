@@ -66,6 +66,8 @@ card, daily challenge.
   Notify me) before orientation. Verified end to end: `/signup?goal=frontend` → preselected →
   goal + interest saved; backend pick continues to orientation.
 - Copy pass: "City map" labels → "Backend District" (nav, menus, back links, onboarding).
+- Fallbacks: reduced motion = one still per chapter (fixed a packet pile-up on scroll); no WebGL =
+  skyline + SVG cutaway of the tower; performance mode = lighter tower interior.
 
 ## 2026-09-26 — Session 3: Full Stack City homepage
 

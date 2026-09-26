@@ -1032,7 +1032,12 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
     camera.updateProjectionMatrix();
   }
 
+  /** Reduced motion: one still frame per chapter, drawn only when the chapter changes. */
+  let stillAt = -1;
   function renderStill() {
+    stillAt = progress;
+    packets.forEach(removePacket);
+    packets.length = 0;
     const want = storyTargets();
     want.forEach((v, i) => (lit[i] = v));
     camPos.copy(targetPos);
@@ -1073,8 +1078,12 @@ export function createCityScene(canvas: HTMLCanvasElement, opts: CityOptions): C
 
   return {
     setProgress(p) {
-      progress = p;
-      if (opts.still) renderStill();
+      if (!opts.still) {
+        progress = p;
+        return;
+      }
+      progress = Math.round(p);
+      if (progress !== stillAt) renderStill();
     },
     setPointer(x, y) {
       pointer.set(x, y);

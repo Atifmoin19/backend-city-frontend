@@ -6,6 +6,7 @@ import { useResolvedTheme } from "@/lib/theme";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { usePreferences } from "@/stores/preferences";
 
+import { CutawayArt } from "../skyline/CutawayArt";
 import { SkylineCanvas } from "../skyline/SkylineCanvas";
 import type { CityScene, CityStage, Outcome } from "./cityScene";
 
@@ -24,7 +25,8 @@ interface City3DProps {
 
 /**
  * Mounts the three.js city (lazy chunk). Pauses when offscreen or the tab is hidden.
- * Reduced motion -> single still frame. No WebGL -> the 2D skyline.
+ * Reduced motion -> one still frame per chapter. No WebGL -> the 2D skyline with a static
+ * cutaway of the Backend Tower for the dive.
  */
 export const City3D = forwardRef<City3DHandle, City3DProps>(function City3D(
   { className, onResolve, onStage },
@@ -34,6 +36,8 @@ export const City3D = forwardRef<City3DHandle, City3DProps>(function City3D(
   const scene = useRef<CityScene | null>(null);
   const progress = useRef(0);
   const [fallback, setFallback] = useState(false);
+  const [chapter, setChapter] = useState(0); // only tracked for the no-WebGL fallback
+  const fallbackRef = useRef(false);
   const [ready, setReady] = useState(false);
   const still = useReducedMotion();
   const lowFx = usePreferences((s) => s.performanceMode);
@@ -49,6 +53,7 @@ export const City3D = forwardRef<City3DHandle, City3DProps>(function City3D(
     setProgress: (p) => {
       progress.current = p;
       scene.current?.setProgress(p);
+      if (fallbackRef.current) setChapter(Math.round(p));
     },
   }));
 
@@ -58,6 +63,8 @@ export const City3D = forwardRef<City3DHandle, City3DProps>(function City3D(
     let disposed = false;
     let cleanup = () => {};
     const fail = () => {
+      fallbackRef.current = true;
+      setChapter(Math.round(progress.current));
       setFallback(true);
       stageRef.current?.("fallback");
     };
@@ -106,7 +113,16 @@ export const City3D = forwardRef<City3DHandle, City3DProps>(function City3D(
     };
   }, [lowFx, still, theme]);
 
-  if (fallback) return <SkylineCanvas className={className} onResolve={onResolve} />;
+  if (fallback)
+    return (
+      <div className={className}>
+        <SkylineCanvas className="absolute inset-0 size-full" onResolve={onResolve} />
+        <CutawayArt
+          chapter={chapter}
+          className="absolute bottom-[30%] left-1/2 h-[60%] max-w-none -translate-x-1/2 sm:bottom-0 sm:h-[82%]"
+        />
+      </div>
+    );
   return (
     <canvas
       ref={canvas}

@@ -363,8 +363,9 @@ export function createInterior(look: InteriorLook, lowFx: boolean): Interior {
     });
   }
 
-  // cross bracing on the back wall (diagonals approximated by stepped short beams)
-  for (let lv = 0; lv < TOWER.floors; lv++) {
+  // cross bracing on the back wall (diagonals approximated by stepped short beams);
+  // performance mode builds a lighter tower without it
+  for (let lv = 0; lv < (lowFx ? 0 : TOWER.floors); lv++) {
     for (let s = 0; s < 6; s++) {
       const t = (s + 0.5) / 6;
       add({
@@ -538,7 +539,9 @@ export function createInterior(look: InteriorLook, lowFx: boolean): Interior {
     const curve = new THREE.CurvePath<THREE.Vector3>();
     for (let i = 1; i < points.length; i++)
       curve.add(new THREE.LineCurve3(points[i - 1]!, points[i]!));
-    const geo = own(new THREE.TubeGeometry(curve, points.length * 8, radius, 6, false));
+    const geo = own(
+      new THREE.TubeGeometry(curve, points.length * (lowFx ? 3 : 8), radius, lowFx ? 4 : 6, false),
+    );
     const m = new THREE.Mesh(geo, material);
     group.add(m);
     return m;
@@ -620,12 +623,17 @@ export function createInterior(look: InteriorLook, lowFx: boolean): Interior {
     const y = (lv + 1) * floor - 1.15;
     tube([V(riserAt.x, y, riserAt.z), V(halfW - 1, y, riserAt.z)], 0.06, wireMat);
     tube([V(riserAt.x, y, riserAt.z), V(riserAt.x, y, halfD - 1)], 0.06, wireMat);
-    tube([V(-0.6, y, riserAt.z), V(-0.6, y, halfD - 1)], 0.05, wireMat);
+    if (!lowFx) tube([V(-0.6, y, riserAt.z), V(-0.6, y, halfD - 1)], 0.05, wireMat);
   }
   // blinking status lights on the server racks
   const rackLedMat = glow(look.wire);
   glowing(rackLedMat, GROUPS.signal, look.day ? 1 : 2.6);
   for (const rx of rackXs) {
+    if (lowFx) {
+      // one LED strip per rack instead of five lights (fewer draw calls)
+      boxAt(cx + rx - 0.25, 2 * floor + 0.6, cz + rackZ + 0.62, 0.1, 2.2, 0.04, rackLedMat);
+      continue;
+    }
     for (let i = 0; i < 5; i++) {
       boxAt(
         cx + rx - 0.25 + (i % 2) * 0.5,

@@ -62,8 +62,14 @@ Rest of the page (You know this end, FAQ, final call) stays with Full Stack City
 
 ### Fallbacks
 
-Reduced motion: one still frame per act. No WebGL: 2D skyline + static cutaway illustration.
-Mobile / performance mode: lighter building (fewer beams, no reflection).
+Built (2026-09-26):
+
+- Reduced motion: one still frame per chapter, redrawn only when the chapter changes (packets
+  are cleared first; the old path re-spawned 30 on every scroll event).
+- No WebGL: 2D skyline plus a static SVG cutaway of the Backend Tower (`skyline/CutawayArt`)
+  from the dive on; the current chapter's floor lights up, full stack shows glass + wires.
+- Performance mode: lighter building (no back-wall bracing, 2 trays per floor, one LED strip
+  per rack, simpler tubes) on top of the existing no-reflection / fewer-packets path.
 
 ## In the app
 
