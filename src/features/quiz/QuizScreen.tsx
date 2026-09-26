@@ -14,7 +14,7 @@ import { useQuizResults } from "./useQuizResults";
 /** A revision quiz page: the round in the main column, the learner's best in the rail. */
 export function QuizScreen({ slug }: { slug: string }) {
   const quiz = quizBySlug(slug)!;
-  const district = DISTRICTS.find((d) => d.key === quiz.district)!;
+  const district = DISTRICTS.find((d) => d.key === quiz.district) ?? DISTRICTS[0]!;
   const { signedIn, best, record } = useQuizResults();
   const mine = best(slug);
   const { mutate } = record;

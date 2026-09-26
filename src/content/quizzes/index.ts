@@ -13,5 +13,6 @@ export const quizBySlug = (slug: string): Quiz | undefined =>
 
 export const quizzesFor = (district: DistrictKey) => QUIZZES.filter((q) => q.district === district);
 
+export { dailyChallenge, daySeed, dayKey } from "./daily";
 export { placement, placementStart } from "./placement";
 export type { Quiz, QuizItem } from "./types";

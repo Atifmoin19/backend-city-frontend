@@ -31,15 +31,18 @@ const SPEED_REVEAL_MS = 650;
  */
 export function QuizRunner({
   quiz,
+  seed: fixedSeed,
   onFinish,
   summaryExtra,
 }: {
   quiz: Quiz;
+  /** Same questions for everyone (the daily challenge); otherwise a new draw each round. */
+  seed?: number;
   onFinish?: (r: RoundResult) => void;
   /** Rendered under the summary (e.g. the placement suggestion). */
   summaryExtra?: (r: RoundResult) => React.ReactNode;
 }) {
-  const [seed, setSeed] = useState(() => Date.now());
+  const [seed, setSeed] = useState(() => fixedSeed ?? Date.now());
   const items = useMemo(() => buildRound(quiz, seed), [quiz, seed]);
   const [phase, setPhase] = useState<"intro" | "play" | "done">("intro");
   const [index, setIndex] = useState(0);
@@ -190,8 +193,9 @@ export function QuizRunner({
         items={items}
         result={result}
         extra={summaryExtra?.(result)}
+        againLabel={fixedSeed === undefined ? "New round" : "Play again"}
         onAgain={() => {
-          setSeed(Date.now());
+          if (fixedSeed === undefined) setSeed(Date.now());
           setPhase("intro");
         }}
       />

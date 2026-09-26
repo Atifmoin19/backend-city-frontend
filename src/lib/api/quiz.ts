@@ -7,6 +7,7 @@ export interface QuizBest {
   total: number;
   best_combo: number;
   plays: number;
+  last_played_at: string;
 }
 
 export interface QuizRoundResult {

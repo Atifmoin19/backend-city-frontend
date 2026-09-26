@@ -16,12 +16,14 @@ export function QuizSummary({
   items,
   result,
   extra,
+  againLabel = "New round",
   onAgain,
 }: {
   quiz: Quiz;
   items: QuizItem[];
   result: RoundResult;
   extra?: ReactNode;
+  againLabel?: string;
   onAgain: () => void;
 }) {
   const pct = Math.round((100 * result.score) / result.total);
@@ -47,7 +49,7 @@ export function QuizSummary({
         onClick={onAgain}
         icon={<RotateCcw aria-hidden className="size-4" />}
       >
-        New round
+        {againLabel}
       </Button>
       <h2 className="mt-10 font-display text-lg font-semibold text-text-1">Answers</h2>
       <ol className="mt-3 flex flex-col gap-3">

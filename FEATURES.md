@@ -11,9 +11,23 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.10.0**
+Current version: **v1.11.0**
 
 ---
+
+## v1.11.0 — Daily challenge (2026-09-26)
+
+**New game**
+
+- **Daily challenge** (`/daily`): five questions drawn from every drill (status codes, routes,
+  the gate), the same for everyone that day, new at midnight. Explanations after each answer.
+- The first round each day earns **20 bonus XP** plus 2 per right answer and counts for your
+  streak; replays are just practice.
+- A **Daily challenge** card on the map shows whether today's is done.
+
+**Gameplay**
+
+- New badge: **Daily regular** (finish the daily challenge on five different days).
 
 ## v1.10.0 — Share your checkpoint result (2026-09-26)
 

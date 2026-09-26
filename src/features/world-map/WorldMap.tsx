@@ -12,6 +12,7 @@ import { DistrictPanel } from "./DistrictPanel";
 import { MapBackdrop } from "./MapBackdrop";
 import { MapRoads } from "./MapRoads";
 import { MapGuide } from "./MapGuide";
+import { DailyCard } from "@/features/quiz/DailyCard";
 import { MissionCard } from "./MissionCard";
 import { activeDistrict, neighbor, progressFrom, restorationFrom } from "./progress";
 import { playSound } from "@/lib/sound/engine";
@@ -102,6 +103,7 @@ export function WorldMap() {
       {/* Side HUD */}
       <aside className="relative z-10 flex flex-col gap-4 overflow-y-auto border-line bg-bg-0/40 p-4 backdrop-blur-sm sm:p-5 lg:border-l">
         <MissionCard records={records} />
+        <DailyCard />
         <DistrictPanel district={district} state={progress[selected]} records={records} />
         <MapGuide />
       </aside>

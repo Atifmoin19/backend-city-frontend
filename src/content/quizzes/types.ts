@@ -26,7 +26,8 @@ export interface Quiz {
   slug: string;
   title: string;
   kind: "speed" | "pick" | "placement";
-  district: DistrictKey;
+  /** Where it's listed as extra practice (the daily challenge has none). */
+  district?: DistrictKey;
   blurb: string;
   seconds?: number; // speed rounds: the whole round's clock
   draw: number; // questions per round, drawn from `items`
