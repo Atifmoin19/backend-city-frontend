@@ -2,16 +2,18 @@
 
 Newest entry on top. Update at the end of every task.
 
-## Status snapshot (2026-09-26, session 4, released)
+## Status snapshot (2026-09-26, session 5, v1.14.0)
 
 **Live:** https://backend-city-frontend-two.vercel.app (Vercel) · API
 https://backend-city-api.onrender.com (Render free, Docker, Singapore) · Postgres 17 on Neon
 (migration head `37d08d8cd287`). Push to `main` auto-deploys both; Render runs migrations +
-content seed on every start. Sessions 2-4 are all on `main`.
+content seed on every start. Sessions 2-4 and session 5 up to v1.13.0 are on `main`.
 
 **Playable:** homepage 3D tour (frontend surface → dive into the Backend Tower → full stack
 pull-out → Choose your side). Academy (briefing + 2 optional warm-ups), Signal Tower, Router
-Station and Gatehouse (briefing + 2 practice + checkpoint each). Extra practice quizzes
+Station and Gatehouse (briefing + 2 practice + checkpoint each). Data Vaults: two topics
+(SQL reads; writes, GROUP BY and transactions). Guest try on the homepage, share card after a
+checkpoint, `/daily` challenge, forgot/reset password and email verification. Extra practice quizzes
 (Status Code Speed Round, Pick the Line ×2), placement check in onboarding, XP / levels /
 streaks / 11 badges (`/badges`), map districts that light up step by step, feedback from the
 account menu. Admin: content, learners, analytics, feedback inbox.
@@ -20,7 +22,7 @@ account menu. Admin: content, learners, analytics, feedback inbox.
 
 **Phase 1 leftovers**
 
-1. **Auth emails**: verify email + forgot/reset password (EmailJS per §14.2).
+1. **Auth emails**: built (v1.12.0); sending needs the EmailJS keys on Render (DEPLOY.md).
 2. **Admin**: create games/topics from the panel (today: edit existing ones); audit log.
    (Game lists already follow the API since v1.12.1; new _topics_ still need `topics.ts`.)
 
@@ -28,8 +30,8 @@ account menu. Admin: content, learners, analytics, feedback inbox.
 
 - AI through Byte (tiered hints, failure explainer, Ask the Robot): **skipped for now by the
   owner**; the AI provider is still an open decision.
-- Levels 3-4: Data Vaults (SQL, ORM, N+1; engine decided: `sqlite3` in the harness) and
-  Citadel (auth, permissions).
+- Data Vaults: an ORM topic (SQLAlchemy is in Pyodide but not yet in the sandbox venv or
+  policy). Citadel (Level 4: auth, permissions).
 
 **Phase 3 — Depth**: Levels 5-6 (Speedway caching, Factory queues), boss fights
 (3 AM Incident), Break It Mode, weekly leaderboard, spaced repetition / daily review,
@@ -39,17 +41,31 @@ announcements, usage monitor.
 Capstone export, certificates + shareable profiles, community levels, other tracks
 (Node/Express, a Frontend City: the backend is per-track already).
 
-**Growth ideas (not in the spec)**: try-before-signup practice, shareable checkpoint result
-card, daily challenge.
-
 ### Known issues
 
 - Render free tier sleeps after 15 min idle unless the keep-alive Action runs.
 - Pyodide first load is 5-7 s on a cold cache; later visits are cached.
 - Audio starts only after the first click/key press (browser rule).
 - Production has test accounts from the first deploy (`@example.com`); delete them in Neon.
-- `PROXY_SHARED_SECRET` must be set on Render + Vercel for per-learner rate limits.
 - Open decisions (§22): AI provider, monetization, i18n, OAuth, leaderboard privacy.
+
+## 2026-09-26 — Session 5: growth, account emails, Data Vaults
+
+### Done
+
+- v1.9.0 guest try (`TryAsGuest`, `guestPractice.ts` keeps wins 2 h, `ClaimGuestPractice`
+  saves them after signup/login).
+- v1.10.0 share card (`shareCard.ts` draws 1200×630 from tokens; `ShareResult` download / Web
+  Share / X / LinkedIn).
+- v1.11.0 `/daily` challenge (seeded by the date, `DailyCard` on the map, badge `daily-5`).
+- v1.12.0 `/forgot-password`, `/reset-password`, `/verify-email`, `VerifyBanner`.
+- v1.12.1 topics take their game lists from the API (`withLiveGames`).
+- v1.13.0 Data Vaults open: `data-vaults-sql` briefing, topic `query-the-vault`, harness 0.3.0.
+- v1.14.0 second Data Vaults topic `write-the-vault` (`data-vaults-writes` briefing: INSERT,
+  GROUP BY / LEFT JOIN / N+1, constraints, transactions) with Stock Room, Vault Census and the
+  Vault Transfer checkpoint. Harness 0.3.1 (`IntegrityError` re-export). Checked in the
+  browser: both starters run in Pyodide and fail as designed.
+- Housekeeping: `PROXY_SHARED_SECRET` confirmed set on both sides.
 
 ## 2026-09-26 — Session 4: Act 3, full stack pull-out
 

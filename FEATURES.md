@@ -11,9 +11,28 @@ and `backend-city-backend`); both carry the same version number.
   UI tweak, copy changes.
 - Docs-only changes don't get a version.
 
-Current version: **v1.13.0**
+Current version: **v1.14.0**
 
 ---
+
+## v1.14.0 — Change the vault safely (2026-09-26)
+
+**New chapter** (The Data Vaults)
+
+- _Changing data safely_ with the topic **Change the vault safely**.
+- New briefing: `INSERT` with `?` parameters and `lastrowid`, `GROUP BY` / `HAVING` /
+  `LEFT JOIN` in one query (and why a query per row, the N+1 problem, is slow), table rules
+  (`CHECK` constraints) and transactions (`with db:`), with quick checks.
+
+**New games**
+
+- **Stock Room** (practice): add items with an `INSERT`; names with an apostrophe must work and
+  unknown vaults answer 404.
+- **Vault Census** (practice): count and total every vault in one grouped query, empty vaults
+  included, filtered with `HAVING`.
+- **Vault Transfer** (checkpoint): move gold between vaults all-or-nothing. Unknown vaults
+  answer 404, transfers that break the vault rules answer 409, and hidden requests check that no
+  gold ever goes missing halfway.
 
 ## v1.13.0 — The Data Vaults open (2026-09-26)
 

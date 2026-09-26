@@ -150,6 +150,33 @@ export const TOPICS: Topic[] = [
     },
     minutes: 7,
   },
+  {
+    slug: "write-the-vault",
+    district: "data-vaults",
+    title: "Change the vault safely",
+    summary:
+      "INSERT with parameters, GROUP BY and LEFT JOIN in one query, table rules, and transactions that are all or nothing.",
+    lesson: "data-vaults-writes",
+    practice: [
+      {
+        slug: "stock-room",
+        title: "Stock Room",
+        blurb: "INSERT new items with ? parameters, answer the new id, and refuse unknown vaults.",
+      },
+      {
+        slug: "vault-census",
+        title: "Vault Census",
+        blurb: "Count and total every vault in one GROUP BY query, empty vaults included.",
+      },
+    ],
+    checkpoint: {
+      slug: "vault-transfer",
+      title: "Vault Transfer",
+      blurb:
+        "Move gold between vaults in a transaction: all or nothing, 404 and 409 when it can't.",
+    },
+    minutes: 8,
+  },
 ];
 
 export const topicsFor = (district: DistrictKey, topics: Topic[] = TOPICS) =>

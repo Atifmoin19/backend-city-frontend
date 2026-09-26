@@ -1,5 +1,5 @@
 {
   "repo": "Atifmoin19/backend-city-backend",
-  "commit": "882523aa0ba4b5f7c380dc5f6bb7a1e51c7178a1",
+  "commit": "237d3ddf3d9f8c7e1289d69e60b77ac929075382",
   "note": "Backend commit whose harness/ is used when ../backend is not checked out (CI/Vercel). Bump deliberately."
 }
