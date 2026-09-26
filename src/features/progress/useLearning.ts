@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import { TOPICS } from "@/content/topics";
 import { SESSION_KEY, useSession } from "@/features/auth/useSession";
+import { STATS_KEY } from "@/features/rewards/useStats";
 import { gamesApi } from "@/lib/api/games";
 import { progressApi } from "@/lib/api/progress";
 import type { Progress, TopicProgress, UserPublic } from "@/lib/api/types";
@@ -36,8 +37,12 @@ export function useLearning() {
   });
   const records = useMemo(() => recordsFrom(TOPICS, query.data), [query.data]);
 
-  const store = (next: TopicProgress) =>
+  // anything that changes progress can earn XP or a badge
+  const restat = () => void qc.invalidateQueries({ queryKey: STATS_KEY });
+  const store = (next: TopicProgress) => {
     qc.setQueryData<Progress>(key, (old) => withTopic(old, next));
+    restat();
+  };
 
   const completeLesson = useMutation({
     mutationFn: (topic: string) => progressApi.completeLesson(topic),
@@ -63,6 +68,9 @@ export function useLearning() {
     completeLesson,
     recordPractice,
     markOnboarded,
-    refresh: () => qc.invalidateQueries({ queryKey: key }),
+    refresh: () => {
+      restat();
+      return qc.invalidateQueries({ queryKey: key });
+    },
   };
 }

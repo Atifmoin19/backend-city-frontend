@@ -1,11 +1,13 @@
 "use client";
 
-import { Building2, Map, Star } from "lucide-react";
+import { Building2, Flame, Map, Star, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { cityStats } from "@/features/progress/stats";
+import { BadgeToaster } from "@/features/rewards/BadgeToaster";
+import { useStats } from "@/features/rewards/useStats";
 import { RequireSession } from "@/features/session/RequireSession";
 import { UserMenu } from "@/features/session/UserMenu";
 import { cn } from "@/lib/cn";
@@ -23,6 +25,7 @@ export function AppShell({ children, bleed = false }: { children: ReactNode; ble
       <main className={cn("flex-1", !bleed && "pb-16")}>
         <RequireSession>{children}</RequireSession>
       </main>
+      <BadgeToaster />
     </div>
   );
 }
@@ -31,6 +34,7 @@ function AppBar() {
   const path = usePathname();
   const { records } = useLearning();
   const stats = cityStats(records);
+  const { data: rewards } = useStats();
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg-1/90 backdrop-blur-md">
       <div className="flex h-16 items-center gap-6 px-4 sm:px-6 lg:px-8">
@@ -57,6 +61,22 @@ function AppBar() {
           })}
         </nav>
         <div className="ml-auto flex items-center gap-3">
+          {rewards ? (
+            <Link
+              href="/badges"
+              className="plate-ghost flex h-9 items-center gap-2 rounded-full border border-line-strong px-3 text-sm"
+              aria-label={`Level ${rewards.level.level}, ${rewards.xp} XP, ${rewards.streak.current}-day streak. Badges and XP`}
+            >
+              <Zap aria-hidden className="size-4 text-cyan" />
+              <span className="tabular font-semibold text-text-1">Lv {rewards.level.level}</span>
+              <span className="hidden text-text-2 xl:inline">{rewards.xp} XP</span>
+              <Flame
+                aria-hidden
+                className={cn("size-4", rewards.streak.current ? "text-amber" : "text-text-3")}
+              />
+              <span className="tabular font-semibold text-text-1">{rewards.streak.current}</span>
+            </Link>
+          ) : null}
           <dl className="hidden items-center gap-2 lg:flex">
             <StatChip
               icon={<Building2 aria-hidden className="size-4 text-green" />}

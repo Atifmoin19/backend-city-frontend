@@ -71,6 +71,11 @@ card, daily challenge.
   screen's next button goes back to the map for practice-only topics.
 - Request log: when the status is right but the JSON is wrong, a detail line shows what the
   response should contain and what the server sent.
+- **XP, levels, streaks, badges** (`features/rewards`, from `GET /me/stats` with the browser's
+  timezone): header chip (level, XP, streak) linking to `/badges` (level bar, streak, all 11
+  badges with earned dates), "Badges & XP" in the account menu, and a toast for badges earned
+  since this browser last looked (first visit records the baseline silently). Stats refetch
+  after lessons, practice, checkpoints and quiz rounds.
 - **Quiz games** (`features/quiz`, content in `src/content/quizzes`): one runner for three
   kinds. Status Code Speed Round (Signal Tower: 60 s clock, instant feedback, combos), Pick
   the Line: Routes / The Gate (choose the missing line, explanation after each), and the

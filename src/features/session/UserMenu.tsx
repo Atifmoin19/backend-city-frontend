@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, LogOut, Map, ShieldCheck } from "lucide-react";
+import { Award, ChevronDown, LogOut, Map, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { isAdmin } from "@/lib/api/admin";
@@ -67,6 +67,13 @@ export function UserMenu() {
               className="flex items-center gap-3 rounded-md px-2.5 py-2 text-sm text-text-1 hover:bg-bg-3/70"
             >
               <Map aria-hidden className="size-4 text-cyan" /> Backend District
+            </Link>
+            <Link
+              href="/badges"
+              onClick={close}
+              className="flex items-center gap-3 rounded-md px-2.5 py-2 text-sm text-text-1 hover:bg-bg-3/70"
+            >
+              <Award aria-hidden className="size-4 text-amber" /> Badges &amp; XP
             </Link>
             {isAdmin(user.role) ? (
               <Link

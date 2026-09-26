@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { SESSION_KEY, useSession } from "@/features/auth/useSession";
+import { STATS_KEY } from "@/features/rewards/useStats";
 import { quizApi, type QuizRoundResult } from "@/lib/api/quiz";
 import type { UserPublic } from "@/lib/api/types";
 
@@ -19,7 +20,10 @@ export function useQuizResults() {
   });
   const record = useMutation({
     mutationFn: (body: QuizRoundResult) => quizApi.record(body),
-    onSuccess: (data) => qc.setQueryData(KEY(user?.id), data),
+    onSuccess: (data) => {
+      qc.setQueryData(KEY(user?.id), data);
+      void qc.invalidateQueries({ queryKey: STATS_KEY });
+    },
   });
   const placement = useMutation({
     mutationFn: (district: string) => quizApi.placement(district),
